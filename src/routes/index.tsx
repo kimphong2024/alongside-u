@@ -115,10 +115,13 @@ function Today() {
         <section className="space-y-3">
           <SectionLabel icon={Sparkles} label="A meaningful moment" />
           <Link to="/moments" className="block">
-            <div className="rounded-2xl bg-card border border-border p-5 shadow-soft hover:border-clay/40 transition">
-              <h3 className="font-serif text-xl">Share a quiet cup of tea with {loveeName}.</h3>
-              <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
-                Small, ordinary moments often become the ones we treasure most.
+            <div className="polaroid-left bg-card border border-border p-5 pb-7 shadow-paper paper-grain rounded-md hover:rotate-0 transition-transform duration-500">
+              <div className="aspect-[5/3] rounded-sm bg-gradient-sage mb-4 flex items-center justify-center">
+                <Sparkles className="h-7 w-7 text-foreground/40" strokeWidth={1.4} />
+              </div>
+              <h3 className="font-serif text-2xl italic leading-snug">Share a quiet cup of tea with {loveeName}.</h3>
+              <p className="font-hand text-xl text-foreground/70 mt-2 leading-snug">
+                small, ordinary moments often become the ones we treasure most.
               </p>
             </div>
           </Link>
