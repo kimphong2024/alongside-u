@@ -188,21 +188,28 @@ function Moments() {
       </div>
 
       {/* Floating Add Moment Button */}
-      <motion.button
-        type="button"
-        onPointerUp={(event) => {
-          event.preventDefault();
-          setComposerOpen(true);
-        }}
-        onClick={() => setComposerOpen(true)}
-        whileHover={{ scale: 1.04 }}
-        whileTap={{ scale: 0.96 }}
-        className="fixed bottom-24 md:bottom-10 right-6 z-[60] h-16 px-6 rounded-full bg-foreground text-background shadow-paper flex items-center gap-2 font-serif italic text-base pointer-events-auto"
-        aria-label="Add a moment"
-      >
-        <Plus className="h-5 w-5" strokeWidth={2} />
-        <span className="hidden sm:inline">Add a moment</span>
-      </motion.button>
+      <AnimatePresence>
+        {!composerOpen && (
+          <motion.button
+            type="button"
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 10 }}
+            onPointerUp={(event) => {
+              event.preventDefault();
+              setComposerOpen(true);
+            }}
+            onClick={() => setComposerOpen(true)}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            className="fixed bottom-24 md:bottom-10 right-6 z-[60] h-16 px-6 rounded-full bg-foreground text-background shadow-paper flex items-center gap-2 font-serif italic text-base pointer-events-auto"
+            aria-label="Add a moment"
+          >
+            <Plus className="h-5 w-5" strokeWidth={2} />
+            <span className="hidden sm:inline">Add a moment</span>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Confirmation toast */}
       <AnimatePresence>
