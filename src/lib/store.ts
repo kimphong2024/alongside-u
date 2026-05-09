@@ -23,7 +23,15 @@ export type OnboardingData = {
 };
 
 export type BucketItem = { id: string; title: string; category: string; done: boolean };
-export type Moment = { id: string; date: string; title: string; note: string };
+export type Moment = {
+  id: string;
+  date: string;
+  title: string;
+  note: string;
+  photo?: string;
+  audio?: string;
+  audioDuration?: number;
+};
 export type FamilyMember = { id: string; name: string; relationship: string; email?: string };
 
 type LocalState = {
