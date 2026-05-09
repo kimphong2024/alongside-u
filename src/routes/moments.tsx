@@ -77,9 +77,9 @@ function Moments() {
 
   return (
     <AppShell>
-      <div className="space-y-10 pb-24 relative">
+      <div className="space-y-6 pb-24 relative">
         {/* HERO SCRAPBOOK */}
-        <section className="relative pt-2 pb-6 isolate">
+        <section className="relative -mt-2 isolate">
           <ScrapbookHero loveeName={loveeName} />
         </section>
 
