@@ -34,7 +34,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       <nav className="fixed bottom-0 inset-x-0 z-40 pb-[env(safe-area-inset-bottom)]">
         <div className="mx-auto max-w-2xl px-4 pb-4">
-          <div className="rounded-3xl bg-card/85 backdrop-blur-xl border border-border shadow-soft px-2 py-2 flex justify-between">
+          <div className="rounded-3xl bg-card/90 backdrop-blur-xl border border-border/70 shadow-soft px-2 py-2 flex justify-between">
             {tabs.map(({ to, label, icon: Icon }) => {
               const active = pathname.startsWith(to);
               return (
@@ -46,12 +46,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                   {active && (
                     <motion.span
                       layoutId="tab-pill"
-                      className="absolute inset-0 rounded-2xl bg-sage-soft"
+                      className="absolute inset-0 rounded-2xl bg-background shadow-soft border border-border/50"
                       transition={{ type: "spring", stiffness: 500, damping: 40 }}
                     />
                   )}
-                  <Icon className={`relative h-5 w-5 ${active ? "text-foreground" : "text-muted-foreground"}`} strokeWidth={1.6} />
-                  <span className={`relative text-[11px] ${active ? "text-foreground font-medium" : "text-muted-foreground"}`}>
+                  <Icon className={`relative h-5 w-5 ${active ? "text-accent-active" : "text-muted-foreground"}`} strokeWidth={1.6} />
+                  <span className={`relative text-[11px] ${active ? "text-accent-active font-medium" : "text-muted-foreground"}`}>
                     {label}
                   </span>
                 </Link>

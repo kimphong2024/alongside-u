@@ -32,13 +32,13 @@ function ChoiceGrid({
           onClick={() => onSelect(o)}
           className={`group relative text-left px-4 py-4 rounded-2xl border transition-all duration-200 ${
             isSelected(o)
-              ? "bg-sage-soft border-sage shadow-soft"
-              : "bg-card border-border hover:bg-muted hover:border-sage/40"
+              ? "bg-card border-border/70 shadow-soft text-accent-active"
+              : "bg-transparent border-border text-foreground hover:bg-card/60"
           }`}
         >
-          <span className="text-sm font-medium text-foreground">{o}</span>
+          <span className="text-sm font-medium">{o}</span>
           {isSelected(o) && (
-            <Check className="absolute top-3 right-3 h-4 w-4 text-sage" strokeWidth={2.4} />
+            <Check className="absolute top-3 right-3 h-4 w-4 text-accent-active" strokeWidth={2.4} />
           )}
         </button>
       ))}
@@ -136,12 +136,12 @@ export function OnboardingFlow() {
             return (
               <button key={p} type="button" onClick={() => toggleArray("priorities", p)}
                 className={`w-full text-left flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition ${
-                  sel ? "bg-sage-soft border-sage" : "bg-card border-border hover:bg-muted"
+                  sel ? "bg-card border-border/70 shadow-soft" : "bg-transparent border-border hover:bg-card/60"
                 }`}>
-                <span className={`h-5 w-5 rounded-full flex items-center justify-center border ${sel ? "bg-sage border-sage" : "border-border"}`}>
-                  {sel && <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />}
+                <span className={`h-5 w-5 rounded-full flex items-center justify-center border ${sel ? "bg-accent-active border-accent-active" : "border-border"}`}>
+                  {sel && <Check className="h-3 w-3 text-card" strokeWidth={3} />}
                 </span>
-                <span className="text-sm">{p}</span>
+                <span className={`text-sm ${sel ? "text-accent-active font-medium" : ""}`}>{p}</span>
               </button>
             );
           })}
@@ -253,7 +253,7 @@ function RelationshipInline({ value, onChange }: { value?: string; onChange: (v:
         onClick={() => setOpen((o) => !o)}
         className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-1 font-serif font-light italic lowercase text-[0.9em] transition-all ${
           value
-            ? "bg-sage-soft border-sage text-foreground"
+            ? "bg-card border-border/70 shadow-soft text-accent-active"
             : "bg-card border-border text-muted-foreground hover:bg-muted"
         }`}
       >
@@ -284,8 +284,8 @@ function RelationshipInline({ value, onChange }: { value?: string; onChange: (v:
                     onClick={() => handleSelect(o)}
                     className={`rounded-full border px-3.5 py-1.5 font-serif font-light italic lowercase text-base transition-all ${
                       sel
-                        ? "bg-sage-soft border-sage text-foreground"
-                        : "bg-background border-border hover:bg-muted hover:border-sage/40"
+                        ? "bg-card border-border/70 shadow-soft text-accent-active"
+                        : "bg-transparent border-border hover:bg-card/60"
                     }`}
                   >
                     {o}

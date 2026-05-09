@@ -43,6 +43,7 @@
   --color-clay-soft: var(--clay-soft);
   --color-sand: var(--sand);
   --color-cream: var(--cream);
+  --color-accent-active: var(--accent-active);
 
   --shadow-soft: 0 1px 2px rgba(94, 70, 54, 0.04), 0 10px 30px rgba(94, 70, 54, 0.06);
   --shadow-paper: 0 1px 1px rgba(94, 70, 54, 0.05), 0 4px 12px rgba(94, 70, 54, 0.08), 0 12px 28px rgba(94, 70, 54, 0.06);
@@ -54,14 +55,14 @@
 
   /* Warm paper cream */
   --background: #F6EFE7;
-  --foreground: #5E4636;
+  --foreground: #33251E;
 
   /* Soft off-white card */
   --card: #FAF8F5;
-  --card-foreground: #5E4636;
+  --card-foreground: #33251E;
 
   --popover: #FAF8F5;
-  --popover-foreground: #5E4636;
+  --popover-foreground: #33251E;
 
   /* Muted sage primary */
   --primary: #8FA88A;
@@ -69,13 +70,13 @@
 
   /* Soft sage wash */
   --secondary: #E7EFE7;
-  --secondary-foreground: #5E4636;
+  --secondary-foreground: #33251E;
 
   --muted: #EFE7DD;
-  --muted-foreground: #8A7668;
+  --muted-foreground: #6C6058;
 
   --accent: #E7EFE7;
-  --accent-foreground: #5E4636;
+  --accent-foreground: #33251E;
 
   --destructive: #C97B5E;
   --destructive-foreground: #FAF8F5;
@@ -92,6 +93,7 @@
   /* Clay / dusty peach for warmth & warnings */
   --clay: #C9886F;
   --clay-soft: #D8B6A4;
+  --accent-active: #ED9054;
 
   --sand: #EFE7DD;
   --cream: #F6EFE7;
@@ -129,6 +131,7 @@
   --sage-soft: #4A5A48;
   --clay: #D8B6A4;
   --clay-soft: #5A4438;
+  --accent-active: #F2A36B;
 }
 
 @layer base {

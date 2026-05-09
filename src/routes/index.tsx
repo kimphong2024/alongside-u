@@ -145,12 +145,12 @@ function Today() {
                     }
                     className={`inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm transition-all duration-300 ${
                       active
-                        ? "bg-sage-soft border-sage shadow-soft scale-[1.02]"
-                        : "bg-card/70 border-border hover:bg-card hover:border-sage/40"
+                        ? "bg-card border-border/60 shadow-soft scale-[1.02] text-accent-active"
+                        : "bg-transparent border-border hover:bg-card/60 text-foreground/80"
                     }`}
                   >
                     <span className="text-lg leading-none">{m.emoji}</span>
-                    <span className="text-foreground/85">{m.label}</span>
+                    <span>{m.label}</span>
                   </button>
                 );
               })}
