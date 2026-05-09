@@ -276,7 +276,7 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
           <path
             d="M 0 6 Q 300 28 600 6"
             fill="none"
-            stroke="hsl(var(--border))"
+            stroke="var(--border)"
             strokeWidth="1.2"
             strokeLinecap="round"
           />
