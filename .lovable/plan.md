@@ -1,17 +1,29 @@
-## Fix polaroid hero overlapping the toggle
+## Mock Singpass login (UI only)
 
-**Problem:** In `src/routes/moments.tsx`, the three decorative polaroid cards in `ScrapbookHero` are absolutely positioned at `top: 50%` with `-translate-y-1/2` plus tilt offsets like `translate-y-3`, so the bottom edges of the cards extend below the container and visually overlap the "Memory journal / Bucket list" toggle pill that sits beneath the hero.
+Real Singpass NDI requires an approved relying-party account, government issued credentials, and a backend OIDC flow with private-key signing. Until you have those credentials, we'll build a **visual-only Singpass sign-in** that mimics the real flow but uses an anonymous/demo session under the hood so the rest of the app still works.
 
-**Change (presentation only, single file):**
+### What changes
 
-In `src/routes/moments.tsx` → `ScrapbookHero`:
+**1. `/auth` page (`src/routes/auth.tsx`) — full redesign**
+- Remove email/password form and "Continue with Google" button.
+- Replace the card with a single, official-looking **"Sign in with Singpass"** button (red Singpass-style brand color, lock icon, "Singpass" wordmark in the recognizable typeface treatment).
+- Add small disclaimer text: *"Demo mode — Singpass integration coming soon."*
+- Keep the Alongside header, the soft card, and the privacy footer.
 
-1. Anchor the polaroid stack to the top of its container instead of vertically centering it:
-   - Change card positioning from `top-[50%] ... -translate-y-1/2` to `top-0` (no Y centering).
-   - Keep the horizontal centering (`left-1/2 -translate-x-1/2`) and the per-card tilt/offset classes.
-2. Resize the hero polaroid container so it fully contains the tallest tilted card and adds clear breathing room before the toggle:
-   - Increase height to roughly `h-[300px] md:h-[320px]`.
-   - Keep `mb-6` (or bump to `mb-8`) so the toggle sits visibly below, not under, the polaroids.
-3. Leave the toggle markup, animations, and all other sections (timeline, bucket list, FAB, voice note) unchanged.
+**2. Mock auth handler**
+- On click, show a brief "Redirecting to Singpass…" loading state (1–1.5s) to mimic the real redirect feel.
+- Then sign the user in via a generated demo email/password (`demo-{uuid}@singpass.local`) using existing Supabase auth so the `_authenticated` routes, profiles trigger, and `useAuth` hook keep working unchanged.
+- On success, navigate to `/`.
 
-**Result:** The decorative polaroid stack renders fully above the toggle pill with consistent spacing, and the toggle is no longer visually obstructed.
+**3. Cleanup**
+- Remove the Google OAuth call from `auth.tsx` (the `lovable.auth.signInWithOAuth` import).
+- Leave `src/integrations/lovable/` untouched (auto-generated).
+- No database changes — existing `profiles` table and trigger continue to work.
+
+**4. When you get real Singpass credentials later**
+We'll swap the mock handler for a real OIDC flow implemented as a TanStack server route under `src/routes/api/public/singpass/callback.ts` plus a server function to initiate the auth request with signed JWTs. That's a separate task once credentials are in hand.
+
+### What this gives you
+- A polished Singpass-branded login screen you can demo to stakeholders / users today.
+- Email + Google fully removed per your request.
+- A clean swap point for the real integration later — only the click handler needs to change.
