@@ -46,21 +46,16 @@ function ChoiceGrid({
   );
 }
 
-const RELATIONSHIPS = ["Parent", "Spouse", "Grandparent", "Sibling", "Child", "Other"];
+const RELATIONSHIPS = ["Son", "Daughter", "Spouse", "Grandchild", "Sibling", "Parent", "Friend", "Other"];
 const ILLNESSES = ["Cancer", "Dementia", "Heart failure", "ALS", "Parkinson's", "Other"];
 const STAGES = ["Recently diagnosed", "Early stage", "Advanced", "Not sure yet"];
-const SITUATIONS = ["At home", "Hospitalized", "Palliative care", "Hospice care"];
-const MOBILITY = ["Fully mobile", "Some assistance", "Mostly bedbound"];
-const COMMUNICATION = ["Clear", "Sometimes confused", "Limited"];
-const PATIENT_KNOWS = ["Yes, fully aware", "Partially aware", "Not yet told"];
-const EMOTIONS = ["Overwhelmed", "Numb", "Anxious", "Lost", "Managing okay", "Exhausted"];
+const EMOTIONS = ["Overwhelmed", "Numb", "Anxious", "Lost", "Trying to stay strong", "Managing okay"];
 const PRIORITIES = [
   "Understanding what to do next",
-  "Managing appointments",
-  "Emotional support",
+  "Managing responsibilities",
   "Spending meaningful time together",
-  "Coordinating family",
-  "Legal and financial guidance",
+  "Coordinating family updates",
+  "Emotional support",
 ];
 
 export function OnboardingFlow() {
@@ -98,64 +93,20 @@ export function OnboardingFlow() {
         </p>
       </div>
     )},
-    { id: "names", render: ({ data, set }) => (
-      <div className="space-y-6">
-        <Header title="A few gentle details" subtitle="So we can speak to you both by name." />
-        <div className="space-y-3">
-          <label className="block">
-            <span className="text-sm text-muted-foreground">Your name (optional)</span>
-            <Input value={data.caregiverName ?? ""} onChange={(e) => set("caregiverName", e.target.value)} className="mt-1.5 h-12 rounded-xl bg-card" placeholder="e.g. Mei Ling" />
-          </label>
-          <label className="block">
-            <span className="text-sm text-muted-foreground">Your loved one's name (optional)</span>
-            <Input value={data.loveeName ?? ""} onChange={(e) => set("loveeName", e.target.value)} className="mt-1.5 h-12 rounded-xl bg-card" placeholder="e.g. Pa, Ma, Ah Gong" />
-          </label>
-        </div>
-      </div>
-    )},
     { id: "relationship", canContinue: (d) => !!d.relationship, render: ({ data, set }) => (
       <div className="space-y-6">
-        <Header title="Who are you caring for?" subtitle="There are no wrong answers." />
+        <Header title="I am a…" subtitle="…to someone recently diagnosed." />
         <ChoiceGrid options={RELATIONSHIPS} selected={data.relationship} onSelect={(v) => set("relationship", v)} />
       </div>
     )},
     { id: "illnessType", canContinue: (d) => !!d.illnessType, render: ({ data, set }) => (
       <div className="space-y-6">
-        <Header title="What diagnosis did they receive?" subtitle="This helps us tailor gentle guidance — not for medical diagnosis." />
+        <Header title="What diagnosis did your loved one receive?" subtitle="This helps us personalize guidance and support." />
         <ChoiceGrid options={ILLNESSES} selected={data.illnessType} onSelect={(v) => set("illnessType", v)} />
-        <p className="text-xs text-muted-foreground bg-muted/60 rounded-xl p-3 leading-relaxed">
-          This information helps personalize support and recommendations. It is not used for medical diagnosis.
-        </p>
-      </div>
-    )},
-    { id: "illnessStage", canContinue: (d) => !!d.illnessStage, render: ({ data, set }) => (
-      <div className="space-y-6">
-        <Header title="Where are you in the journey?" subtitle="It's okay if things are still unclear." />
-        <ChoiceGrid options={STAGES} selected={data.illnessStage} onSelect={(v) => set("illnessStage", v)} />
-      </div>
-    )},
-    { id: "situation", render: ({ data, toggleArray }) => (
-      <div className="space-y-6">
-        <Header title="Where are they being cared for?" subtitle="Select any that apply." />
-        <ChoiceGrid options={SITUATIONS} selected={data.situation} onSelect={(v) => toggleArray("situation", v)} multi />
-      </div>
-    )},
-    { id: "mobility", render: ({ data, set }) => (
-      <div className="space-y-6">
-        <Header title="How is their mobility?" />
-        <ChoiceGrid options={MOBILITY} selected={data.mobility} onSelect={(v) => set("mobility", v)} />
-      </div>
-    )},
-    { id: "communication", render: ({ data, set }) => (
-      <div className="space-y-6">
-        <Header title="And their ability to communicate?" />
-        <ChoiceGrid options={COMMUNICATION} selected={data.communication} onSelect={(v) => set("communication", v)} />
-      </div>
-    )},
-    { id: "patientKnows", render: ({ data, set }) => (
-      <div className="space-y-6">
-        <Header title="Does your loved one know the diagnosis?" subtitle="There is no judgement here." />
-        <ChoiceGrid options={PATIENT_KNOWS} selected={data.patientKnows} onSelect={(v) => set("patientKnows", v)} />
+        <div className="space-y-2 pt-2">
+          <span className="text-sm text-muted-foreground">Stage (optional)</span>
+          <ChoiceGrid options={STAGES} selected={data.illnessStage} onSelect={(v) => set("illnessStage", v)} />
+        </div>
       </div>
     )},
     { id: "emotional", canContinue: (d) => !!d.emotional, render: ({ data, set }) => (
@@ -165,18 +116,12 @@ export function OnboardingFlow() {
         {data.emotional && (
           <motion.p initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
             className="text-sm text-foreground/80 bg-sage-soft rounded-xl p-4 leading-relaxed">
-            It's okay to take things one step at a time. We'll only show you a little at a time.
+            It's okay to take things one step at a time.
           </motion.p>
         )}
       </div>
     )},
-    { id: "isPrimary", render: ({ data, set }) => (
-      <div className="space-y-6">
-        <Header title="Are you the primary caregiver?" />
-        <ChoiceGrid options={["Yes", "Shared with family", "No, just helping"]} selected={data.isPrimary} onSelect={(v) => set("isPrimary", v)} />
-      </div>
-    )},
-    { id: "priorities", render: ({ data, toggleArray }) => (
+    { id: "priorities", canContinue: (d) => !!d.priorities && d.priorities.length > 0, render: ({ data, toggleArray }) => (
       <div className="space-y-6">
         <Header title="What would help most right now?" subtitle="Choose as many as you like." />
         <div className="space-y-2">
