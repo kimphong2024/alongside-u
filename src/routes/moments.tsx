@@ -439,11 +439,16 @@ function MomentCard({
   expanded?: boolean;
 }) {
   const tilts = ["polaroid-left", "polaroid-right", "polaroid-tiny"];
-  const tilt = tilts[index % tilts.length];
+  const tilt = stacked ? "" : tilts[index % tilts.length];
+  const stackRotations = [-4, 3, -2, 5, -3];
+  const i = Math.min(index, 4);
   const stackStyles = stacked
     ? {
-        left: `${Math.min(index, 4) * 24}px`,
-        top: `${Math.min(index, 4) * 32}px`,
+        left: "50%",
+        top: 0,
+        width: 320,
+        marginLeft: -160,
+        transform: `translate(${i * 6}px, ${i * 10}px) rotate(${stackRotations[index % stackRotations.length]}deg)`,
         zIndex: 20 - index,
       }
     : undefined;
@@ -454,13 +459,13 @@ function MomentCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.06 }}
-      whileHover={{ rotate: 0, y: -3, transition: { duration: 0.4 } }}
+      whileHover={stacked ? undefined : { rotate: 0, y: -3, transition: { duration: 0.4 } }}
       style={stackStyles}
       className={`${tilt} ${
         stacked
-          ? "absolute w-[calc(100%-96px)] sm:w-[500px]"
+          ? "absolute"
           : expanded
-          ? "w-[260px] sm:w-[280px]"
+          ? "w-[300px] sm:w-[340px] flex-shrink-0 snap-center"
           : "mx-auto max-w-[92%] sm:max-w-[520px]"
       } bg-card border border-border p-5 pb-7 shadow-paper paper-grain rounded-md`}
     >
