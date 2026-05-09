@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MomentsRouteImport } from './routes/moments'
+import { Route as FamilyRouteImport } from './routes/family'
 import { Route as CareJourneyRouteImport } from './routes/care-journey'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -22,6 +23,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const MomentsRoute = MomentsRouteImport.update({
   id: '/moments',
   path: '/moments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FamilyRoute = FamilyRouteImport.update({
+  id: '/family',
+  path: '/family',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CareJourneyRoute = CareJourneyRouteImport.update({
@@ -38,12 +44,14 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/care-journey': typeof CareJourneyRoute
+  '/family': typeof FamilyRoute
   '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/care-journey': typeof CareJourneyRoute
+  '/family': typeof FamilyRoute
   '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
 }
@@ -51,20 +59,28 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/care-journey': typeof CareJourneyRoute
+  '/family': typeof FamilyRoute
   '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/care-journey' | '/moments' | '/onboarding'
+  fullPaths: '/' | '/care-journey' | '/family' | '/moments' | '/onboarding'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/care-journey' | '/moments' | '/onboarding'
-  id: '__root__' | '/' | '/care-journey' | '/moments' | '/onboarding'
+  to: '/' | '/care-journey' | '/family' | '/moments' | '/onboarding'
+  id:
+    | '__root__'
+    | '/'
+    | '/care-journey'
+    | '/family'
+    | '/moments'
+    | '/onboarding'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CareJourneyRoute: typeof CareJourneyRoute
+  FamilyRoute: typeof FamilyRoute
   MomentsRoute: typeof MomentsRoute
   OnboardingRoute: typeof OnboardingRoute
 }
@@ -83,6 +99,13 @@ declare module '@tanstack/react-router' {
       path: '/moments'
       fullPath: '/moments'
       preLoaderRoute: typeof MomentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/family': {
+      id: '/family'
+      path: '/family'
+      fullPath: '/family'
+      preLoaderRoute: typeof FamilyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/care-journey': {
@@ -105,6 +128,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CareJourneyRoute: CareJourneyRoute,
+  FamilyRoute: FamilyRoute,
   MomentsRoute: MomentsRoute,
   OnboardingRoute: OnboardingRoute,
 }
