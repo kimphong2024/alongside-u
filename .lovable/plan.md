@@ -1,24 +1,24 @@
-## Goal
-Replace the 2-column grid on the "I am a…" relationship step with a single inline sentence — "I am a [pill ▾] to someone recently diagnosed." — where the pill is a dropdown trigger that rolls down a soft animated panel of options (Son, Daughter, Spouse, Grandchild, Sibling, Parent, Friend, Other). Selecting an option fills the pill with the sage-soft shade and gently collapses the panel.
+## Changes
 
-## Scope
-Frontend / presentation only. File: `src/components/OnboardingFlow.tsx`. No store, route, or schema changes.
+### 1. Flower logo
+- Copy `user-uploads://Flower-App_Logo.png` to `src/assets/flower-logo.png`.
+- In `src/components/AppShell.tsx`, replace the white gradient circle next to "Alongside" with an `<img>` of the flower logo (h-9 w-9, object-contain). The Link already points to `/`, so tapping the logo returns to Today.
 
-## UX behavior
-- The relationship step renders as one flowing sentence wrapping naturally on small screens.
-- The pill shows a placeholder ("choose…") when empty, the chosen relationship when selected, with a small chevron that rotates on open.
-- Tapping the pill rolls down a rounded panel beneath it (height + opacity transition via framer-motion, ~250ms, easeOut). Options appear as small pills in a flex-wrap row.
-- Hovering / focusing an option lightly shades it; selecting it fills with sage-soft, sets the value, then auto-closes the panel after ~150ms so the Continue button becomes active.
-- Click-outside and Escape close the panel. Keyboard: Enter/Space toggles, Arrow keys move focus across option pills, Enter selects.
-- Reduced-motion: skip the height animation, just fade.
+### 2. Navigation bar — 3 tabs only
+- In `AppShell.tsx`, change tabs to: **Journey** (`/care-journey`), **Moments** (`/moments`), **Support** (`/support`).
+- Remove the "Today" tab (still reachable via the logo) and remove the standalone "Family" tab.
 
-## Visual details
-- Pill: rounded-full, border, px-4 py-1.5, inline-flex with chevron; selected state uses `bg-sage-soft border-sage` to match existing tokens.
-- Panel: `bg-card border border-border rounded-2xl shadow-soft p-3 mt-3`, max-w matches sentence column.
-- Sentence typography stays serif at the same size as the current Header title; subtitle line ("…to someone recently diagnosed.") is folded into the sentence itself, so the separate subtitle is removed for this step only.
+### 3. Merge Family into Support
+- Rework `src/routes/support.tsx` into a tabbed/segmented page with two modes:
+  - **For you** — existing breathing exercise, reminders, helplines, gentle observation.
+  - **From family** — the invite-circle UI and member list currently in `src/routes/family.tsx` (port the form + list + suggested ways to share).
+- Intro copy updated to: "Support yourself, or invite family to support you."
+- Keep `/family` route as a redirect to `/support` (so old links still work) — implement by rendering a `<Navigate to="/support" />` in `src/routes/family.tsx`.
+
+### 4. Today snapshot card on Journey
+- At the top of `src/routes/care-journey.tsx` (above the phase pills), add a small "Today" card showing today's date + a one-line gentle prompt (e.g. last mood from `state.checkInHistory` or a default reassurance). The whole card is a `<Link to="/">` so tapping returns to the Today main page. Styled like the existing `bg-gradient-warm` cards with a subtle Sun icon and chevron.
 
 ## Technical notes
-- Add a small local `RelationshipInline` component inside `OnboardingFlow.tsx` (no new files) that takes `value` and `onChange`.
-- Use framer-motion `AnimatePresence` + `motion.div` with `initial/animate/exit` on `height: 0 / auto` (via `style={{ overflow: 'hidden' }}`) and opacity.
-- Replace only the `relationship` step's `render`; keep its `canContinue` check unchanged.
-- Leave all other onboarding steps (illness, emotion, priorities) untouched.
+- Logo: import as ES6 module (`import flowerLogo from "@/assets/flower-logo.png"`).
+- Family→Support merge uses a local `useState<"self" | "family">` segmented control inside Support, styled like the existing phase pill row.
+- The redirect file uses `import { Navigate } from "@tanstack/react-router"` to keep the route registered without breaking the generated route tree.
