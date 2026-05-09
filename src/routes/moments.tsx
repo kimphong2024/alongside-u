@@ -348,6 +348,7 @@ function groupByRelativeDate(moments: Moment[]): Group[] {
 
 function TimelineGroup({ group }: { group: Group }) {
   const hasStack = group.items.length > 1;
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <motion.section
@@ -361,16 +362,68 @@ function TimelineGroup({ group }: { group: Group }) {
         <h2 className="font-serif italic text-2xl text-foreground/80">{group.label}</h2>
         <span className="h-px flex-1 bg-border" />
       </div>
-      <div className={hasStack ? "relative mx-auto max-w-[92%] sm:max-w-[560px] min-h-[420px] sm:min-h-[460px]" : "space-y-6"}>
-        {group.items.map((m, i) => (
-          <MomentCard key={m.id} moment={m} index={i} stacked={hasStack} />
-        ))}
-      </div>
+
+      {!hasStack ? (
+        <div className="space-y-6">
+          {group.items.map((m, i) => (
+            <MomentCard key={m.id} moment={m} index={i} />
+          ))}
+        </div>
+      ) : (
+        <div
+          className="relative mx-auto"
+          style={{ maxWidth: expanded ? "100%" : "560px" }}
+          onClick={() => !expanded && setExpanded(true)}
+        >
+          {expanded && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setExpanded(false); }}
+              className="absolute -top-2 right-0 z-30 text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
+            >
+              Restack
+            </button>
+          )}
+          <motion.div
+            layout
+            transition={{ type: "spring", stiffness: 240, damping: 28 }}
+            className={
+              expanded
+                ? "flex flex-wrap gap-6 justify-center pt-6"
+                : "relative min-h-[460px] cursor-pointer"
+            }
+          >
+            {group.items.map((m, i) => (
+              <MomentCard
+                key={m.id}
+                moment={m}
+                index={i}
+                stacked={!expanded}
+                expanded={expanded}
+              />
+            ))}
+          </motion.div>
+          {!expanded && (
+            <p className="text-center text-xs uppercase tracking-[0.18em] text-muted-foreground mt-4">
+              {group.items.length} moments · tap to spread
+            </p>
+          )}
+        </div>
+      )}
     </motion.section>
   );
 }
 
-function MomentCard({ moment, index, stacked }: { moment: Moment; index: number; stacked?: boolean }) {
+function MomentCard({
+  moment,
+  index,
+  stacked,
+  expanded,
+}: {
+  moment: Moment;
+  index: number;
+  stacked?: boolean;
+  expanded?: boolean;
+}) {
   const tilts = ["polaroid-left", "polaroid-right", "polaroid-tiny"];
   const tilt = tilts[index % tilts.length];
   const stackStyles = stacked
@@ -383,16 +436,28 @@ function MomentCard({ moment, index, stacked }: { moment: Moment; index: number;
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 16, rotate: 0 }}
+      layout
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.06 }}
       whileHover={{ rotate: 0, y: -3, transition: { duration: 0.4 } }}
       style={stackStyles}
-      className={`${tilt} ${stacked ? "absolute w-[calc(100%-96px)] sm:w-[500px]" : "mx-auto max-w-[92%] sm:max-w-[520px]"} bg-card border border-border p-5 pb-7 shadow-paper paper-grain rounded-md`}
+      className={`${tilt} ${
+        stacked
+          ? "absolute w-[calc(100%-96px)] sm:w-[500px]"
+          : expanded
+          ? "w-[260px] sm:w-[280px]"
+          : "mx-auto max-w-[92%] sm:max-w-[520px]"
+      } bg-card border border-border p-5 pb-7 shadow-paper paper-grain rounded-md`}
     >
       {moment.photo && (
         <div className="mb-4 rounded-sm overflow-hidden aspect-[4/3] bg-muted">
           <img src={moment.photo} alt={moment.title} className="w-full h-full object-cover" />
+        </div>
+      )}
+      {moment.video && (
+        <div className="mb-4 rounded-sm overflow-hidden aspect-[4/3] bg-black">
+          <video src={moment.video} controls className="w-full h-full object-cover" />
         </div>
       )}
       <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">

@@ -29,6 +29,7 @@ export type Moment = {
   title: string;
   note: string;
   photo?: string;
+  video?: string;
   audio?: string;
   audioDuration?: number;
 };
