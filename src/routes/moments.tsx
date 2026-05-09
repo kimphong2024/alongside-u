@@ -243,7 +243,7 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
         </p>
       </div>
 
-      <div className="relative h-[280px] md:h-[320px] mt-8 mx-auto max-w-3xl">
+      <div className="relative h-[340px] md:h-[380px] mt-8 mx-auto max-w-3xl overflow-hidden">
         {cards.map((c, i) => (
           <motion.div
             key={i}
