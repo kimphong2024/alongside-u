@@ -36,7 +36,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto max-w-2xl px-4 pb-4">
           <div className="rounded-3xl bg-card/85 backdrop-blur-xl border border-border shadow-soft px-2 py-2 flex justify-between">
             {tabs.map(({ to, label, icon: Icon }) => {
-              const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
+              const active = pathname.startsWith(to);
               return (
                 <Link
                   key={to}
