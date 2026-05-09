@@ -94,7 +94,7 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
     if (tickRef.current) clearInterval(tickRef.current);
   };
 
-  const canSave = title.trim() || note.trim() || photo || audio;
+  const canSave = title.trim() || note.trim() || photo || video || audio;
 
   const handleSave = () => {
     if (!canSave) return;
@@ -102,6 +102,7 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
       title: title.trim() || "A quiet moment",
       note: note.trim(),
       photo,
+      video,
       audio,
       audioDuration,
     });
