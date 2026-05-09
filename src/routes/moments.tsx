@@ -342,6 +342,8 @@ function groupByRelativeDate(moments: Moment[]): Group[] {
 }
 
 function TimelineGroup({ group }: { group: Group }) {
+  const hasStack = group.items.length > 1;
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 12 }}
@@ -354,25 +356,34 @@ function TimelineGroup({ group }: { group: Group }) {
         <h2 className="font-serif italic text-2xl text-foreground/80">{group.label}</h2>
         <span className="h-px flex-1 bg-border" />
       </div>
-      <div className="space-y-6">
+      <div className={hasStack ? "relative mx-auto max-w-[92%] sm:max-w-[560px] min-h-[420px] sm:min-h-[460px]" : "space-y-6"}>
         {group.items.map((m, i) => (
-          <MomentCard key={m.id} moment={m} index={i} />
+          <MomentCard key={m.id} moment={m} index={i} stacked={hasStack} />
         ))}
       </div>
     </motion.section>
   );
 }
 
-function MomentCard({ moment, index }: { moment: Moment; index: number }) {
+function MomentCard({ moment, index, stacked }: { moment: Moment; index: number; stacked?: boolean }) {
   const tilts = ["polaroid-left", "polaroid-right", "polaroid-tiny"];
   const tilt = tilts[index % tilts.length];
+  const stackStyles = stacked
+    ? {
+        left: `${Math.min(index, 4) * 24}px`,
+        top: `${Math.min(index, 4) * 32}px`,
+        zIndex: 20 - index,
+      }
+    : undefined;
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 16, rotate: 0 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.06 }}
       whileHover={{ rotate: 0, y: -3, transition: { duration: 0.4 } }}
-      className={`${tilt} mx-auto max-w-[92%] sm:max-w-[520px] bg-card border border-border p-5 pb-7 shadow-paper paper-grain rounded-md`}
+      style={stackStyles}
+      className={`${tilt} ${stacked ? "absolute w-[calc(100%-96px)] sm:w-[500px]" : "mx-auto max-w-[92%] sm:max-w-[520px]"} bg-card border border-border p-5 pb-7 shadow-paper paper-grain rounded-md`}
     >
       {moment.photo && (
         <div className="mb-4 rounded-sm overflow-hidden aspect-[4/3] bg-muted">
