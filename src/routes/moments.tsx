@@ -114,13 +114,20 @@ function Moments() {
         {tab === "journal" && (
           <div className="space-y-12">
             {timeline.length === 0 ? (
-              <div className="text-center max-w-md mx-auto">
+              <div className="text-center max-w-md mx-auto flex flex-col items-center">
                 <p className="font-serif italic text-2xl text-foreground/70 leading-snug">
                   Your scrapbook starts with one quiet moment.
                 </p>
                 <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
-                  Tap the <span className="font-medium text-foreground/80">+</span> below to keep your first memory with {loveeName}.
+                  Tap the button below to keep your first memory with {loveeName}.
                 </p>
+                <Button
+                  onClick={() => setComposerOpen(true)}
+                  className="mt-6 h-12 px-6 rounded-full bg-foreground text-background hover:bg-foreground/90 font-serif italic text-base shadow-paper"
+                >
+                  <Plus className="h-5 w-5 mr-2" strokeWidth={2} />
+                  Add a moment
+                </Button>
               </div>
             ) : (
               timeline.map((group) => (
