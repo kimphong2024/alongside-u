@@ -6,9 +6,27 @@ import { useAppData } from "@/lib/store";
 import heartImg from "@/assets/arms-hugging-heart.png";
 
 const TILES = [
-  { title: "Let me process this a bit more", icon: Wind, to: "/support" as const },
-  { title: "Show me what needs to be done", icon: ListChecks, to: "/care-journey" as const },
-  { title: "Help me relive my memories", icon: Images, to: "/moments" as const },
+  {
+    title: "Let me process this a bit more",
+    icon: Wind,
+    to: "/support" as const,
+    gradient:
+      "radial-gradient(120% 100% at 20% 15%, #F4D7DE 0%, #EBD5E6 45%, #E0D2EC 100%)",
+  },
+  {
+    title: "Show me what needs to be done",
+    icon: ListChecks,
+    to: "/care-journey" as const,
+    gradient:
+      "radial-gradient(120% 100% at 25% 20%, #DDEAD3 0%, #CFE5CC 50%, #D8EBD4 100%)",
+  },
+  {
+    title: "Help me relive my memories",
+    icon: Images,
+    to: "/moments" as const,
+    gradient:
+      "radial-gradient(120% 100% at 25% 15%, #FBE3D2 0%, #F5D4C4 55%, #ECCBC4 100%)",
+  },
 ];
 
 export function OnboardingFlow() {
@@ -26,40 +44,53 @@ export function OnboardingFlow() {
   if (!hydrated) return null;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-5 py-12 max-w-xl mx-auto w-full">
+    <div className="min-h-screen flex flex-col items-center justify-center px-5 py-12 max-w-4xl mx-auto w-full">
       <motion.img
         src={heartImg}
         alt=""
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="h-40 w-40 object-contain drop-shadow-sm"
+        className="h-40 w-40 object-contain"
       />
 
       <motion.h1
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-        className="mt-6 text-3xl md:text-4xl font-serif font-light text-balance text-center leading-snug"
+        className="mt-4 text-3xl md:text-4xl font-serif font-light text-balance text-center leading-snug"
       >
         You are not alone. What shall we do today?
       </motion.h1>
 
-      <div className="mt-10 w-full space-y-3">
+      <div className="mt-10 w-full grid grid-cols-1 sm:grid-cols-3 gap-5">
         {TILES.map((t, i) => {
           const Icon = t.icon;
           return (
             <motion.div
               key={t.to}
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 + i * 0.06, ease: "easeOut" }}
+              transition={{ duration: 0.5, delay: 0.2 + i * 0.07, ease: "easeOut" }}
             >
               <Link to={t.to} className="block group">
-                <div className="flex items-center gap-5 rounded-2xl bg-card border border-border shadow-soft px-5 py-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-paper">
-                  <Icon className="h-7 w-7 text-muted-foreground flex-shrink-0" strokeWidth={1.4} />
-                  <span className="flex-1 font-serif text-lg leading-snug">{t.title}</span>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-0.5 transition" strokeWidth={1.6} />
+                <div
+                  className="relative aspect-square rounded-3xl border border-border/40 shadow-soft p-6 flex flex-col justify-between overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:shadow-paper"
+                  style={{ backgroundImage: t.gradient }}
+                >
+                  <div className="flex items-start justify-between">
+                    <Icon
+                      className="h-7 w-7 text-foreground/70"
+                      strokeWidth={1.4}
+                    />
+                    <ArrowRight
+                      className="h-4 w-4 text-foreground/50 group-hover:translate-x-0.5 group-hover:text-foreground/80 transition"
+                      strokeWidth={1.6}
+                    />
+                  </div>
+                  <h3 className="font-serif text-2xl leading-tight text-foreground/90 text-balance">
+                    {t.title}
+                  </h3>
                 </div>
               </Link>
             </motion.div>
