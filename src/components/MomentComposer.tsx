@@ -18,6 +18,7 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
   const [title, setTitle] = useState("");
   const [note, setNote] = useState("");
   const [photo, setPhoto] = useState<string | undefined>();
+  const [video, setVideo] = useState<string | undefined>();
   const [audio, setAudio] = useState<string | undefined>();
   const [audioDuration, setAudioDuration] = useState<number | undefined>();
   const [recording, setRecording] = useState(false);
@@ -28,7 +29,7 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const reset = () => {
-    setTitle(""); setNote(""); setPhoto(undefined);
+    setTitle(""); setNote(""); setPhoto(undefined); setVideo(undefined);
     setAudio(undefined); setAudioDuration(undefined);
     setRecording(false); setElapsed(0);
   };
