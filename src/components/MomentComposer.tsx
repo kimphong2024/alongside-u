@@ -193,6 +193,28 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
             </AnimatePresence>
 
             <AnimatePresence>
+              {video && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="relative mx-auto max-w-[80%]"
+                >
+                  <div className="bg-card border border-border p-3 pb-5 shadow-paper rounded-md polaroid-right">
+                    <video src={video} controls className="w-full aspect-[4/3] object-cover rounded-sm bg-black" />
+                  </div>
+                  <button
+                    onClick={() => setVideo(undefined)}
+                    className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-foreground text-background flex items-center justify-center shadow-soft"
+                    aria-label="Remove video"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>
               {audio && (
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
@@ -220,23 +242,35 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
               )}
             </AnimatePresence>
 
-            <div className="flex gap-2 pt-1">
-              <label className="flex-1 cursor-pointer">
+            <div className="grid grid-cols-3 gap-2 pt-1">
+              <label className="cursor-pointer">
                 <input
                   type="file"
                   accept="image/*"
                   className="hidden"
                   onChange={(e) => e.target.files?.[0] && handlePhoto(e.target.files[0])}
                 />
-                <div className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border bg-background hover:bg-muted/40 transition text-sm">
+                <div className="flex flex-col items-center justify-center gap-1 h-16 rounded-xl border border-border bg-background hover:bg-muted/40 transition text-xs">
                   <ImagePlus className="h-4 w-4" strokeWidth={1.6} />
                   <span>{photo ? "Change photo" : "Add photo"}</span>
+                </div>
+              </label>
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  accept="video/*"
+                  className="hidden"
+                  onChange={(e) => e.target.files?.[0] && handleVideo(e.target.files[0])}
+                />
+                <div className="flex flex-col items-center justify-center gap-1 h-16 rounded-xl border border-border bg-background hover:bg-muted/40 transition text-xs">
+                  <Video className="h-4 w-4" strokeWidth={1.6} />
+                  <span>{video ? "Change video" : "Add video"}</span>
                 </div>
               </label>
               {!recording ? (
                 <button
                   onClick={startRecording}
-                  className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl border border-border bg-background hover:bg-muted/40 transition text-sm"
+                  className="flex flex-col items-center justify-center gap-1 h-16 rounded-xl border border-border bg-background hover:bg-muted/40 transition text-xs"
                 >
                   <Mic className="h-4 w-4" strokeWidth={1.6} />
                   <span>{audio ? "Re-record" : "Voice note"}</span>
@@ -244,7 +278,7 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
               ) : (
                 <button
                   onClick={stopRecording}
-                  className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl bg-clay text-primary-foreground transition text-sm animate-pulse"
+                  className="flex flex-col items-center justify-center gap-1 h-16 rounded-xl bg-clay text-primary-foreground transition text-xs animate-pulse"
                 >
                   <Square className="h-3.5 w-3.5 fill-current" />
                   <span>Stop · 0:{String(elapsed).padStart(2, "0")}</span>
