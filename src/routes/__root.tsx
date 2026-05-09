@@ -72,14 +72,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Alongside — A gentle companion for caregivers" },
+      { name: "description", content: "A compassionate companion for caregivers in Singapore navigating terminal illness — with clarity, support, and meaningful moments." },
+      { property: "og:title", content: "Alongside — A gentle companion for caregivers" },
+      { property: "og:description", content: "Reduce overwhelm. Find clarity. Spend meaningful time with the people you love." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
