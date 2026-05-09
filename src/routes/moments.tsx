@@ -440,30 +440,37 @@ function MomentCard({
 }) {
   const tilts = ["polaroid-left", "polaroid-right", "polaroid-tiny"];
   const tilt = stacked ? "" : tilts[index % tilts.length];
-  const stackRotations = [-4, 3, -2, 5, -3];
+  const stackRotations = [-6, 4, -3, 7, -4];
   const i = Math.min(index, 4);
-  const stackStyles = stacked
+  const stackRotate = stackRotations[index % stackRotations.length];
+
+  const stackedStyle = stacked
     ? {
         left: "50%",
         top: 0,
         width: 320,
         marginLeft: -160,
-        transform: `translate(${i * 6}px, ${i * 10}px) rotate(${stackRotations[index % stackRotations.length]}deg)`,
         zIndex: 20 - index,
       }
     : undefined;
 
+  const initial = stacked
+    ? { opacity: 0, x: -160 + i * 14, y: -10 + i * 18, rotate: stackRotate }
+    : { opacity: 0, y: 16 };
+  const animate = stacked
+    ? { opacity: 1, x: -160 + i * 14, y: i * 18, rotate: stackRotate }
+    : { opacity: 1, y: 0 };
+
   return (
     <motion.article
-      layout
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={initial}
+      animate={animate}
       transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.06 }}
       whileHover={stacked ? undefined : { rotate: 0, y: -3, transition: { duration: 0.4 } }}
-      style={stackStyles}
+      style={stackedStyle}
       className={`${tilt} ${
         stacked
-          ? "absolute"
+          ? "absolute origin-center"
           : expanded
           ? "w-[300px] sm:w-[340px] flex-shrink-0 snap-center"
           : "mx-auto max-w-[92%] sm:max-w-[520px]"
