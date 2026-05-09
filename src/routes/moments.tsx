@@ -234,12 +234,6 @@ function Moments() {
 /* -------------------- Hero scrapbook -------------------- */
 
 function ScrapbookHero({ loveeName }: { loveeName: string }) {
-  // Decorative inline SVG "photos" — warm watercolor washes so the page never feels empty.
-  const cards = [
-    { tilt: "-rotate-6", offset: "-translate-x-2 translate-y-1", art: <PorchArt />, caption: "tea on the porch" },
-    { tilt: "rotate-3", offset: "translate-x-3 -translate-y-2", art: <HandsArt />, caption: "her hands" },
-    { tilt: "-rotate-2", offset: "translate-x-1 translate-y-3", art: <GardenArt />, caption: "spring garden" },
-  ];
   return (
     <div className="relative">
       <div className="text-center max-w-xl mx-auto">
@@ -254,7 +248,6 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
           A quiet space to hold meaningful moments with {loveeName} — kept gently, like pages in a family album.
         </p>
       </div>
-
     </div>
   );
 }
