@@ -187,8 +187,16 @@ function Moments() {
             </div>
 
             {state.moments.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
+              <div className="relative py-10">
+                <div className="polaroid-right mx-auto max-w-[78%] bg-card border border-border p-4 pb-6 shadow-paper paper-grain rounded-md">
+                  <div className="aspect-[4/3] rounded-sm bg-gradient-warm flex items-center justify-center">
+                    <Heart className="h-7 w-7 text-foreground/30" strokeWidth={1.4} />
+                  </div>
+                  <p className="font-hand text-2xl text-foreground/70 mt-3 text-center leading-snug">
+                    a place for the small, treasured things…
+                  </p>
+                </div>
+                <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed text-center mt-6">
                   Your moments will appear here, gently held.
                 </p>
               </div>
