@@ -515,28 +515,28 @@ function VoiceNote({ src, duration }: { src: string; duration: number }) {
   };
 
   return (
-    <div className="mt-4 flex items-center gap-3 p-3 pl-3 pr-4 rounded-full bg-sage-soft/50 border border-sage/30">
+    <div className="mt-4 flex items-center gap-2 p-2 pl-2 pr-3 rounded-full bg-sage-soft/50 border border-sage/30 min-w-0 max-w-full overflow-hidden">
       <button
         onClick={toggle}
-        className="h-10 w-10 rounded-full bg-foreground text-background flex items-center justify-center shrink-0 shadow-soft"
+        className="h-9 w-9 rounded-full bg-foreground text-background flex items-center justify-center shrink-0 shadow-soft"
         aria-label={playing ? "Pause voice note" : "Play voice note"}
       >
         {playing ? <Pause className="h-4 w-4 fill-current" /> : <Play className="h-4 w-4 fill-current ml-0.5" />}
       </button>
-      <Mic className="h-3.5 w-3.5 text-foreground/40" strokeWidth={1.6} />
-      <div className="flex-1 flex items-center gap-[3px] h-7">
-        {Array.from({ length: 32 }).map((_, i) => {
-          const active = (i / 32) <= progress;
+      <Mic className="h-3.5 w-3.5 text-foreground/40 shrink-0" strokeWidth={1.6} />
+      <div className="flex-1 min-w-0 flex items-center gap-[2px] h-6 overflow-hidden">
+        {Array.from({ length: 20 }).map((_, i) => {
+          const active = (i / 20) <= progress;
           return (
             <span
               key={i}
-              className={`w-[3px] rounded-full transition-colors ${active ? "bg-foreground/70" : "bg-foreground/25"}`}
+              className={`flex-1 min-w-[2px] rounded-full transition-colors ${active ? "bg-foreground/70" : "bg-foreground/25"}`}
               style={{ height: `${28 + Math.sin(i * 0.6) * 22 + (i % 4) * 5}%` }}
             />
           );
         })}
       </div>
-      <span className="text-xs tabular-nums text-muted-foreground">
+      <span className="text-[11px] tabular-nums text-muted-foreground shrink-0">
         0:{String(duration).padStart(2, "0")}
       </span>
       <audio
