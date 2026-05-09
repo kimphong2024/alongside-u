@@ -96,7 +96,7 @@ function Support() {
           </p>
         </header>
 
-        <div className="relative rounded-full bg-muted p-1 flex">
+        <div className="relative rounded-full bg-card/60 border border-border p-1 flex">
           {(["self", "family"] as const).map((m) => (
             <button
               key={m}
@@ -106,11 +106,11 @@ function Support() {
               {mode === m && (
                 <motion.span
                   layoutId="support-mode-pill"
-                  className="absolute inset-0 rounded-full bg-card shadow-soft"
+                  className="absolute inset-0 rounded-full bg-background shadow-soft border border-border/60"
                   transition={{ type: "spring", stiffness: 500, damping: 40 }}
                 />
               )}
-              <span className={`relative ${mode === m ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+              <span className={`relative ${mode === m ? "font-medium text-accent-active" : "text-muted-foreground"}`}>
                 {m === "self" ? "For you" : "From family"}
               </span>
             </button>
