@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as MomentsRouteImport } from './routes/moments'
 import { Route as CareJourneyRouteImport } from './routes/care-journey'
 import { Route as IndexRouteImport } from './routes/index'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MomentsRoute = MomentsRouteImport.update({
+  id: '/moments',
+  path: '/moments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CareJourneyRoute = CareJourneyRouteImport.update({
@@ -32,30 +38,34 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/care-journey': typeof CareJourneyRoute
+  '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/care-journey': typeof CareJourneyRoute
+  '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/care-journey': typeof CareJourneyRoute
+  '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/care-journey' | '/onboarding'
+  fullPaths: '/' | '/care-journey' | '/moments' | '/onboarding'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/care-journey' | '/onboarding'
-  id: '__root__' | '/' | '/care-journey' | '/onboarding'
+  to: '/' | '/care-journey' | '/moments' | '/onboarding'
+  id: '__root__' | '/' | '/care-journey' | '/moments' | '/onboarding'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CareJourneyRoute: typeof CareJourneyRoute
+  MomentsRoute: typeof MomentsRoute
   OnboardingRoute: typeof OnboardingRoute
 }
 
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/moments': {
+      id: '/moments'
+      path: '/moments'
+      fullPath: '/moments'
+      preLoaderRoute: typeof MomentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/care-journey': {
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CareJourneyRoute: CareJourneyRoute,
+  MomentsRoute: MomentsRoute,
   OnboardingRoute: OnboardingRoute,
 }
 export const routeTree = rootRouteImport
