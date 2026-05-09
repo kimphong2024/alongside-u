@@ -167,3 +167,34 @@ export function useAppData() {
     updateLocal,
   };
 }
+
+// Compatibility shim for legacy routes
+export type AppState = LocalState & {
+  onboarding: OnboardingData;
+  family: FamilyMember[];
+};
+
+export function useAppState() {
+  const data = useAppData();
+  const state: AppState = {
+    ...data.local,
+    onboarding: data.onboarding,
+    family: data.family,
+  };
+  const update = (updater: (s: AppState) => AppState) => {
+    const next = updater(state);
+    const prevIds = new Set(state.family.map((f) => f.id));
+    const nextIds = new Set(next.family.map((f) => f.id));
+    next.family.forEach((f) => {
+      if (!prevIds.has(f.id)) {
+        void data.addFamily({ name: f.name, relationship: f.relationship, email: f.email });
+      }
+    });
+    state.family.forEach((f) => {
+      if (!nextIds.has(f.id)) void data.removeFamily(f.id);
+    });
+    const { checkedItems, bucketList, moments, checkInHistory } = next;
+    data.updateLocal(() => ({ checkedItems, bucketList, moments, checkInHistory }));
+  };
+  return { state, update, hydrated: data.hydrated };
+}
