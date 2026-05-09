@@ -189,10 +189,15 @@ function Moments() {
 
       {/* Floating Add Moment Button */}
       <motion.button
+        type="button"
+        onPointerUp={(event) => {
+          event.preventDefault();
+          setComposerOpen(true);
+        }}
         onClick={() => setComposerOpen(true)}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
-        className="fixed bottom-24 md:bottom-10 right-6 z-40 h-16 px-6 rounded-full bg-foreground text-background shadow-paper flex items-center gap-2 font-serif italic text-base"
+        className="fixed bottom-24 md:bottom-10 right-6 z-[60] h-16 px-6 rounded-full bg-foreground text-background shadow-paper flex items-center gap-2 font-serif italic text-base pointer-events-auto"
         aria-label="Add a moment"
       >
         <Plus className="h-5 w-5" strokeWidth={2} />
@@ -243,14 +248,14 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
         </p>
       </div>
 
-      <div className="relative h-[340px] md:h-[380px] mt-8 mx-auto max-w-3xl overflow-hidden">
+      <div className="relative h-[300px] md:h-[320px] mt-2 mx-auto max-w-3xl overflow-visible">
         {cards.map((c, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20, rotate: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.12, duration: 0.7, ease: "easeOut" }}
-            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${c.tilt} ${c.offset}`}
+            className={`absolute top-[46%] left-1/2 -translate-x-1/2 -translate-y-1/2 ${c.tilt} ${c.offset}`}
             style={{ marginLeft: `${(i - 1) * 130}px` }}
             whileHover={{ rotate: 0, y: -6, transition: { duration: 0.4 } }}
           >
@@ -342,6 +347,8 @@ function groupByRelativeDate(moments: Moment[]): Group[] {
 }
 
 function TimelineGroup({ group }: { group: Group }) {
+  const hasStack = group.items.length > 1;
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 12 }}
@@ -354,25 +361,34 @@ function TimelineGroup({ group }: { group: Group }) {
         <h2 className="font-serif italic text-2xl text-foreground/80">{group.label}</h2>
         <span className="h-px flex-1 bg-border" />
       </div>
-      <div className="space-y-6">
+      <div className={hasStack ? "relative mx-auto max-w-[92%] sm:max-w-[560px] min-h-[420px] sm:min-h-[460px]" : "space-y-6"}>
         {group.items.map((m, i) => (
-          <MomentCard key={m.id} moment={m} index={i} />
+          <MomentCard key={m.id} moment={m} index={i} stacked={hasStack} />
         ))}
       </div>
     </motion.section>
   );
 }
 
-function MomentCard({ moment, index }: { moment: Moment; index: number }) {
+function MomentCard({ moment, index, stacked }: { moment: Moment; index: number; stacked?: boolean }) {
   const tilts = ["polaroid-left", "polaroid-right", "polaroid-tiny"];
   const tilt = tilts[index % tilts.length];
+  const stackStyles = stacked
+    ? {
+        left: `${Math.min(index, 4) * 24}px`,
+        top: `${Math.min(index, 4) * 32}px`,
+        zIndex: 20 - index,
+      }
+    : undefined;
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 16, rotate: 0 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut", delay: index * 0.06 }}
       whileHover={{ rotate: 0, y: -3, transition: { duration: 0.4 } }}
-      className={`${tilt} mx-auto max-w-[92%] sm:max-w-[520px] bg-card border border-border p-5 pb-7 shadow-paper paper-grain rounded-md`}
+      style={stackStyles}
+      className={`${tilt} ${stacked ? "absolute w-[calc(100%-96px)] sm:w-[500px]" : "mx-auto max-w-[92%] sm:max-w-[520px]"} bg-card border border-border p-5 pb-7 shadow-paper paper-grain rounded-md`}
     >
       {moment.photo && (
         <div className="mb-4 rounded-sm overflow-hidden aspect-[4/3] bg-muted">

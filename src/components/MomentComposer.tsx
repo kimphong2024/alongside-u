@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ImagePlus, Mic, Square, Trash2, X, Check } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ type Props = {
 };
 
 export function MomentComposer({ open, onOpenChange, onSave }: Props) {
+  const [mounted, setMounted] = useState(false);
   const [title, setTitle] = useState("");
   const [note, setNote] = useState("");
   const [photo, setPhoto] = useState<string | undefined>();
@@ -32,9 +33,20 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
     setRecording(false); setElapsed(0);
   };
 
+  useEffect(() => setMounted(true), []);
+
   useEffect(() => {
     if (!open) reset();
   }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onOpenChange(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open, onOpenChange]);
 
   const handlePhoto = (file: File) => {
     const reader = new FileReader();
@@ -89,30 +101,52 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
     onOpenChange(false);
   };
 
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="bottom"
-        onCloseAutoFocus={(e) => {
-          e.preventDefault();
-          // Defensive cleanup for the known Radix issue where body
-          // pointer-events lock can persist after close, blocking the FAB.
-          if (typeof document !== "undefined") {
-            document.body.style.pointerEvents = "";
-          }
-        }}
-        className="rounded-t-3xl bg-card border-border max-h-[92vh] overflow-y-auto p-0"
-      >
-        <div className="paper-grain p-6 pb-8">
-          <SheetHeader className="text-left mb-5">
+  if (!mounted) return null;
+
+  return createPortal(
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-end justify-center"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="moment-composer-title"
+        >
+          <motion.button
+            type="button"
+            aria-label="Close moment composer"
+            className="absolute inset-0 bg-foreground/25 backdrop-blur-[2px]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            onClick={() => onOpenChange(false)}
+          />
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-t-3xl bg-card border border-border shadow-paper p-0"
+          >
+            <button
+              type="button"
+              onClick={() => onOpenChange(false)}
+              className="absolute right-4 top-4 z-10 h-9 w-9 rounded-full bg-background/80 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition"
+              aria-label="Close"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <div className="paper-grain p-6 pb-8">
+              <div className="text-left mb-5">
             <div className="mx-auto h-1 w-10 rounded-full bg-border mb-4" />
-            <SheetTitle className="font-serif text-3xl italic font-light text-foreground/90">
+            <h2 id="moment-composer-title" className="font-serif text-3xl italic font-light text-foreground/90">
               hold this moment
-            </SheetTitle>
+            </h2>
             <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
               A photo, a few words, or just a voice — whatever feels right.
             </p>
-          </SheetHeader>
+          </div>
 
           <div className="space-y-4">
             <Input
@@ -227,8 +261,11 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
               </Button>
             </div>
           </div>
-        </div>
-      </SheetContent>
-    </Sheet>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>,
+    document.body,
   );
 }
