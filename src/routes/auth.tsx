@@ -59,7 +59,10 @@ function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-5 py-10 bg-muted/30">
+    <div
+      className="min-h-screen flex flex-col items-center justify-center px-5 py-10 bg-cover bg-center"
+      style={{ backgroundImage: `url(${authBg})` }}
+    >
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
