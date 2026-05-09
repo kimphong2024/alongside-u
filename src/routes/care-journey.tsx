@@ -69,8 +69,8 @@ function CareJourney() {
               onClick={() => setActivePhase(p.id)}
               className={`flex-shrink-0 px-4 py-2 rounded-full text-sm border transition ${
                 activePhase === p.id
-                  ? "bg-foreground text-background border-foreground"
-                  : "bg-card border-border text-foreground/80 hover:bg-muted"
+                  ? "bg-card border-border/60 text-accent-active shadow-soft"
+                  : "bg-transparent border-border text-foreground/70 hover:bg-card/60"
               }`}
             >
               {p.title}
