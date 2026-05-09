@@ -248,20 +248,20 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
         </p>
       </div>
 
-      <div className="relative h-[300px] md:h-[320px] mt-2 mx-auto max-w-3xl overflow-visible">
+      <div className="relative h-[220px] md:h-[240px] -mt-4 mx-auto max-w-3xl overflow-visible">
         {cards.map((c, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20, rotate: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.12, duration: 0.7, ease: "easeOut" }}
-            className={`absolute top-[46%] left-1/2 -translate-x-1/2 -translate-y-1/2 ${c.tilt} ${c.offset}`}
-            style={{ marginLeft: `${(i - 1) * 130}px` }}
+            className={`absolute top-[50%] left-1/2 -translate-x-1/2 -translate-y-1/2 ${c.tilt} ${c.offset}`}
+            style={{ marginLeft: `${(i - 1) * 110}px` }}
             whileHover={{ rotate: 0, y: -6, transition: { duration: 0.4 } }}
           >
-            <div className="bg-card border border-border p-3 pb-7 shadow-paper paper-grain rounded-md w-[200px] md:w-[220px]">
+            <div className="bg-card border border-border p-2.5 pb-5 shadow-paper paper-grain rounded-md w-[160px] md:w-[180px]">
               <div className="aspect-[4/5] rounded-sm overflow-hidden">{c.art}</div>
-              <p className="font-hand text-xl text-foreground/70 mt-2 text-center leading-tight">
+              <p className="font-hand text-lg text-foreground/70 mt-1.5 text-center leading-tight">
                 {c.caption}
               </p>
             </div>
