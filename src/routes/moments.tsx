@@ -255,26 +255,6 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
         </p>
       </div>
 
-      <div className="relative h-[260px] md:h-[280px] mt-2 mb-6 mx-auto max-w-3xl overflow-visible">
-        {cards.map((c, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20, rotate: 0 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.12, duration: 0.7, ease: "easeOut" }}
-            className={`absolute top-[50%] left-1/2 -translate-x-1/2 -translate-y-1/2 ${c.tilt} ${c.offset}`}
-            style={{ marginLeft: `${(i - 1) * 110}px` }}
-            whileHover={{ rotate: 0, y: -6, transition: { duration: 0.4 } }}
-          >
-            <div className="bg-card border border-border p-2.5 pb-5 shadow-paper paper-grain rounded-md w-[160px] md:w-[180px]">
-              <div className="aspect-[4/5] rounded-sm overflow-hidden">{c.art}</div>
-              <p className="font-hand text-lg text-foreground/70 mt-1.5 text-center leading-tight">
-                {c.caption}
-              </p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
     </div>
   );
 }
