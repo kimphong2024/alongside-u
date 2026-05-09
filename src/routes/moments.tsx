@@ -74,8 +74,6 @@ function Moments() {
     return acc;
   }, {});
 
-  // Group moments by relative date for the timeline
-  const timeline = useMemo(() => groupByRelativeDate(state.moments), [state.moments]);
 
   return (
     <AppShell>
