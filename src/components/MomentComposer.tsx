@@ -93,6 +93,14 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+          // Defensive cleanup for the known Radix issue where body
+          // pointer-events lock can persist after close, blocking the FAB.
+          if (typeof document !== "undefined") {
+            document.body.style.pointerEvents = "";
+          }
+        }}
         className="rounded-t-3xl bg-card border-border max-h-[92vh] overflow-y-auto p-0"
       >
         <div className="paper-grain p-6 pb-8">
