@@ -263,7 +263,7 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.12, duration: 0.7, ease: "easeOut" }}
             className={`absolute top-0 left-1/2 -translate-x-1/2 ${c.tilt} ${c.offset}`}
-            style={{ marginLeft: `${(i - 1) * 110}px` }}
+            style={{ marginLeft: `${(i - 1) * 110 - 30}px` }}
             whileHover={{ rotate: 0, y: -6, transition: { duration: 0.4 } }}
           >
             <div className="bg-card border border-border p-2.5 pb-5 shadow-paper paper-grain rounded-md w-[160px] md:w-[180px]">
