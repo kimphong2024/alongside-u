@@ -189,10 +189,15 @@ function Moments() {
 
       {/* Floating Add Moment Button */}
       <motion.button
+        type="button"
+        onPointerUp={(event) => {
+          event.preventDefault();
+          setComposerOpen(true);
+        }}
         onClick={() => setComposerOpen(true)}
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.96 }}
-        className="fixed bottom-24 md:bottom-10 right-6 z-40 h-16 px-6 rounded-full bg-foreground text-background shadow-paper flex items-center gap-2 font-serif italic text-base"
+        className="fixed bottom-24 md:bottom-10 right-6 z-[60] h-16 px-6 rounded-full bg-foreground text-background shadow-paper flex items-center gap-2 font-serif italic text-base pointer-events-auto"
         aria-label="Add a moment"
       >
         <Plus className="h-5 w-5" strokeWidth={2} />
