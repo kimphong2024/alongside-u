@@ -197,9 +197,9 @@ function Moments() {
         )}
       </div>
 
-      {/* Floating Add Moment Button */}
+      {/* Floating Add Moment Button — hidden on empty journal (inline CTA shown instead) */}
       <AnimatePresence>
-        {!composerOpen && (
+        {!composerOpen && !(tab === "journal" && timeline.length === 0) && (
           <motion.button
             type="button"
             initial={{ opacity: 0, scale: 0.9, y: 10 }}
