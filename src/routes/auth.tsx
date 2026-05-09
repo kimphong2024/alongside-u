@@ -135,6 +135,9 @@ function AuthPage() {
             >
               {busy ? "One moment…" : mode === "signin" ? "Sign in" : "Create account"}
             </Button>
+            {error && (
+              <p className="text-sm text-destructive leading-relaxed text-center px-1">{error}</p>
+            )}
           </form>
 
           <p className="text-center text-sm text-muted-foreground mt-5">
