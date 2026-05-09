@@ -1,11 +1,11 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { Sun, Wind, CalendarHeart, Heart, ArrowRight, Sparkles } from "lucide-react";
+import { Sun, Wind, CalendarHeart, Heart, ArrowRight, Sparkles, LogOut } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
-import { useAppState } from "@/lib/store";
-import { Link } from "@tanstack/react-router";
+import { useAppData } from "@/lib/store";
+import { signOut } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -19,57 +19,58 @@ export const Route = createFileRoute("/")({
 
 function Today() {
   const navigate = useNavigate();
-  const { state, update, hydrated } = useAppState();
+  const { onboarding, local, updateLocal, hydrated, user } = useAppData();
 
   useEffect(() => {
-    if (hydrated && !state.onboarding.completed) {
-      navigate({ to: "/onboarding" });
-    }
-  }, [hydrated, state.onboarding.completed, navigate]);
+    if (!hydrated) return;
+    if (!user) { navigate({ to: "/auth" }); return; }
+    if (!onboarding.completed) navigate({ to: "/onboarding" });
+  }, [hydrated, user, onboarding.completed, navigate]);
 
-  if (!hydrated) return null;
+  if (!hydrated || !user) return null;
 
-  const greetingName = state.onboarding.caregiverName?.trim();
-  const loveeName = state.onboarding.loveeName?.trim() || "your loved one";
+  const greetingName = onboarding.caregiverName?.trim();
+  const loveeName = onboarding.loveeName?.trim() || "your loved one";
   const hour = new Date().getHours();
   const timeGreeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
-  const isOverwhelmed = ["Overwhelmed", "Exhausted", "Numb"].includes(state.onboarding.emotional ?? "");
+  const isOverwhelmed = ["Overwhelmed", "Exhausted", "Numb"].includes(onboarding.emotional ?? "");
 
   const focuses = isOverwhelmed
     ? [
-        { title: "Take three slow breaths", why: "Begin with the smallest step.", effort: "1 minute", link: "/support" },
-        { title: "A short, kind message to one family member", why: "You don't need to explain everything.", effort: "5 minutes", link: "/family" },
+        { title: "Take three slow breaths", why: "Begin with the smallest step.", effort: "1 minute", link: "/support" as const },
+        { title: "A short, kind message to one family member", why: "You don't need to explain everything.", effort: "5 minutes", link: "/family" as const },
       ]
     : [
-        { title: "Review available caregiving subsidies", why: "Many families find this eases long-term stress.", effort: "10 minutes", link: "/care-journey" },
-        { title: "Note one question for the next medical visit", why: "Clarity often matters more than answers.", effort: "5 minutes", link: "/care-journey" },
-        { title: "Suggest one small moment with " + loveeName, why: "These are the memories that stay.", effort: "Today", link: "/moments" },
+        { title: "Review available caregiving subsidies", why: "Many families find this eases long-term stress.", effort: "10 minutes", link: "/care-journey" as const },
+        { title: "Note one question for the next medical visit", why: "Clarity often matters more than answers.", effort: "5 minutes", link: "/care-journey" as const },
+        { title: "Suggest one small moment with " + loveeName, why: "These are the memories that stay.", effort: "Today", link: "/moments" as const },
       ];
+
+  const today = new Date().toISOString().slice(0, 10);
+  const todayMood = local.checkInHistory.find((c) => c.date === today)?.mood;
 
   return (
     <AppShell>
       <div className="space-y-7">
-        <section>
-          <p className="text-sm text-muted-foreground">{timeGreeting}{greetingName ? `, ${greetingName}` : ""}.</p>
-          <h1 className="text-4xl font-serif mt-1 text-balance">
-            You're doing the best you can.
-          </h1>
-          <p className="text-muted-foreground mt-2 leading-relaxed">
-            A few gentle things you may want to look into. Move at your own pace — nothing here is urgent.
-          </p>
+        <section className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-sm text-muted-foreground">{timeGreeting}{greetingName ? `, ${greetingName}` : ""}.</p>
+            <h1 className="text-4xl font-serif mt-1 text-balance">You're doing the best you can.</h1>
+            <p className="text-muted-foreground mt-2 leading-relaxed">
+              A few gentle things you may want to look into. Move at your own pace — nothing here is urgent.
+            </p>
+          </div>
+          <button onClick={signOut} className="h-9 w-9 rounded-full hover:bg-muted flex items-center justify-center flex-shrink-0" aria-label="Sign out">
+            <LogOut className="h-4 w-4 text-muted-foreground" />
+          </button>
         </section>
 
         <section className="space-y-3">
           <SectionLabel icon={Sun} label="Today's focus" />
           <div className="space-y-3">
             {focuses.map((f, i) => (
-              <motion.div
-                key={f.title}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-              >
+              <motion.div key={f.title} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
                 <Link to={f.link} className="block">
                   <div className="rounded-2xl bg-card border border-border p-5 shadow-soft hover:border-sage/40 transition group">
                     <div className="flex items-start justify-between gap-3">
@@ -93,23 +94,16 @@ function Today() {
             <h3 className="font-serif text-2xl mt-2">How are you coping today?</h3>
             <div className="grid grid-cols-3 gap-2 mt-4">
               {["Tired", "Sad", "Managing", "Hopeful", "Overwhelmed", "Numb"].map((m) => {
-                const today = new Date().toISOString().slice(0, 10);
-                const todayMood = state.checkInHistory.find((c) => c.date === today)?.mood;
                 const active = todayMood === m;
                 return (
-                  <button
-                    key={m}
-                    onClick={() => update((s) => ({
+                  <button key={m}
+                    onClick={() => updateLocal((s) => ({
                       ...s,
-                      checkInHistory: [
-                        ...s.checkInHistory.filter((c) => c.date !== today),
-                        { date: today, mood: m },
-                      ],
+                      checkInHistory: [...s.checkInHistory.filter((c) => c.date !== today), { date: today, mood: m }],
                     }))}
                     className={`px-3 py-2.5 rounded-xl text-sm border transition ${
                       active ? "bg-clay-soft border-clay text-foreground" : "bg-card border-border hover:bg-muted"
-                    }`}
-                  >
+                    }`}>
                     {m}
                   </button>
                 );
