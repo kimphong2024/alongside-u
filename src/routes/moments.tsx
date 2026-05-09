@@ -193,19 +193,29 @@ function Moments() {
                 </p>
               </div>
             ) : (
-              <div className="space-y-3">
-                {state.moments.map((m) => (
-                  <motion.div
-                    key={m.id}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="rounded-2xl bg-card border border-border p-5 shadow-soft"
-                  >
-                    <p className="text-xs text-muted-foreground">{new Date(m.date).toLocaleDateString("en-SG", { month: "long", day: "numeric" })}</p>
-                    <h3 className="font-serif text-xl mt-1">{m.title}</h3>
-                    {m.note && <p className="text-sm text-foreground/80 mt-2 leading-relaxed whitespace-pre-line">{m.note}</p>}
-                  </motion.div>
-                ))}
+              <div className="space-y-5 pt-2">
+                {state.moments.map((m, i) => {
+                  const tilt = i % 3 === 0 ? "polaroid-left" : i % 3 === 1 ? "polaroid-right" : "polaroid-tiny";
+                  return (
+                    <motion.div
+                      key={m.id}
+                      initial={{ opacity: 0, y: 10, rotate: 0 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, ease: "easeOut" }}
+                      className={`${tilt} mx-auto max-w-[92%] bg-card border border-border p-5 pb-7 shadow-paper paper-grain rounded-md`}
+                    >
+                      <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                        {new Date(m.date).toLocaleDateString("en-SG", { month: "long", day: "numeric" })}
+                      </p>
+                      <h3 className="font-serif text-2xl italic mt-1 leading-snug">{m.title}</h3>
+                      {m.note && (
+                        <p className="font-hand text-xl text-foreground/80 mt-3 leading-snug whitespace-pre-line">
+                          {m.note}
+                        </p>
+                      )}
+                    </motion.div>
+                  );
+                })}
               </div>
             )}
           </div>
