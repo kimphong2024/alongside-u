@@ -1,21 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight, ArrowLeft, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAppState, type OnboardingData } from "@/lib/store";
-
-type Step = {
-  id: keyof OnboardingData | "welcome" | "final" | "names";
-  render: (props: StepProps) => React.ReactNode;
-  canContinue?: (d: OnboardingData) => boolean;
-};
+import { useAppData, type OnboardingData } from "@/lib/store";
 
 type StepProps = {
   data: OnboardingData;
   set: <K extends keyof OnboardingData>(k: K, v: OnboardingData[K]) => void;
   toggleArray: (k: keyof OnboardingData, v: string) => void;
+};
+
+type Step = {
+  id: string;
+  render: (props: StepProps) => React.ReactNode;
+  canContinue?: (d: OnboardingData) => boolean;
 };
 
 function ChoiceGrid({
@@ -65,9 +65,17 @@ const PRIORITIES = [
 
 export function OnboardingFlow() {
   const navigate = useNavigate();
-  const { state, update } = useAppState();
-  const [data, setData] = useState<OnboardingData>(state.onboarding);
+  const { onboarding, saveOnboarding, hydrated, user } = useAppData();
+  const [data, setData] = useState<OnboardingData>({});
   const [step, setStep] = useState(0);
+  const [seeded, setSeeded] = useState(false);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!user) { navigate({ to: "/auth" }); return; }
+    if (onboarding.completed) { navigate({ to: "/" }); return; }
+    if (!seeded) { setData(onboarding); setSeeded(true); }
+  }, [hydrated, user, onboarding, navigate, seeded]);
 
   const set = <K extends keyof OnboardingData>(k: K, v: OnboardingData[K]) =>
     setData((d) => ({ ...d, [k]: v }));
@@ -81,185 +89,135 @@ export function OnboardingFlow() {
   };
 
   const steps: Step[] = [
-    {
-      id: "welcome",
-      render: () => (
-        <div className="text-center space-y-5 pt-8">
-          <div className="mx-auto h-20 w-20 rounded-full bg-gradient-dawn shadow-glow" />
-          <h1 className="text-4xl md:text-5xl text-balance font-serif">
-            You do not have to navigate this alone.
-          </h1>
-          <p className="text-muted-foreground text-balance leading-relaxed max-w-md mx-auto">
-            We'll help you organize next steps and create meaningful moments with your loved one — at your own pace.
-          </p>
+    { id: "welcome", render: () => (
+      <div className="text-center space-y-5 pt-8">
+        <div className="mx-auto h-20 w-20 rounded-full bg-gradient-dawn shadow-glow" />
+        <h1 className="text-4xl md:text-5xl text-balance font-serif">You do not have to navigate this alone.</h1>
+        <p className="text-muted-foreground text-balance leading-relaxed max-w-md mx-auto">
+          We'll help you organize next steps and create meaningful moments with your loved one — at your own pace.
+        </p>
+      </div>
+    )},
+    { id: "names", render: ({ data, set }) => (
+      <div className="space-y-6">
+        <Header title="A few gentle details" subtitle="So we can speak to you both by name." />
+        <div className="space-y-3">
+          <label className="block">
+            <span className="text-sm text-muted-foreground">Your name (optional)</span>
+            <Input value={data.caregiverName ?? ""} onChange={(e) => set("caregiverName", e.target.value)} className="mt-1.5 h-12 rounded-xl bg-card" placeholder="e.g. Mei Ling" />
+          </label>
+          <label className="block">
+            <span className="text-sm text-muted-foreground">Your loved one's name (optional)</span>
+            <Input value={data.loveeName ?? ""} onChange={(e) => set("loveeName", e.target.value)} className="mt-1.5 h-12 rounded-xl bg-card" placeholder="e.g. Pa, Ma, Ah Gong" />
+          </label>
         </div>
-      ),
-    },
-    {
-      id: "names",
-      render: ({ data, set }) => (
-        <div className="space-y-6">
-          <Header title="A few gentle details" subtitle="So we can speak to you both by name." />
-          <div className="space-y-3">
-            <label className="block">
-              <span className="text-sm text-muted-foreground">Your name (optional)</span>
-              <Input value={data.caregiverName ?? ""} onChange={(e) => set("caregiverName", e.target.value)} className="mt-1.5 h-12 rounded-xl bg-card" placeholder="e.g. Mei Ling" />
-            </label>
-            <label className="block">
-              <span className="text-sm text-muted-foreground">Your loved one's name (optional)</span>
-              <Input value={data.loveeName ?? ""} onChange={(e) => set("loveeName", e.target.value)} className="mt-1.5 h-12 rounded-xl bg-card" placeholder="e.g. Pa, Ma, Ah Gong" />
-            </label>
-          </div>
+      </div>
+    )},
+    { id: "relationship", canContinue: (d) => !!d.relationship, render: ({ data, set }) => (
+      <div className="space-y-6">
+        <Header title="Who are you caring for?" subtitle="There are no wrong answers." />
+        <ChoiceGrid options={RELATIONSHIPS} selected={data.relationship} onSelect={(v) => set("relationship", v)} />
+      </div>
+    )},
+    { id: "illnessType", canContinue: (d) => !!d.illnessType, render: ({ data, set }) => (
+      <div className="space-y-6">
+        <Header title="What diagnosis did they receive?" subtitle="This helps us tailor gentle guidance — not for medical diagnosis." />
+        <ChoiceGrid options={ILLNESSES} selected={data.illnessType} onSelect={(v) => set("illnessType", v)} />
+        <p className="text-xs text-muted-foreground bg-muted/60 rounded-xl p-3 leading-relaxed">
+          This information helps personalize support and recommendations. It is not used for medical diagnosis.
+        </p>
+      </div>
+    )},
+    { id: "illnessStage", canContinue: (d) => !!d.illnessStage, render: ({ data, set }) => (
+      <div className="space-y-6">
+        <Header title="Where are you in the journey?" subtitle="It's okay if things are still unclear." />
+        <ChoiceGrid options={STAGES} selected={data.illnessStage} onSelect={(v) => set("illnessStage", v)} />
+      </div>
+    )},
+    { id: "situation", render: ({ data, toggleArray }) => (
+      <div className="space-y-6">
+        <Header title="Where are they being cared for?" subtitle="Select any that apply." />
+        <ChoiceGrid options={SITUATIONS} selected={data.situation} onSelect={(v) => toggleArray("situation", v)} multi />
+      </div>
+    )},
+    { id: "mobility", render: ({ data, set }) => (
+      <div className="space-y-6">
+        <Header title="How is their mobility?" />
+        <ChoiceGrid options={MOBILITY} selected={data.mobility} onSelect={(v) => set("mobility", v)} />
+      </div>
+    )},
+    { id: "communication", render: ({ data, set }) => (
+      <div className="space-y-6">
+        <Header title="And their ability to communicate?" />
+        <ChoiceGrid options={COMMUNICATION} selected={data.communication} onSelect={(v) => set("communication", v)} />
+      </div>
+    )},
+    { id: "patientKnows", render: ({ data, set }) => (
+      <div className="space-y-6">
+        <Header title="Does your loved one know the diagnosis?" subtitle="There is no judgement here." />
+        <ChoiceGrid options={PATIENT_KNOWS} selected={data.patientKnows} onSelect={(v) => set("patientKnows", v)} />
+      </div>
+    )},
+    { id: "emotional", canContinue: (d) => !!d.emotional, render: ({ data, set }) => (
+      <div className="space-y-6">
+        <Header title="How are you feeling right now?" subtitle="Whatever it is, it's valid." />
+        <ChoiceGrid options={EMOTIONS} selected={data.emotional} onSelect={(v) => set("emotional", v)} />
+        {data.emotional && (
+          <motion.p initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+            className="text-sm text-foreground/80 bg-sage-soft rounded-xl p-4 leading-relaxed">
+            It's okay to take things one step at a time. We'll only show you a little at a time.
+          </motion.p>
+        )}
+      </div>
+    )},
+    { id: "isPrimary", render: ({ data, set }) => (
+      <div className="space-y-6">
+        <Header title="Are you the primary caregiver?" />
+        <ChoiceGrid options={["Yes", "Shared with family", "No, just helping"]} selected={data.isPrimary} onSelect={(v) => set("isPrimary", v)} />
+      </div>
+    )},
+    { id: "priorities", render: ({ data, toggleArray }) => (
+      <div className="space-y-6">
+        <Header title="What would help most right now?" subtitle="Choose as many as you like." />
+        <div className="space-y-2">
+          {PRIORITIES.map((p) => {
+            const sel = data.priorities?.includes(p);
+            return (
+              <button key={p} type="button" onClick={() => toggleArray("priorities", p)}
+                className={`w-full text-left flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition ${
+                  sel ? "bg-sage-soft border-sage" : "bg-card border-border hover:bg-muted"
+                }`}>
+                <span className={`h-5 w-5 rounded-full flex items-center justify-center border ${sel ? "bg-sage border-sage" : "border-border"}`}>
+                  {sel && <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />}
+                </span>
+                <span className="text-sm">{p}</span>
+              </button>
+            );
+          })}
         </div>
-      ),
-    },
-    {
-      id: "relationship",
-      canContinue: (d) => !!d.relationship,
-      render: ({ data, set }) => (
-        <div className="space-y-6">
-          <Header title="Who are you caring for?" subtitle="There are no wrong answers." />
-          <ChoiceGrid options={RELATIONSHIPS} selected={data.relationship} onSelect={(v) => set("relationship", v)} />
-        </div>
-      ),
-    },
-    {
-      id: "illnessType",
-      canContinue: (d) => !!d.illnessType,
-      render: ({ data, set }) => (
-        <div className="space-y-6">
-          <Header title="What diagnosis did they receive?" subtitle="This helps us tailor gentle guidance — not for medical diagnosis." />
-          <ChoiceGrid options={ILLNESSES} selected={data.illnessType} onSelect={(v) => set("illnessType", v)} />
-          <p className="text-xs text-muted-foreground bg-muted/60 rounded-xl p-3 leading-relaxed">
-            This information helps personalize support and recommendations. It is not used for medical diagnosis.
-          </p>
-        </div>
-      ),
-    },
-    {
-      id: "illnessStage",
-      canContinue: (d) => !!d.illnessStage,
-      render: ({ data, set }) => (
-        <div className="space-y-6">
-          <Header title="Where are you in the journey?" subtitle="It's okay if things are still unclear." />
-          <ChoiceGrid options={STAGES} selected={data.illnessStage} onSelect={(v) => set("illnessStage", v)} />
-        </div>
-      ),
-    },
-    {
-      id: "situation",
-      render: ({ data, toggleArray }) => (
-        <div className="space-y-6">
-          <Header title="Where are they being cared for?" subtitle="Select any that apply." />
-          <ChoiceGrid options={SITUATIONS} selected={data.situation} onSelect={(v) => toggleArray("situation", v)} multi />
-        </div>
-      ),
-    },
-    {
-      id: "mobility",
-      render: ({ data, set }) => (
-        <div className="space-y-6">
-          <Header title="How is their mobility?" />
-          <ChoiceGrid options={MOBILITY} selected={data.mobility} onSelect={(v) => set("mobility", v)} />
-        </div>
-      ),
-    },
-    {
-      id: "communication",
-      render: ({ data, set }) => (
-        <div className="space-y-6">
-          <Header title="And their ability to communicate?" />
-          <ChoiceGrid options={COMMUNICATION} selected={data.communication} onSelect={(v) => set("communication", v)} />
-        </div>
-      ),
-    },
-    {
-      id: "patientKnows",
-      render: ({ data, set }) => (
-        <div className="space-y-6">
-          <Header title="Does your loved one know the diagnosis?" subtitle="There is no judgement here." />
-          <ChoiceGrid options={PATIENT_KNOWS} selected={data.patientKnows} onSelect={(v) => set("patientKnows", v)} />
-        </div>
-      ),
-    },
-    {
-      id: "emotional",
-      canContinue: (d) => !!d.emotional,
-      render: ({ data, set }) => (
-        <div className="space-y-6">
-          <Header title="How are you feeling right now?" subtitle="Whatever it is, it's valid." />
-          <ChoiceGrid options={EMOTIONS} selected={data.emotional} onSelect={(v) => set("emotional", v)} />
-          {data.emotional && (
-            <motion.p
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-sm text-foreground/80 bg-sage-soft rounded-xl p-4 leading-relaxed"
-            >
-              It's okay to take things one step at a time. We'll only show you a little at a time.
-            </motion.p>
-          )}
-        </div>
-      ),
-    },
-    {
-      id: "isPrimary",
-      render: ({ data, set }) => (
-        <div className="space-y-6">
-          <Header title="Are you the primary caregiver?" />
-          <ChoiceGrid options={["Yes", "Shared with family", "No, just helping"]} selected={data.isPrimary} onSelect={(v) => set("isPrimary", v)} />
-        </div>
-      ),
-    },
-    {
-      id: "priorities",
-      render: ({ data, toggleArray }) => (
-        <div className="space-y-6">
-          <Header title="What would help most right now?" subtitle="Choose as many as you like." />
-          <div className="space-y-2">
-            {PRIORITIES.map((p) => {
-              const sel = data.priorities?.includes(p);
-              return (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => toggleArray("priorities", p)}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition ${
-                    sel ? "bg-sage-soft border-sage" : "bg-card border-border hover:bg-muted"
-                  }`}
-                >
-                  <span className={`h-5 w-5 rounded-full flex items-center justify-center border ${sel ? "bg-sage border-sage" : "border-border"}`}>
-                    {sel && <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />}
-                  </span>
-                  <span className="text-sm">{p}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: "final",
-      render: ({ data }) => (
-        <div className="text-center space-y-5 pt-8">
-          <div className="mx-auto h-20 w-20 rounded-full bg-gradient-dawn shadow-glow" />
-          <h1 className="text-4xl font-serif text-balance">Here's a gentle starting point.</h1>
-          <p className="text-muted-foreground text-balance max-w-md mx-auto leading-relaxed">
-            {data.caregiverName ? `${data.caregiverName}, ` : ""}we've prepared a small set of next steps and a quiet space for meaningful moments. Nothing is urgent. You can return anytime.
-          </p>
-        </div>
-      ),
-    },
+      </div>
+    )},
+    { id: "final", render: ({ data }) => (
+      <div className="text-center space-y-5 pt-8">
+        <div className="mx-auto h-20 w-20 rounded-full bg-gradient-dawn shadow-glow" />
+        <h1 className="text-4xl font-serif text-balance">Here's a gentle starting point.</h1>
+        <p className="text-muted-foreground text-balance max-w-md mx-auto leading-relaxed">
+          {data.caregiverName ? `${data.caregiverName}, ` : ""}we've prepared a small set of next steps and a quiet space for meaningful moments. Nothing is urgent. You can return anytime.
+        </p>
+      </div>
+    )},
   ];
+
+  if (!hydrated) return null;
 
   const current = steps[step];
   const isFirst = step === 0;
   const isLast = step === steps.length - 1;
   const canNext = current.canContinue ? current.canContinue(data) : true;
 
-  const next = () => {
+  const next = async () => {
     if (isLast) {
-      update((s) => ({ ...s, onboarding: { ...data, completed: true } }));
+      await saveOnboarding({ ...data, completed: true });
       navigate({ to: "/" });
       return;
     }
@@ -273,26 +231,17 @@ export function OnboardingFlow() {
         <span className="font-serif text-xl">Alongside</span>
         <div className="ml-auto flex gap-1.5">
           {steps.map((_, i) => (
-            <span
-              key={i}
-              className={`h-1.5 rounded-full transition-all ${
-                i === step ? "w-6 bg-sage" : i < step ? "w-1.5 bg-sage/60" : "w-1.5 bg-border"
-              }`}
-            />
+            <span key={i} className={`h-1.5 rounded-full transition-all ${
+              i === step ? "w-6 bg-sage" : i < step ? "w-1.5 bg-sage/60" : "w-1.5 bg-border"
+            }`} />
           ))}
         </div>
       </div>
 
       <div className="flex-1 flex flex-col">
         <AnimatePresence mode="wait">
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-            className="flex-1"
-          >
+          <motion.div key={step} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: "easeOut" }} className="flex-1">
             {current.render({ data, set, toggleArray })}
           </motion.div>
         </AnimatePresence>
@@ -303,12 +252,8 @@ export function OnboardingFlow() {
               <ArrowLeft className="h-4 w-4 mr-1" /> Back
             </Button>
           )}
-          <Button
-            size="lg"
-            onClick={next}
-            disabled={!canNext}
-            className="ml-auto rounded-full px-7 h-12 bg-foreground text-background hover:bg-foreground/90"
-          >
+          <Button size="lg" onClick={next} disabled={!canNext}
+            className="ml-auto rounded-full px-7 h-12 bg-foreground text-background hover:bg-foreground/90">
             {isFirst ? "Begin" : isLast ? "Take me in" : "Continue"}
             <ArrowRight className="h-4 w-4 ml-1" />
           </Button>
