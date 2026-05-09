@@ -76,9 +76,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Alongside — A gentle companion for caregivers" },
       { name: "description", content: "A compassionate companion for caregivers in Singapore navigating terminal illness — with clarity, support, and meaningful moments." },
       { property: "og:title", content: "Alongside — A gentle companion for caregivers" },
-      { property: "og:description", content: "Reduce overwhelm. Find clarity. Spend meaningful time with the people you love." },
+      { property: "og:description", content: "A compassionate companion for caregivers in Singapore navigating terminal illness — with clarity, support, and meaningful moments." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Alongside — A gentle companion for caregivers" },
+      { name: "twitter:description", content: "A compassionate companion for caregivers in Singapore navigating terminal illness — with clarity, support, and meaningful moments." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3216228f-70ae-4307-825f-40ebf540ef5f/id-preview-1612a916--ea730b34-10ea-4f6c-81fc-74346e7acf81.lovable.app-1778326659450.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3216228f-70ae-4307-825f-40ebf540ef5f/id-preview-1612a916--ea730b34-10ea-4f6c-81fc-74346e7acf81.lovable.app-1778326659450.png" },
     ],
     links: [
       {
