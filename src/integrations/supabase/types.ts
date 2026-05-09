@@ -14,7 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      family_members: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string
+          owner_id: string
+          relationship: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          owner_id: string
+          relationship?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          owner_id?: string
+          relationship?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          caregiver_name: string | null
+          communication: string | null
+          completed: boolean | null
+          created_at: string | null
+          diagnosed_date: string | null
+          emotional: string | null
+          family_helps: string | null
+          id: string
+          illness_stage: string | null
+          illness_type: string | null
+          is_primary: string | null
+          language: string | null
+          lovee_name: string | null
+          mobility: string | null
+          patient_knows: string | null
+          priorities: Json | null
+          prognosis: string | null
+          relationship: string | null
+          situation: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          caregiver_name?: string | null
+          communication?: string | null
+          completed?: boolean | null
+          created_at?: string | null
+          diagnosed_date?: string | null
+          emotional?: string | null
+          family_helps?: string | null
+          id: string
+          illness_stage?: string | null
+          illness_type?: string | null
+          is_primary?: string | null
+          language?: string | null
+          lovee_name?: string | null
+          mobility?: string | null
+          patient_knows?: string | null
+          priorities?: Json | null
+          prognosis?: string | null
+          relationship?: string | null
+          situation?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          caregiver_name?: string | null
+          communication?: string | null
+          completed?: boolean | null
+          created_at?: string | null
+          diagnosed_date?: string | null
+          emotional?: string | null
+          family_helps?: string | null
+          id?: string
+          illness_stage?: string | null
+          illness_type?: string | null
+          is_primary?: string | null
+          language?: string | null
+          lovee_name?: string | null
+          mobility?: string | null
+          patient_knows?: string | null
+          priorities?: Json | null
+          prognosis?: string | null
+          relationship?: string | null
+          situation?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
