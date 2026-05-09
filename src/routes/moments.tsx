@@ -252,56 +252,6 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
   );
 }
 
-function PorchArt() {
-  return (
-    <svg viewBox="0 0 200 250" className="w-full h-full">
-      <defs>
-        <linearGradient id="porch" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#E7EFE7" />
-          <stop offset="100%" stopColor="#D8B6A4" />
-        </linearGradient>
-      </defs>
-      <rect width="200" height="250" fill="url(#porch)" />
-      <circle cx="150" cy="60" r="34" fill="#F6EFE7" opacity="0.9" />
-      <ellipse cx="100" cy="200" rx="80" ry="22" fill="#8FA88A" opacity="0.5" />
-      <path d="M70 180 Q100 150 130 180 L130 200 L70 200 Z" fill="#5E4636" opacity="0.7" />
-      <path d="M85 175 L85 155 M115 175 L115 155" stroke="#5E4636" strokeWidth="2" opacity="0.6" />
-    </svg>
-  );
-}
-function HandsArt() {
-  return (
-    <svg viewBox="0 0 200 250" className="w-full h-full">
-      <defs>
-        <linearGradient id="hands" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#F6EFE7" />
-          <stop offset="100%" stopColor="#D8B6A4" />
-        </linearGradient>
-      </defs>
-      <rect width="200" height="250" fill="url(#hands)" />
-      <ellipse cx="80" cy="140" rx="50" ry="32" fill="#C9886F" opacity="0.55" />
-      <ellipse cx="125" cy="155" rx="45" ry="28" fill="#5E4636" opacity="0.35" />
-      <circle cx="100" cy="120" r="10" fill="#FAF8F5" opacity="0.9" />
-    </svg>
-  );
-}
-function GardenArt() {
-  return (
-    <svg viewBox="0 0 200 250" className="w-full h-full">
-      <defs>
-        <linearGradient id="garden" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#C7D8C4" />
-          <stop offset="100%" stopColor="#E7EFE7" />
-        </linearGradient>
-      </defs>
-      <rect width="200" height="250" fill="url(#garden)" />
-      <circle cx="60" cy="90" r="22" fill="#D8B6A4" opacity="0.85" />
-      <circle cx="140" cy="80" r="18" fill="#C9886F" opacity="0.6" />
-      <circle cx="105" cy="130" r="26" fill="#FAF8F5" opacity="0.8" />
-      <path d="M0 200 Q100 160 200 200 L200 250 L0 250 Z" fill="#8FA88A" opacity="0.5" />
-    </svg>
-  );
-}
 
 /* -------------------- Timeline -------------------- */
 
