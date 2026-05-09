@@ -251,7 +251,7 @@ function RelationshipInline({ value, onChange }: { value?: string; onChange: (v:
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-1 text-[0.85em] font-sans font-medium transition-all ${
+        className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-1 font-serif font-light italic lowercase text-[0.9em] transition-all ${
           value
             ? "bg-sage-soft border-sage text-foreground"
             : "bg-card border-border text-muted-foreground hover:bg-muted"
