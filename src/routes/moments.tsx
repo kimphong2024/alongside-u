@@ -26,6 +26,9 @@ function Moments() {
   const [newBucket, setNewBucket] = useState("");
   const [confirmation, setConfirmation] = useState<string | null>(null);
 
+  // Group moments by relative date for the timeline (must be before any early return)
+  const timeline = useMemo(() => groupByRelativeDate(state.moments), [state.moments]);
+
   if (!hydrated) return null;
 
   const loveeName = state.onboarding.loveeName?.trim() || "your loved one";
