@@ -20,14 +20,26 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && isAuthenticated) navigate({ to: "/" });
   }, [isAuthenticated, loading, navigate]);
 
+  const friendly = (msg: string) => {
+    if (/weak_password|pwned|known to be weak/i.test(msg))
+      return "That password has appeared in a known data breach. Please choose a stronger one — try a passphrase of 3–4 unrelated words.";
+    if (/already registered|already exists/i.test(msg))
+      return "An account with this email already exists. Try signing in instead.";
+    if (/invalid login|invalid credentials/i.test(msg))
+      return "That email and password don't match. Please try again.";
+    return msg;
+  };
+
   const handleEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
+    setError(null);
     try {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
@@ -43,7 +55,8 @@ function AuthPage() {
         navigate({ to: "/" });
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Something went wrong";
+      const msg = friendly(err instanceof Error ? err.message : "Something went wrong");
+      setError(msg);
       toast.error(msg);
     } finally {
       setBusy(false);
