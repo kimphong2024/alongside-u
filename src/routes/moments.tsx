@@ -244,11 +244,11 @@ function Moments() {
 /* -------------------- Hero scrapbook -------------------- */
 
 function ScrapbookHero({ loveeName }: { loveeName: string }) {
-  // Decorative inline SVG "photos" — warm watercolor washes so the page never feels empty.
+  // Polaroid family photos hanging from a clothesline with pegs.
   const cards = [
-    { tilt: "-rotate-6", offset: "-translate-x-2 translate-y-1", art: <PorchArt />, caption: "tea on the porch" },
-    { tilt: "rotate-3", offset: "translate-x-3 -translate-y-2", art: <HandsArt />, caption: "her hands" },
-    { tilt: "-rotate-2", offset: "translate-x-1 translate-y-3", art: <GardenArt />, caption: "spring garden" },
+    { tilt: -7, src: momentsTea, caption: "tea on the porch" },
+    { tilt: 4, src: momentsHands, caption: "her hands" },
+    { tilt: -3, src: momentsGarden, caption: "spring garden" },
   ];
   return (
     <div className="relative">
@@ -265,78 +265,75 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
         </p>
       </div>
 
-      <div className="relative h-[300px] md:h-[320px] mt-4 mb-8 mx-auto max-w-3xl overflow-visible">
+      <div className="relative h-[320px] md:h-[340px] mt-6 mb-8 mx-auto max-w-3xl overflow-visible">
+        {/* Clothesline (drooping) */}
+        <svg
+          className="absolute inset-x-0 top-3 w-full h-8 pointer-events-none"
+          viewBox="0 0 600 32"
+          preserveAspectRatio="none"
+          aria-hidden
+        >
+          <path
+            d="M 0 6 Q 300 28 600 6"
+            fill="none"
+            stroke="hsl(var(--border))"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+          />
+        </svg>
+
         {cards.map((c, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, y: 20, rotate: 0 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.12, duration: 0.7, ease: "easeOut" }}
-            className={`absolute top-0 left-1/2 -translate-x-1/2 ${c.tilt} ${c.offset}`}
-            style={{ marginLeft: `${(i - 1) * 110 - 60}px` }}
-            whileHover={{ rotate: 0, y: -6, transition: { duration: 0.4 } }}
+            initial={{ opacity: 0, y: -160, rotate: 0 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              rotate: [c.tilt - 2, c.tilt + 2, c.tilt - 1, c.tilt],
+            }}
+            transition={{
+              opacity: { delay: i * 0.18, duration: 0.4 },
+              y: { delay: i * 0.18, type: "spring", stiffness: 70, damping: 9 },
+              rotate: { delay: i * 0.18 + 0.4, duration: 1.6, ease: "easeOut" },
+            }}
+            className="absolute top-6 left-1/2 -translate-x-1/2"
+            style={{ marginLeft: `${(i - 1) * 120 - 60}px`, transformOrigin: "top center" }}
+            whileHover={{ rotate: 0, y: -4, transition: { duration: 0.4 } }}
           >
-            <div className="bg-card border border-border p-2.5 pb-5 shadow-paper paper-grain rounded-md w-[160px] md:w-[180px]">
-              <div className="aspect-[4/5] rounded-sm overflow-hidden">{c.art}</div>
-              <p className="font-hand text-lg text-foreground/70 mt-1.5 text-center leading-tight">
-                {c.caption}
-              </p>
+            {/* Peg */}
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+              <div
+                className="w-3 h-4 rounded-sm shadow-soft"
+                style={{
+                  background: "linear-gradient(180deg, hsl(var(--clay)) 0%, hsl(var(--clay) / 0.75) 100%)",
+                }}
+              />
             </div>
+
+            {/* Sway loop after settle */}
+            <motion.div
+              animate={{ rotate: [0, 0.6, -0.6, 0] }}
+              transition={{ delay: i * 0.18 + 2, duration: 4.2, ease: "easeInOut", repeat: Infinity }}
+              style={{ transformOrigin: "top center" }}
+            >
+              <div className="bg-card border border-border p-2.5 pb-5 shadow-paper paper-grain rounded-md w-[160px] md:w-[180px]">
+                <div className="aspect-[4/5] rounded-sm overflow-hidden bg-muted">
+                  <img
+                    src={c.src}
+                    alt={c.caption}
+                    loading="lazy"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <p className="font-hand text-lg text-foreground/70 mt-1.5 text-center leading-tight">
+                  {c.caption}
+                </p>
+              </div>
+            </motion.div>
           </motion.div>
         ))}
       </div>
     </div>
-  );
-}
-
-function PorchArt() {
-  return (
-    <svg viewBox="0 0 200 250" className="w-full h-full">
-      <defs>
-        <linearGradient id="porch" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#E7EFE7" />
-          <stop offset="100%" stopColor="#D8B6A4" />
-        </linearGradient>
-      </defs>
-      <rect width="200" height="250" fill="url(#porch)" />
-      <circle cx="150" cy="60" r="34" fill="#F6EFE7" opacity="0.9" />
-      <ellipse cx="100" cy="200" rx="80" ry="22" fill="#8FA88A" opacity="0.5" />
-      <path d="M70 180 Q100 150 130 180 L130 200 L70 200 Z" fill="#5E4636" opacity="0.7" />
-      <path d="M85 175 L85 155 M115 175 L115 155" stroke="#5E4636" strokeWidth="2" opacity="0.6" />
-    </svg>
-  );
-}
-function HandsArt() {
-  return (
-    <svg viewBox="0 0 200 250" className="w-full h-full">
-      <defs>
-        <linearGradient id="hands" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#F6EFE7" />
-          <stop offset="100%" stopColor="#D8B6A4" />
-        </linearGradient>
-      </defs>
-      <rect width="200" height="250" fill="url(#hands)" />
-      <ellipse cx="80" cy="140" rx="50" ry="32" fill="#C9886F" opacity="0.55" />
-      <ellipse cx="125" cy="155" rx="45" ry="28" fill="#5E4636" opacity="0.35" />
-      <circle cx="100" cy="120" r="10" fill="#FAF8F5" opacity="0.9" />
-    </svg>
-  );
-}
-function GardenArt() {
-  return (
-    <svg viewBox="0 0 200 250" className="w-full h-full">
-      <defs>
-        <linearGradient id="garden" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#C7D8C4" />
-          <stop offset="100%" stopColor="#E7EFE7" />
-        </linearGradient>
-      </defs>
-      <rect width="200" height="250" fill="url(#garden)" />
-      <circle cx="60" cy="90" r="22" fill="#D8B6A4" opacity="0.85" />
-      <circle cx="140" cy="80" r="18" fill="#C9886F" opacity="0.6" />
-      <circle cx="105" cy="130" r="26" fill="#FAF8F5" opacity="0.8" />
-      <path d="M0 200 Q100 160 200 200 L200 250 L0 250 Z" fill="#8FA88A" opacity="0.5" />
-    </svg>
   );
 }
 
