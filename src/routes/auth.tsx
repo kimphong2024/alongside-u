@@ -47,8 +47,9 @@ function AuthPage() {
           options: { emailRedirectTo: `${window.location.origin}/` },
         });
         if (error) throw error;
-        toast.success("Welcome. Check your email to confirm your account, then sign in.");
-        setMode("signin");
+        // Auto-confirm is on — sign the user in immediately.
+        await supabase.auth.signInWithPassword({ email, password });
+        navigate({ to: "/" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
