@@ -385,19 +385,20 @@ function TimelineGroup({ group }: { group: Group }) {
             <button
               type="button"
               onClick={() => setExpanded(true)}
-              className="relative block mx-auto cursor-pointer group"
-              style={{ width: 360, height: 460 }}
+              className="block w-full max-w-2xl mx-auto cursor-pointer"
               aria-label={`Open ${group.items.length} moments`}
             >
-              {group.items.slice(0, 5).map((m, i) => (
-                <MomentCard
-                  key={m.id}
-                  moment={m}
-                  index={i}
-                  stacked
-                  expanded={false}
-                />
-              ))}
+              <div className="grid grid-cols-2 gap-x-6 gap-y-8">
+                {group.items.slice(0, 4).map((m, i) => (
+                  <MomentCard
+                    key={m.id}
+                    moment={m}
+                    index={i}
+                    stacked={false}
+                    expanded={false}
+                  />
+                ))}
+              </div>
             </button>
           ) : (
             <motion.div
