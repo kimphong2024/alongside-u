@@ -77,9 +77,9 @@ function Moments() {
 
   return (
     <AppShell>
-      <div className="space-y-10 pb-24 relative">
+      <div className="space-y-6 pb-24 relative">
         {/* HERO SCRAPBOOK */}
-        <section className="relative pt-2 pb-6 isolate">
+        <section className="relative -mt-2 isolate">
           <ScrapbookHero loveeName={loveeName} />
         </section>
 
@@ -188,21 +188,28 @@ function Moments() {
       </div>
 
       {/* Floating Add Moment Button */}
-      <motion.button
-        type="button"
-        onPointerUp={(event) => {
-          event.preventDefault();
-          setComposerOpen(true);
-        }}
-        onClick={() => setComposerOpen(true)}
-        whileHover={{ scale: 1.04 }}
-        whileTap={{ scale: 0.96 }}
-        className="fixed bottom-24 md:bottom-10 right-6 z-[60] h-16 px-6 rounded-full bg-foreground text-background shadow-paper flex items-center gap-2 font-serif italic text-base pointer-events-auto"
-        aria-label="Add a moment"
-      >
-        <Plus className="h-5 w-5" strokeWidth={2} />
-        <span className="hidden sm:inline">Add a moment</span>
-      </motion.button>
+      <AnimatePresence>
+        {!composerOpen && (
+          <motion.button
+            type="button"
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 10 }}
+            onPointerUp={(event) => {
+              event.preventDefault();
+              setComposerOpen(true);
+            }}
+            onClick={() => setComposerOpen(true)}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            className="fixed bottom-24 md:bottom-10 right-6 z-[60] h-16 px-6 rounded-full bg-foreground text-background shadow-paper flex items-center gap-2 font-serif italic text-base pointer-events-auto"
+            aria-label="Add a moment"
+          >
+            <Plus className="h-5 w-5" strokeWidth={2} />
+            <span className="hidden sm:inline">Add a moment</span>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Confirmation toast */}
       <AnimatePresence>
@@ -248,20 +255,20 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
         </p>
       </div>
 
-      <div className="relative h-[300px] md:h-[320px] mt-2 mx-auto max-w-3xl overflow-visible">
+      <div className="relative h-[220px] md:h-[240px] -mt-4 mx-auto max-w-3xl overflow-visible">
         {cards.map((c, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20, rotate: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.12, duration: 0.7, ease: "easeOut" }}
-            className={`absolute top-[46%] left-1/2 -translate-x-1/2 -translate-y-1/2 ${c.tilt} ${c.offset}`}
-            style={{ marginLeft: `${(i - 1) * 130}px` }}
+            className={`absolute top-[50%] left-1/2 -translate-x-1/2 -translate-y-1/2 ${c.tilt} ${c.offset}`}
+            style={{ marginLeft: `${(i - 1) * 110}px` }}
             whileHover={{ rotate: 0, y: -6, transition: { duration: 0.4 } }}
           >
-            <div className="bg-card border border-border p-3 pb-7 shadow-paper paper-grain rounded-md w-[200px] md:w-[220px]">
+            <div className="bg-card border border-border p-2.5 pb-5 shadow-paper paper-grain rounded-md w-[160px] md:w-[180px]">
               <div className="aspect-[4/5] rounded-sm overflow-hidden">{c.art}</div>
-              <p className="font-hand text-xl text-foreground/70 mt-2 text-center leading-tight">
+              <p className="font-hand text-lg text-foreground/70 mt-1.5 text-center leading-tight">
                 {c.caption}
               </p>
             </div>
@@ -515,28 +522,28 @@ function VoiceNote({ src, duration }: { src: string; duration: number }) {
   };
 
   return (
-    <div className="mt-4 flex items-center gap-3 p-3 pl-3 pr-4 rounded-full bg-sage-soft/50 border border-sage/30">
+    <div className="mt-4 flex items-center gap-2 p-2 pl-2 pr-3 rounded-full bg-sage-soft/50 border border-sage/30 min-w-0 max-w-full overflow-hidden">
       <button
         onClick={toggle}
-        className="h-10 w-10 rounded-full bg-foreground text-background flex items-center justify-center shrink-0 shadow-soft"
+        className="h-9 w-9 rounded-full bg-foreground text-background flex items-center justify-center shrink-0 shadow-soft"
         aria-label={playing ? "Pause voice note" : "Play voice note"}
       >
         {playing ? <Pause className="h-4 w-4 fill-current" /> : <Play className="h-4 w-4 fill-current ml-0.5" />}
       </button>
-      <Mic className="h-3.5 w-3.5 text-foreground/40" strokeWidth={1.6} />
-      <div className="flex-1 flex items-center gap-[3px] h-7">
-        {Array.from({ length: 32 }).map((_, i) => {
-          const active = (i / 32) <= progress;
+      <Mic className="h-3.5 w-3.5 text-foreground/40 shrink-0" strokeWidth={1.6} />
+      <div className="flex-1 min-w-0 flex items-center gap-[2px] h-6 overflow-hidden">
+        {Array.from({ length: 20 }).map((_, i) => {
+          const active = (i / 20) <= progress;
           return (
             <span
               key={i}
-              className={`w-[3px] rounded-full transition-colors ${active ? "bg-foreground/70" : "bg-foreground/25"}`}
+              className={`flex-1 min-w-[2px] rounded-full transition-colors ${active ? "bg-foreground/70" : "bg-foreground/25"}`}
               style={{ height: `${28 + Math.sin(i * 0.6) * 22 + (i % 4) * 5}%` }}
             />
           );
         })}
       </div>
-      <span className="text-xs tabular-nums text-muted-foreground">
+      <span className="text-[11px] tabular-nums text-muted-foreground shrink-0">
         0:{String(duration).padStart(2, "0")}
       </span>
       <audio
