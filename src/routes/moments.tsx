@@ -234,6 +234,12 @@ function Moments() {
 /* -------------------- Hero scrapbook -------------------- */
 
 function ScrapbookHero({ loveeName }: { loveeName: string }) {
+  // Decorative inline SVG "photos" — warm watercolor washes so the page never feels empty.
+  const cards = [
+    { tilt: "-rotate-6", offset: "-translate-x-2 translate-y-1", art: <PorchArt />, caption: "tea on the porch" },
+    { tilt: "rotate-3", offset: "translate-x-3 -translate-y-2", art: <HandsArt />, caption: "her hands" },
+    { tilt: "-rotate-2", offset: "translate-x-1 translate-y-3", art: <GardenArt />, caption: "spring garden" },
+  ];
   return (
     <div className="relative">
       <div className="text-center max-w-xl mx-auto">
@@ -248,10 +254,81 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
           A quiet space to hold meaningful moments with {loveeName} — kept gently, like pages in a family album.
         </p>
       </div>
+
+      <div className="relative h-[260px] md:h-[280px] mt-2 mb-6 mx-auto max-w-3xl overflow-visible">
+        {cards.map((c, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20, rotate: 0 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.12, duration: 0.7, ease: "easeOut" }}
+            className={`absolute top-[50%] left-1/2 -translate-x-1/2 -translate-y-1/2 ${c.tilt} ${c.offset}`}
+            style={{ marginLeft: `${(i - 1) * 110}px` }}
+            whileHover={{ rotate: 0, y: -6, transition: { duration: 0.4 } }}
+          >
+            <div className="bg-card border border-border p-2.5 pb-5 shadow-paper paper-grain rounded-md w-[160px] md:w-[180px]">
+              <div className="aspect-[4/5] rounded-sm overflow-hidden">{c.art}</div>
+              <p className="font-hand text-lg text-foreground/70 mt-1.5 text-center leading-tight">
+                {c.caption}
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 }
 
+function PorchArt() {
+  return (
+    <svg viewBox="0 0 200 250" className="w-full h-full">
+      <defs>
+        <linearGradient id="porch" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#E7EFE7" />
+          <stop offset="100%" stopColor="#D8B6A4" />
+        </linearGradient>
+      </defs>
+      <rect width="200" height="250" fill="url(#porch)" />
+      <circle cx="150" cy="60" r="34" fill="#F6EFE7" opacity="0.9" />
+      <ellipse cx="100" cy="200" rx="80" ry="22" fill="#8FA88A" opacity="0.5" />
+      <path d="M70 180 Q100 150 130 180 L130 200 L70 200 Z" fill="#5E4636" opacity="0.7" />
+      <path d="M85 175 L85 155 M115 175 L115 155" stroke="#5E4636" strokeWidth="2" opacity="0.6" />
+    </svg>
+  );
+}
+function HandsArt() {
+  return (
+    <svg viewBox="0 0 200 250" className="w-full h-full">
+      <defs>
+        <linearGradient id="hands" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#F6EFE7" />
+          <stop offset="100%" stopColor="#D8B6A4" />
+        </linearGradient>
+      </defs>
+      <rect width="200" height="250" fill="url(#hands)" />
+      <ellipse cx="80" cy="140" rx="50" ry="32" fill="#C9886F" opacity="0.55" />
+      <ellipse cx="125" cy="155" rx="45" ry="28" fill="#5E4636" opacity="0.35" />
+      <circle cx="100" cy="120" r="10" fill="#FAF8F5" opacity="0.9" />
+    </svg>
+  );
+}
+function GardenArt() {
+  return (
+    <svg viewBox="0 0 200 250" className="w-full h-full">
+      <defs>
+        <linearGradient id="garden" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#C7D8C4" />
+          <stop offset="100%" stopColor="#E7EFE7" />
+        </linearGradient>
+      </defs>
+      <rect width="200" height="250" fill="url(#garden)" />
+      <circle cx="60" cy="90" r="22" fill="#D8B6A4" opacity="0.85" />
+      <circle cx="140" cy="80" r="18" fill="#C9886F" opacity="0.6" />
+      <circle cx="105" cy="130" r="26" fill="#FAF8F5" opacity="0.8" />
+      <path d="M0 200 Q100 160 200 200 L200 250 L0 250 Z" fill="#8FA88A" opacity="0.5" />
+    </svg>
+  );
+}
 
 /* -------------------- Timeline -------------------- */
 
