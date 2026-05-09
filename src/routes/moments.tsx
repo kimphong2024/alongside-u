@@ -370,38 +370,52 @@ function TimelineGroup({ group }: { group: Group }) {
           ))}
         </div>
       ) : (
-        <div
-          className="relative mx-auto"
-          style={{ maxWidth: expanded ? "100%" : "560px" }}
-          onClick={() => !expanded && setExpanded(true)}
-        >
+        <div className="relative mx-auto w-full">
           {expanded && (
-            <button
-              onClick={(e) => { e.stopPropagation(); setExpanded(false); }}
-              className="absolute -top-2 right-0 z-30 text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
-            >
-              Restack
-            </button>
+            <div className="flex justify-end mb-3">
+              <button
+                onClick={() => setExpanded(false)}
+                className="text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
+              >
+                Restack
+              </button>
+            </div>
           )}
-          <motion.div
-            layout
-            transition={{ type: "spring", stiffness: 240, damping: 28 }}
-            className={
-              expanded
-                ? "flex flex-wrap gap-6 justify-center pt-6"
-                : "relative min-h-[460px] cursor-pointer"
-            }
-          >
-            {group.items.map((m, i) => (
-              <MomentCard
-                key={m.id}
-                moment={m}
-                index={i}
-                stacked={!expanded}
-                expanded={expanded}
-              />
-            ))}
-          </motion.div>
+          {!expanded ? (
+            <button
+              type="button"
+              onClick={() => setExpanded(true)}
+              className="relative block mx-auto cursor-pointer group"
+              style={{ width: 360, height: 460 }}
+              aria-label={`Open ${group.items.length} moments`}
+            >
+              {group.items.slice(0, 5).map((m, i) => (
+                <MomentCard
+                  key={m.id}
+                  moment={m}
+                  index={i}
+                  stacked
+                  expanded={false}
+                />
+              ))}
+            </button>
+          ) : (
+            <motion.div
+              layout
+              transition={{ type: "spring", stiffness: 240, damping: 28 }}
+              className="flex gap-6 overflow-x-auto pb-6 pt-2 px-2 snap-x snap-mandatory"
+            >
+              {group.items.map((m, i) => (
+                <MomentCard
+                  key={m.id}
+                  moment={m}
+                  index={i}
+                  stacked={false}
+                  expanded
+                />
+              ))}
+            </motion.div>
+          )}
           {!expanded && (
             <p className="text-center text-xs uppercase tracking-[0.18em] text-muted-foreground mt-4">
               {group.items.length} moments · tap to spread
