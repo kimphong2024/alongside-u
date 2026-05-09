@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAppData, type OnboardingData } from "@/lib/store";
