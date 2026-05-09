@@ -94,9 +94,15 @@ export function OnboardingFlow() {
       </div>
     )},
     { id: "relationship", canContinue: (d) => !!d.relationship, render: ({ data, set }) => (
-      <div className="space-y-6">
-        <Header title="I am a…" subtitle="…to someone recently diagnosed." />
-        <ChoiceGrid options={RELATIONSHIPS} selected={data.relationship} onSelect={(v) => set("relationship", v)} />
+      <div className="space-y-6 pt-4">
+        <h2 className="text-3xl md:text-4xl font-serif text-balance leading-snug">
+          I am a{" "}
+          <RelationshipInline
+            value={data.relationship}
+            onChange={(v) => set("relationship", v)}
+          />{" "}
+          to someone recently diagnosed.
+        </h2>
       </div>
     )},
     { id: "illnessType", canContinue: (d) => !!d.illnessType, render: ({ data, set }) => (
