@@ -282,7 +282,7 @@ function RelationshipInline({ value, onChange }: { value?: string; onChange: (v:
                     key={o}
                     type="button"
                     onClick={() => handleSelect(o)}
-                    className={`rounded-full border px-3.5 py-1.5 text-sm font-sans transition-all ${
+                    className={`rounded-full border px-3.5 py-1.5 font-serif font-light italic lowercase text-base transition-all ${
                       sel
                         ? "bg-sage-soft border-sage text-foreground"
                         : "bg-background border-border hover:bg-muted hover:border-sage/40"
