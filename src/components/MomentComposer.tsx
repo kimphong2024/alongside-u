@@ -55,6 +55,12 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
     reader.readAsDataURL(file);
   };
 
+  const handleVideo = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => setVideo(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
