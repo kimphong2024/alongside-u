@@ -46,21 +46,16 @@ function ChoiceGrid({
   );
 }
 
-const RELATIONSHIPS = ["Parent", "Spouse", "Grandparent", "Sibling", "Child", "Other"];
+const RELATIONSHIPS = ["Son", "Daughter", "Spouse", "Grandchild", "Sibling", "Parent", "Friend", "Other"];
 const ILLNESSES = ["Cancer", "Dementia", "Heart failure", "ALS", "Parkinson's", "Other"];
 const STAGES = ["Recently diagnosed", "Early stage", "Advanced", "Not sure yet"];
-const SITUATIONS = ["At home", "Hospitalized", "Palliative care", "Hospice care"];
-const MOBILITY = ["Fully mobile", "Some assistance", "Mostly bedbound"];
-const COMMUNICATION = ["Clear", "Sometimes confused", "Limited"];
-const PATIENT_KNOWS = ["Yes, fully aware", "Partially aware", "Not yet told"];
-const EMOTIONS = ["Overwhelmed", "Numb", "Anxious", "Lost", "Managing okay", "Exhausted"];
+const EMOTIONS = ["Overwhelmed", "Numb", "Anxious", "Lost", "Trying to stay strong", "Managing okay"];
 const PRIORITIES = [
   "Understanding what to do next",
-  "Managing appointments",
-  "Emotional support",
+  "Managing responsibilities",
   "Spending meaningful time together",
-  "Coordinating family",
-  "Legal and financial guidance",
+  "Coordinating family updates",
+  "Emotional support",
 ];
 
 export function OnboardingFlow() {
