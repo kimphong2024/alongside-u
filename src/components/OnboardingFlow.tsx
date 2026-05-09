@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAppData, type OnboardingData } from "@/lib/store";
@@ -94,9 +94,15 @@ export function OnboardingFlow() {
       </div>
     )},
     { id: "relationship", canContinue: (d) => !!d.relationship, render: ({ data, set }) => (
-      <div className="space-y-6">
-        <Header title="I am a…" subtitle="…to someone recently diagnosed." />
-        <ChoiceGrid options={RELATIONSHIPS} selected={data.relationship} onSelect={(v) => set("relationship", v)} />
+      <div className="space-y-6 pt-4">
+        <h2 className="text-3xl md:text-4xl font-serif text-balance leading-snug">
+          I am a{" "}
+          <RelationshipInline
+            value={data.relationship}
+            onChange={(v) => set("relationship", v)}
+          />{" "}
+          to someone recently diagnosed.
+        </h2>
       </div>
     )},
     { id: "illnessType", canContinue: (d) => !!d.illnessType, render: ({ data, set }) => (
@@ -214,5 +220,82 @@ function Header({ title, subtitle }: { title: string; subtitle?: string }) {
       <h2 className="text-3xl font-serif text-balance">{title}</h2>
       {subtitle && <p className="text-muted-foreground text-sm leading-relaxed">{subtitle}</p>}
     </div>
+  );
+}
+
+function RelationshipInline({ value, onChange }: { value?: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const handleSelect = (v: string) => {
+    onChange(v);
+    setTimeout(() => setOpen(false), 150);
+  };
+
+  return (
+    <span ref={ref} className="relative inline-block align-baseline">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-1 text-[0.85em] font-sans font-medium transition-all ${
+          value
+            ? "bg-sage-soft border-sage text-foreground"
+            : "bg-card border-border text-muted-foreground hover:bg-muted"
+        }`}
+      >
+        <span>{value ?? "choose…"}</span>
+        <ChevronDown
+          className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          strokeWidth={2.4}
+        />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -4, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, y: -4, height: 0 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            style={{ overflow: "hidden" }}
+            className="absolute left-0 top-full z-20 mt-2 w-[min(22rem,80vw)]"
+          >
+            <div className="bg-card border border-border rounded-2xl shadow-soft p-3 flex flex-wrap gap-2">
+              {RELATIONSHIPS.map((o) => {
+                const sel = value === o;
+                return (
+                  <button
+                    key={o}
+                    type="button"
+                    onClick={() => handleSelect(o)}
+                    className={`rounded-full border px-3.5 py-1.5 text-sm font-sans transition-all ${
+                      sel
+                        ? "bg-sage-soft border-sage text-foreground"
+                        : "bg-background border-border hover:bg-muted hover:border-sage/40"
+                    }`}
+                  >
+                    {o}
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </span>
   );
 }
