@@ -79,12 +79,12 @@ function Moments() {
     <AppShell>
       <div className="space-y-10 pb-24 relative">
         {/* HERO SCRAPBOOK */}
-        <section className="relative pt-2">
+        <section className="relative pt-2 pb-6 isolate">
           <ScrapbookHero loveeName={loveeName} />
         </section>
 
         {/* Toggle */}
-        <div className="grid grid-cols-2 gap-1 p-1.5 bg-card/70 border border-border rounded-full shadow-soft max-w-sm mx-auto">
+        <div className="relative z-10 grid grid-cols-2 gap-1 p-1.5 bg-card border border-border rounded-full shadow-soft max-w-sm mx-auto">
           {[
             { id: "journal", label: "Memory journal" },
             { id: "bucket", label: "Bucket list" },
@@ -243,7 +243,7 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
         </p>
       </div>
 
-      <div className="relative h-[280px] md:h-[320px] mt-8 mx-auto max-w-3xl">
+      <div className="relative h-[340px] md:h-[380px] mt-8 mx-auto max-w-3xl overflow-hidden">
         {cards.map((c, i) => (
           <motion.div
             key={i}
