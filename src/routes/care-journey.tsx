@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronDown, Compass } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, Compass, Sun } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { CARE_JOURNEY, SG_RESOURCES } from "@/lib/content";
 import { useAppState } from "@/lib/store";
@@ -43,6 +43,25 @@ function CareJourney() {
           </p>
         </header>
 
+        <Link
+          to="/"
+          className="block rounded-2xl bg-gradient-warm border border-border p-4 hover:border-sage/40 transition"
+        >
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-card/70 flex items-center justify-center flex-shrink-0">
+              <Sun className="h-4 w-4 text-foreground/80" strokeWidth={1.6} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Today</p>
+              <p className="font-serif text-lg leading-snug">
+                {state.checkInHistory.length > 0
+                  ? `Your last check-in: ${state.checkInHistory[state.checkInHistory.length - 1].mood.toLowerCase()}.`
+                  : "A small moment to begin the day."}
+              </p>
+            </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+          </div>
+        </Link>
         <div className="flex gap-2 overflow-x-auto pb-1 -mx-5 px-5 scrollbar-none">
           {CARE_JOURNEY.map((p) => (
             <button
