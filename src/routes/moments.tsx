@@ -243,14 +243,14 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
         </p>
       </div>
 
-      <div className="relative h-[340px] md:h-[380px] mt-8 mx-auto max-w-3xl overflow-hidden">
+      <div className="relative h-[300px] md:h-[320px] mt-2 mx-auto max-w-3xl overflow-visible">
         {cards.map((c, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20, rotate: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.12, duration: 0.7, ease: "easeOut" }}
-            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${c.tilt} ${c.offset}`}
+            className={`absolute top-[46%] left-1/2 -translate-x-1/2 -translate-y-1/2 ${c.tilt} ${c.offset}`}
             style={{ marginLeft: `${(i - 1) * 130}px` }}
             whileHover={{ rotate: 0, y: -6, transition: { duration: 0.4 } }}
           >
