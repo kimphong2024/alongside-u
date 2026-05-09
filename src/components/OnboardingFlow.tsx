@@ -136,12 +136,12 @@ export function OnboardingFlow() {
             return (
               <button key={p} type="button" onClick={() => toggleArray("priorities", p)}
                 className={`w-full text-left flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition ${
-                  sel ? "bg-sage-soft border-sage" : "bg-card border-border hover:bg-muted"
+                  sel ? "bg-card border-border/70 shadow-soft" : "bg-transparent border-border hover:bg-card/60"
                 }`}>
-                <span className={`h-5 w-5 rounded-full flex items-center justify-center border ${sel ? "bg-sage border-sage" : "border-border"}`}>
-                  {sel && <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />}
+                <span className={`h-5 w-5 rounded-full flex items-center justify-center border ${sel ? "bg-accent-active border-accent-active" : "border-border"}`}>
+                  {sel && <Check className="h-3 w-3 text-card" strokeWidth={3} />}
                 </span>
-                <span className="text-sm">{p}</span>
+                <span className={`text-sm ${sel ? "text-accent-active font-medium" : ""}`}>{p}</span>
               </button>
             );
           })}
