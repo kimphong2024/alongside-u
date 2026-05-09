@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import singpassMock from "@/assets/singpass-mock.png";
+import authBg from "@/assets/auth-bg.png";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — Alongside" }] }),
@@ -58,7 +59,10 @@ function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-5 py-10 bg-muted/30">
+    <div
+      className="min-h-screen flex flex-col items-center justify-center px-5 py-10 bg-cover bg-center"
+      style={{ backgroundImage: `url(${authBg})` }}
+    >
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
