@@ -1,44 +1,69 @@
-## Redesign `/onboarding` as a calm 3-tile landing
+## Execute feedback from `Alongside_feedback_1.docx`
 
-Replace the multi-step onboarding questionnaire with a single, calm screen. The current gradient orb is swapped for the uploaded watercolor "arms hugging heart" illustration, followed by one line of copy and three tappable tiles with line icons.
+Six changes across two pages.
 
-### Layout (top → bottom, centered, max-w-xl)
+---
 
-1. **Hero illustration** — the uploaded `arms_hugging_heart.png`, ~160px square, centered, soft drop shadow. Replaces the `bg-gradient-dawn` orb.
-2. **Headline** — serif, balanced, ~text-4xl:
-   "You are not alone. What shall we do today?"
-3. **Three tiles** — stacked vertically (single column on mobile, still single column on desktop for calm rhythm), each a full-width rounded card (`bg-card`, `border border-border`, `shadow-soft`, `rounded-2xl`, hover `shadow-paper` + slight lift). Each tile contains:
-   - Left: a thin line icon (~32px, `stroke-[1.4]`, muted-foreground) from `lucide-react`
-   - Middle: serif title
-   - Right: small `ArrowRight` chevron
+### Moments page (`src/routes/moments.tsx`)
 
-   | Title | Icon (lucide) | Route |
-   |---|---|---|
-   | Let me process this a bit more | `Wind` | `/support` |
-   | Show me what needs to be done | `ListChecks` | `/care-journey` |
-   | Help me relive my memories | `Images` | `/moments` |
+**1. Replace scrapbook hero cards with poignant family watercolors**
+Generate three real watercolor images (saved to `src/assets/`) at premium quality, in the existing warm/sage palette. Each replaces one of the inline SVGs (`PorchArt`, `HandsArt`, `GardenArt`):
+- `moments-tea.jpg` — two pairs of hands holding teacups on a porch table, soft watercolor, warm light
+- `moments-hands.jpg` — close-up of an elderly hand resting in a younger hand, gentle watercolor wash
+- `moments-garden.jpg` — soft watercolor garden in spring bloom with a quiet bench
+Replace the three `<svg>` art components with `<img>` tags using the new assets. Captions stay ("tea on the porch", "her hands", "spring garden").
 
-4. Subtle footer line: "Move at your own pace." in muted text.
+**2. Polaroid micro-interactions: pegs + clothesline**
+Re-style the hero section so the three polaroids look like they're hanging from a clothesline:
+- Add a thin horizontal line (1px sage/border color, slight droop via SVG curve) across the hero behind the cards.
+- Each polaroid gets a small peg (tiny `div` shape, ~10x14px, clay color) at its top-center, slightly rotated to match the card's tilt.
+- Entry animation: each polaroid drops from above with a gentle pendulum sway — `initial: { y: -120, rotate: 0, opacity: 0 }` → `animate: { y: 0, rotate: <tilt>, opacity: 1 }` with `type: "spring", stiffness: 60, damping: 8` and staggered `delay: i * 0.18`. After settle, a subtle infinite sway (`±0.5deg`, 4s) so they feel alive.
+- Hover: stronger sway + slight lift (already partially present).
 
-### Behavior
+**3. Move "Add a moment" button inline (empty state)**
+- Replace the empty-state copy block with a centered CTA: keep the headline and "Tap below…" line, then render a real `<Button>` directly underneath that opens the composer (same handler as the floating FAB).
+- Keep the floating FAB ONLY when the journal already has moments (so users with content can still add quickly while scrolling). When `timeline.length === 0` and `tab === "journal"`, hide the floating FAB.
 
-- Each tile is a TanStack `<Link>` to its route — no extra logic.
-- Auth gate stays: if no `user`, redirect to `/auth` (same as current OnboardingFlow).
-- The `onboarding.completed` redirect is removed so this page is always reachable from `/onboarding`. We mark `onboarding.completed = true` on first mount via `saveOnboarding({ completed: true })` so existing `/` redirects to `/onboarding` no longer loop, and Today page renders normally for users who land on `/`.
-- Gentle entry animation: fade + 8px rise on hero, then staggered tiles (0.06s).
+---
 
-### Files
+### Care Journey page (`src/routes/care-journey.tsx`)
 
-- **Rewrite** `src/components/OnboardingFlow.tsx` — replace entire multi-step flow with the new 3-tile layout. Remove all step state, choice grids, relationship dropdown, headers, illness/emotion/priority arrays.
-- **Copy asset** `user-uploads://arms_hugging_heart.png` → `src/assets/arms-hugging-heart.png`, imported as ES6 module.
-- `src/routes/onboarding.tsx` — unchanged (still renders `<OnboardingFlow />`).
+**4. Remove the "Today · A small moment…" link card**
+Delete the entire `<Link to="/">…</Link>` block (lines 46–64). The page no longer references the Today shortcut.
+
+**5. Add a heart "completion meter" next to the page title**
+Right of the `A gentle path forward` headline (same row, flex), render a small heart that fills with a sage gradient based on `completedRatio = checkedCount / totalItemsAcrossAllPhases`.
+- Implementation: an inline SVG heart (~36px). Two paths: a muted outline + a clipped fill that uses `clipPath` with a rect whose height = `ratio * 100%` from the bottom. Below the heart, tiny text "`{checkedCount}/{totalCount}`".
+- Compute totals from `CARE_JOURNEY` (sum of `phase.categories[*].items.length`) and `state.checkedItems`.
+
+**6. Compact layout + line icons per category, fit in first fold**
+- Tighten vertical spacing of the page: `space-y-6` → `space-y-4`, headline `mt-1.5` → `mt-1`, phase header card padding `p-5` → `p-4`, card spacing `space-y-2` → `space-y-1.5`, item card padding `p-4` → `px-4 py-3`.
+- Map each category name to a `lucide-react` line icon (stroke 1.5):
+  - `Family Coordination` → `Users`
+  - `Medical & Care` → `Stethoscope`
+  - `Practical & Legal` / `Legal & Admin` → `FileText`
+  - `Emotional & Spiritual` → `Heart`
+  - `Daily Life` / `Routines` → `Sun`
+  - `Memory & Legacy` → `BookOpen`
+  - default → `Sparkles`
+- Render the icon to the left of the small uppercase category title (`text-xs uppercase tracking-[0.14em]`) inside a tiny rounded container. Keep "Singapore resources" section as-is.
+- Default the description preview line under each item to off (only show on expand) to reduce vertical cost. Keep the existing chevron + accordion behavior.
+
+---
 
 ### What stays the same
 
-- `useAppData`, `saveOnboarding`, auth redirect pattern.
-- Route file, route tree, all other pages (`/`, `/support`, `/care-journey`, `/moments`, `/family`, `/auth`).
-- Design tokens — uses existing `bg-card`, `border-border`, `shadow-soft`, `font-serif`, `text-muted-foreground`.
+- Routes, route tree, store schema, RLS, design tokens.
+- Onboarding page, auth page, today/index page, family page, support page.
+- All copy in unchanged sections.
 
-### Out of scope
+### Out of scope (not in feedback)
 
-- No DB changes, no new routes, no changes to the Today page or other tiles' destination pages.
+- No new tabs, no new data tables, no new dependencies.
+- No mobile FAB redesign on Care Journey.
+
+### Files touched
+
+- `src/routes/moments.tsx` (cards → imgs, clothesline + peg, drop animation, empty-state CTA + conditional FAB)
+- `src/routes/care-journey.tsx` (remove Today card, add heart meter, line icons per category, tighter spacing)
+- `src/assets/moments-tea.jpg`, `src/assets/moments-hands.jpg`, `src/assets/moments-garden.jpg` (new, generated)
