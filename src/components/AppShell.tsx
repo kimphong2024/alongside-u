@@ -1,13 +1,12 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Sun, Compass, Heart, Users, LifeBuoy } from "lucide-react";
+import { Compass, Heart, LifeBuoy } from "lucide-react";
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
+import flowerLogo from "@/assets/flower-logo.png";
 
 const tabs = [
-  { to: "/", label: "Today", icon: Sun },
   { to: "/care-journey", label: "Journey", icon: Compass },
   { to: "/moments", label: "Moments", icon: Heart },
-  { to: "/family", label: "Family", icon: Users },
   { to: "/support", label: "Support", icon: LifeBuoy },
 ] as const;
 
@@ -17,8 +16,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="px-5 pt-7 pb-2 flex items-center justify-between max-w-2xl mx-auto w-full">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="h-8 w-8 rounded-full bg-gradient-dawn shadow-soft" />
+        <Link to="/" className="flex items-center gap-2" aria-label="Today">
+          <img src={flowerLogo} alt="" className="h-10 w-10 object-contain" />
           <span className="font-serif text-2xl tracking-tight">Alongside</span>
         </Link>
       </header>
