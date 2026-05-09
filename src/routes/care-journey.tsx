@@ -235,15 +235,16 @@ function HeartMeter({ ratio, checked, total }: { ratio: number; checked: number;
             <path d="M16 28 C 4 20, 4 10, 10 7 C 13 5.5, 15.5 7, 16 9 C 16.5 7, 19 5.5, 22 7 C 28 10, 28 20, 16 28 Z" />
           </clipPath>
           <linearGradient id="heart-fill" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0%" stopColor="hsl(var(--sage))" />
-            <stop offset="100%" stopColor="hsl(var(--sage) / 0.7)" />
+            <stop offset="0%" stopColor="var(--sage)" />
+            <stop offset="100%" stopColor="var(--sage)" stopOpacity="0.7" />
           </linearGradient>
         </defs>
         {/* Outline */}
         <path
           d="M16 28 C 4 20, 4 10, 10 7 C 13 5.5, 15.5 7, 16 9 C 16.5 7, 19 5.5, 22 7 C 28 10, 28 20, 16 28 Z"
-          fill="hsl(var(--sage) / 0.12)"
-          stroke="hsl(var(--sage))"
+          fill="var(--sage)"
+          fillOpacity="0.12"
+          stroke="var(--sage)"
           strokeWidth="1.2"
         />
         {/* Animated fill */}
