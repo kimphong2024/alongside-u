@@ -59,10 +59,10 @@
 
   /* Soft off-white card */
   --card: #FAF8F5;
-  --card-foreground: #5E4636;
+  --card-foreground: #33251E;
 
   --popover: #FAF8F5;
-  --popover-foreground: #5E4636;
+  --popover-foreground: #33251E;
 
   /* Muted sage primary */
   --primary: #8FA88A;
@@ -70,13 +70,13 @@
 
   /* Soft sage wash */
   --secondary: #E7EFE7;
-  --secondary-foreground: #5E4636;
+  --secondary-foreground: #33251E;
 
   --muted: #EFE7DD;
-  --muted-foreground: #8A7668;
+  --muted-foreground: #6C6058;
 
   --accent: #E7EFE7;
-  --accent-foreground: #5E4636;
+  --accent-foreground: #33251E;
 
   --destructive: #C97B5E;
   --destructive-foreground: #FAF8F5;
