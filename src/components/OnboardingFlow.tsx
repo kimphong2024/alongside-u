@@ -32,13 +32,13 @@ function ChoiceGrid({
           onClick={() => onSelect(o)}
           className={`group relative text-left px-4 py-4 rounded-2xl border transition-all duration-200 ${
             isSelected(o)
-              ? "bg-sage-soft border-sage shadow-soft"
-              : "bg-card border-border hover:bg-muted hover:border-sage/40"
+              ? "bg-card border-border/70 shadow-soft text-accent-active"
+              : "bg-transparent border-border text-foreground hover:bg-card/60"
           }`}
         >
-          <span className="text-sm font-medium text-foreground">{o}</span>
+          <span className="text-sm font-medium">{o}</span>
           {isSelected(o) && (
-            <Check className="absolute top-3 right-3 h-4 w-4 text-sage" strokeWidth={2.4} />
+            <Check className="absolute top-3 right-3 h-4 w-4 text-accent-active" strokeWidth={2.4} />
           )}
         </button>
       ))}
