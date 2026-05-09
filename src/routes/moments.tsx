@@ -305,7 +305,7 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
               <div
                 className="w-3 h-4 rounded-sm shadow-soft"
                 style={{
-                  background: "linear-gradient(180deg, hsl(var(--clay)) 0%, hsl(var(--clay) / 0.75) 100%)",
+                  background: "linear-gradient(180deg, var(--clay) 0%, var(--clay-soft) 100%)",
                 }}
               />
             </div>
