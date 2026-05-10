@@ -432,6 +432,37 @@ function MemoryCollage({
                 </motion.div>
               );
             })}
+
+            {/* Empty polaroid — quick add */}
+            <motion.div
+              initial={{ opacity: 0, y: -40, rotate: 0 }}
+              animate={{ opacity: 1, y: 0, rotate: 4 }}
+              transition={{ delay: cards.length * 0.12, type: "spring", stiffness: 80, damping: 14 }}
+              whileHover={{ y: -6, rotate: 1.6, transition: { duration: 0.3 } }}
+              className="relative"
+              style={{ transformOrigin: "top center" }}
+            >
+              <span
+                className="absolute left-1/2 -translate-x-1/2 -top-3 h-5 w-3 rounded-sm bg-clay/80 shadow-sm z-10"
+                aria-hidden
+              />
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onAdd();
+                }}
+                aria-label="Add a moment"
+                className="group/add bg-card border border-dashed border-foreground/25 hover:border-clay/70 p-2 pb-6 shadow-paper paper-grain rounded-md w-[150px] md:w-[180px] mt-2 transition-colors"
+              >
+                <div className="relative aspect-[4/5] rounded-sm bg-muted/40 flex flex-col items-center justify-center text-muted-foreground group-hover/add:text-clay transition-colors">
+                  <Plus className="h-8 w-8" strokeWidth={1.4} />
+                </div>
+                <p className="font-serif italic text-center text-foreground/60 text-sm mt-2 truncate">
+                  add a moment
+                </p>
+              </button>
+            </motion.div>
           </div>
         </div>
 
