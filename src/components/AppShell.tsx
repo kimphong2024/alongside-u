@@ -25,21 +25,23 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="px-5 pt-7 pb-2 flex items-center justify-between max-w-2xl mx-auto w-full">
-        <Link to="/" className="flex items-center gap-2" aria-label="Today">
-          <img src={flowerLogo} alt="" className="h-10 w-10 object-contain" />
-          <span className="font-serif text-2xl tracking-tight">Alongside</span>
-        </Link>
-        {user && (
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 h-9 px-2 sm:px-3 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition"
-            aria-label="Log out"
-          >
-            <LogOut className="h-4 w-4" strokeWidth={1.6} />
-            <span className="hidden sm:inline text-sm">Log out</span>
-          </button>
-        )}
+      <header className="sticky top-0 z-40 w-full bg-background/85 backdrop-blur-md border-b border-border/40">
+        <div className="px-5 py-3 flex items-center justify-between max-w-2xl mx-auto w-full">
+          <Link to="/" className="flex items-center gap-2" aria-label="Today">
+            <img src={flowerLogo} alt="" className="h-9 w-9 object-contain" />
+            <span className="font-serif text-2xl tracking-tight">Alongside</span>
+          </Link>
+          {user && (
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 h-9 px-2 sm:px-3 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition"
+              aria-label="Log out"
+            >
+              <LogOut className="h-4 w-4" strokeWidth={1.6} />
+              <span className="hidden sm:inline text-sm">Log out</span>
+            </button>
+          )}
+        </div>
       </header>
 
       <motion.main
