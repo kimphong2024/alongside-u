@@ -1,1 +1,4 @@
 project_id = "qeoxenjbbzxewewijqtt"
+
+[functions.public-scrapbook]
+verify_jwt = false
