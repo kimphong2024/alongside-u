@@ -10,6 +10,8 @@ import {
   FileText,
   Heart,
   Home,
+  Info,
+  Lightbulb,
   Scale,
   Sparkles,
   Stethoscope,
@@ -47,12 +49,14 @@ export const Route = createFileRoute("/care-journey")({
   component: CareJourney,
 });
 
+const EMOTIONAL_CATEGORY = "When you are ready, let's note down what has been happening";
+
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
   "Family Coordination": Users,
   "Medical": Stethoscope,
   "Medical Clarity": Stethoscope,
   "Emotional": Heart,
-  "Emotional Stabilization": Heart,
+  [EMOTIONAL_CATEGORY]: Heart,
   "Financial (Singapore)": Wallet,
   "Legal": Scale,
   "Practical": FileText,
@@ -151,8 +155,32 @@ function CareJourney() {
                     </h3>
                   </div>
 
-                  {cat.category === "Emotional Stabilization" ? (
-                    <EmotionalCarousel items={cat.items} checkedItems={state.checkedItems} onToggle={check} />
+                  {cat.category === EMOTIONAL_CATEGORY ? (
+                    <div className="space-y-3">
+                      <div className="rounded-2xl border border-border bg-gradient-sage px-4 py-3 flex items-start gap-3">
+                        <span className="h-7 w-7 rounded-full bg-card/70 border border-border/60 flex items-center justify-center flex-shrink-0">
+                          <Info className="h-4 w-4 text-foreground/70" strokeWidth={1.6} />
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium leading-snug">Quick Check</p>
+                          <p className="text-xs text-foreground/70 mt-0.5 leading-relaxed">
+                            If you have had the time to pause and process all of this.
+                          </p>
+                        </div>
+                      </div>
+                      <EmotionalCarousel items={cat.items} checkedItems={state.checkedItems} onToggle={check} />
+                      <div className="rounded-2xl border border-border bg-gradient-warm px-4 py-3 flex items-start gap-3">
+                        <span className="h-7 w-7 rounded-full bg-card/70 border border-border/60 flex items-center justify-center flex-shrink-0">
+                          <Lightbulb className="h-4 w-4 text-foreground/70" strokeWidth={1.6} />
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium leading-snug">Tip</p>
+                          <p className="text-xs text-foreground/70 mt-0.5 leading-relaxed">
+                            Big decisions today can wait.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   ) : cat.category === "Medical Clarity" ? (
                     <MedicalTiles items={cat.items} checkedItems={state.checkedItems} onToggle={check} />
                   ) : (
@@ -176,7 +204,7 @@ function CareJourney() {
               <Sparkles className="h-3.5 w-3.5 text-foreground/70" strokeWidth={1.5} />
             </span>
             <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
-              Singapore resources
+              Care resources in Singapore
             </h3>
           </div>
           <ResourcesCarousel />
