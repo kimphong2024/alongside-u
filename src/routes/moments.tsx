@@ -304,13 +304,13 @@ function Moments() {
 
 function MemoryCollage({
   loveeName,
-  photoMoments,
+  recentMoments,
   totalCount,
   onOpen,
   onAdd,
 }: {
   loveeName: string;
-  photoMoments: Moment[];
+  recentMoments: Moment[];
   totalCount: number;
   onOpen: () => void;
   onAdd: () => void;
@@ -321,14 +321,17 @@ function MemoryCollage({
     { id: "seed-garden", src: momentsGarden, kind: "photo" as const, caption: "spring garden" },
   ];
 
-  const userCards = photoMoments.slice(0, 3).map((m, i) => ({
-    id: m.id,
-    src: (m.photo || m.video)!,
-    kind: (m.photo ? "photo" : "video") as "photo" | "video",
-    caption: m.title?.toLowerCase() || seedCards[i]?.caption || "",
-  }));
+  type CardKind = "photo" | "video" | "blank";
+  const userCards: { id: string; src?: string; kind: CardKind; caption: string }[] =
+    recentMoments.slice(0, 3).map((m, i) => ({
+      id: m.id,
+      src: m.photo || m.video,
+      kind: m.video ? "video" : m.photo ? "photo" : "blank",
+      caption: m.title?.toLowerCase() || seedCards[i]?.caption || "",
+    }));
 
-  const cards = (userCards.length > 0 ? userCards : seedCards).slice(0, 3);
+  const cards: { id: string; src?: string; kind: CardKind; caption: string }[] =
+    (userCards.length > 0 ? userCards : seedCards).slice(0, 3);
 
   // Slight alternating tilt for a hand-pinned clothesline feel.
   const tilts = [-3, 2, -2];
