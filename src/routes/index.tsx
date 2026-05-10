@@ -28,7 +28,9 @@ function Today() {
     if (!onboarding.completed) navigate({ to: "/onboarding" });
   }, [hydrated, user, onboarding.completed, navigate]);
 
-  if (!hydrated || !user) return null;
+  if (!hydrated || !user || !onboarding.completed) {
+    return <div className="min-h-screen bg-background" />;
+  }
 
   const greetingName = onboarding.caregiverName?.trim();
   const loveeName = onboarding.loveeName?.trim() || "your loved one";
