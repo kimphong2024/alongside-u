@@ -269,8 +269,10 @@ function EmotionalCarousel({
   const [leaving, setLeaving] = useState<Record<string, boolean>>({});
   const gradients = ["bg-gradient-sage", "bg-gradient-warm", "bg-gradient-dawn"];
 
-  const handleComplete = (id: string) => {
+  const handleComplete = (id: string, e?: React.MouseEvent) => {
     const item = items.find((i) => i.id === id);
+    const origin = originFromEvent(e);
+    if (origin) flyHeart(origin);
     setLeaving((p) => ({ ...p, [id]: true }));
     setTimeout(() => {
       onToggle(id);
