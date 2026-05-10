@@ -1,15 +1,18 @@
-## Make the heart visibly ~25% full after the first task
+## Fix: questionnaire skipped after one page
 
-Right now the water level is a true ratio: with many tasks, completing one only fills ~3%, which barely shows. The user wants the first completion to read clearly (~20–30%) and growth from there to remain proportional.
+The welcome chooser at `/onboarding` is showing once, then "Show me what needs to be done" sends you to `/care-journey-intro`, which immediately bounces to `/care-journey`. Result: the user only ever sees one page.
 
-### Change (single spot)
+### Root cause
+`/care-journey-intro` skips the questionnaire when `onboarding.completed === true`. But many users already have `completed=true` saved from the previous version of the chooser (which auto-marked completion). So the intro redirects away before any of its own steps render.
 
-In `src/routes/care-journey.tsx`, `HeartMeter` (around line 712–714):
+### Fix (single file: `src/routes/care-journey-intro.tsx`)
 
-- Keep the incoming `ratio` for the splash/overshoot trigger and the `checked/total` label as-is.
-- Compute a separate `visualR` for the water fill geometry only:
-  - If `r === 0` → 0 (empty heart stays empty).
-  - Else → `0.25 + 0.75 * r` (so 1 task instantly looks ~25% full, fully complete still reaches 100%).
-- Use `visualR` to derive `fillHeight` and `fillY` (replacing the current `r * 24`). Wave visibility (`r > 0 ? "block" : "none"`) keeps using `r`.
+Replace the "already done" guard so it only fires when the questionnaire itself has actually been answered, not when the legacy `completed` flag is set:
 
-No other components or data change.
+- Add a helper, e.g. `const introDone = !!onboarding.relationship && !!onboarding.illnessType;` (the two required-to-advance fields from the early steps).
+- Change the redirect-to-`/care-journey` line to use `introDone` instead of `onboarding.completed`.
+- Keep the final-step `saveOnboarding({ ...data, completed: true })` as-is — it still records overall completion for other places that may read it.
+
+This makes returning users with stale `completed=true` still see the questionnaire on first visit, but anyone who has actually filled it out goes straight to `/care-journey`.
+
+No DB or store changes needed.

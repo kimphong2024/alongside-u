@@ -158,7 +158,8 @@ function CareJourneyIntro() {
   useEffect(() => {
     if (!hydrated) return;
     if (!user) { navigate({ to: "/auth" }); return; }
-    if (onboarding.completed) { navigate({ to: "/care-journey" }); return; }
+    const introDone = !!onboarding.relationship && !!onboarding.illnessType;
+    if (introDone) { navigate({ to: "/care-journey" }); return; }
     if (!seeded) { setData(onboarding); setSeeded(true); }
   }, [hydrated, user, onboarding, navigate, seeded]);
 
