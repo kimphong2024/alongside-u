@@ -24,7 +24,7 @@ type Step = {
 };
 
 const RELATIONSHIPS = ["Son", "Daughter", "Spouse", "Grandchild", "Sibling", "Parent", "Friend"];
-const ILLNESSES = ["Cancer", "Dementia", "Heart failure", "ALS", "Parkinson's", "Other"];
+
 const STAGES = ["Recently diagnosed", "Early stage", "Advanced", "Not sure yet"];
 const EMOTIONS = ["Overwhelmed", "Numb", "Anxious", "Lost", "Trying to stay strong", "Managing okay"];
 const EMOTION_ICONS: Record<string, LucideIcon> = {
@@ -197,7 +197,7 @@ function CareJourneyIntro() {
   useEffect(() => {
     if (!hydrated) return;
     if (!user) { navigate({ to: "/auth" }); return; }
-    const introDone = !!onboarding.relationship && !!onboarding.illnessType;
+    const introDone = !!onboarding.relationship;
     if (introDone) { navigate({ to: "/care-journey" }); return; }
     if (!seeded) { setData(onboarding); setSeeded(true); }
   }, [hydrated, user, onboarding, navigate, seeded]);
@@ -235,12 +235,11 @@ function CareJourneyIntro() {
         </h2>
       </div>
     )},
-    { id: "illnessType", canContinue: (d) => !!d.illnessType, render: ({ data, set }) => {
+    { id: "illnessType", render: ({ data, set }) => {
       const lovedOne = lovedOneFor(data.relationship);
       return (
       <div className="space-y-6">
         <Header title="What diagnosis did your loved one receive?" subtitle="This helps us personalize guidance and support." />
-        <ChoiceGrid options={ILLNESSES} selected={data.illnessType} onSelect={(v) => set("illnessType", v)} />
         <div className="space-y-2 pt-2">
           <span className="text-sm text-muted-foreground">Where is your {lovedOne} in their diagnosis? (optional)</span>
           <ChoiceGrid options={STAGES} selected={data.illnessStage} onSelect={(v) => set("illnessStage", v)} />
