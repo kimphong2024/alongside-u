@@ -260,6 +260,7 @@ function EmotionalCarousel({
   const gradients = ["bg-gradient-sage", "bg-gradient-warm", "bg-gradient-dawn"];
 
   const handleComplete = (id: string) => {
+    const item = items.find((i) => i.id === id);
     setLeaving((p) => ({ ...p, [id]: true }));
     setTimeout(() => {
       onToggle(id);
@@ -268,6 +269,7 @@ function EmotionalCarousel({
         delete n[id];
         return n;
       });
+      if (item) notifyCompleted(item.title, () => onToggle(id));
     }, 550);
   };
 
