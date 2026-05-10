@@ -177,24 +177,26 @@ function CareJourney() {
 
                   {cat.category === EMOTIONAL_CATEGORY ? (
                     <div className="space-y-3">
-                      <div className="rounded-2xl border border-border bg-gradient-sage px-4 py-3 flex items-start gap-3">
-                        <span className="h-7 w-7 rounded-full bg-card/70 border border-border/60 flex items-center justify-center flex-shrink-0">
-                          <Info className="h-4 w-4 text-foreground/70" strokeWidth={1.6} />
-                        </span>
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium leading-snug">Quick Check</p>
+                      <div className="rounded-2xl border border-border bg-gradient-sage px-4 py-3 flex items-center gap-3">
+                        <img src={imgPause} alt="" className="h-14 w-14 object-contain flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <Info className="h-3.5 w-3.5 text-foreground/70" strokeWidth={1.8} />
+                            <p className="text-sm font-medium leading-snug">Quick Check</p>
+                          </div>
                           <p className="text-xs text-foreground/70 mt-0.5 leading-relaxed">
                             If you have had the time to pause and process all of this.
                           </p>
                         </div>
                       </div>
                       <EmotionalCarousel items={cat.items} checkedItems={state.checkedItems} onToggle={check} />
-                      <div className="rounded-2xl border border-border bg-gradient-warm px-4 py-3 flex items-start gap-3">
-                        <span className="h-7 w-7 rounded-full bg-card/70 border border-border/60 flex items-center justify-center flex-shrink-0">
-                          <Lightbulb className="h-4 w-4 text-foreground/70" strokeWidth={1.6} />
-                        </span>
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium leading-snug">Tip</p>
+                      <div className="rounded-2xl border border-border bg-gradient-warm px-4 py-3 flex items-center gap-3">
+                        <img src={imgPauseDecisions} alt="" className="h-14 w-14 object-contain flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <Lightbulb className="h-3.5 w-3.5 text-foreground/70" strokeWidth={1.8} />
+                            <p className="text-sm font-medium leading-snug">Tip</p>
+                          </div>
                           <p className="text-xs text-foreground/70 mt-0.5 leading-relaxed">
                             Big decisions today can wait.
                           </p>
