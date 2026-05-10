@@ -29,5 +29,7 @@ export function getHeartTarget() {
 
 export function onTarget(l: TargetListener) {
   targetListeners.add(l);
-  return () => targetListeners.delete(l);
+  return () => {
+    targetListeners.delete(l);
+  };
 }
