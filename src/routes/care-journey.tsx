@@ -39,6 +39,15 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { flyHeart, setHeartTarget } from "@/lib/heart-flight";
+import { HeartFlyer } from "@/components/HeartFlyer";
+
+function originFromEvent(e: React.MouseEvent | React.TouchEvent | undefined): { x: number; y: number } | null {
+  if (!e) return null;
+  const t = e.currentTarget as HTMLElement;
+  const r = t.getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+}
 
 function notifyCompleted(title: string, undo: () => void) {
   toast.success(`Marked done · ${title}`, {
