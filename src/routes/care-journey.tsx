@@ -588,8 +588,8 @@ function ChecklistAccordion({
           >
             <div className="flex items-start gap-3 px-4 py-3">
               <button
-                onClick={() => {
-                  if (!isLeaving) handleComplete(item.id);
+                onClick={(e) => {
+                  if (!isLeaving) handleComplete(item.id, e);
                 }}
                 className="mt-0.5 h-5 w-5 rounded-full flex items-center justify-center border border-border hover:border-sage hover:bg-sage/20 flex-shrink-0 transition"
                 aria-label="Mark complete"
