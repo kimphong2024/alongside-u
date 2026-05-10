@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
 import type { Moment } from "@/lib/store";
+import { DEMO_MOMENTS } from "@/lib/demo-moments";
 
 export const Route = createFileRoute("/scrapbook/$token")({
   head: () => ({
@@ -62,7 +63,9 @@ function SharedScrapbook() {
     };
   }, [token]);
 
-  const groups = groupByRelativeDate(data.moments);
+  const isDemo = !loading && !error && data.moments.length === 0;
+  const displayMoments = isDemo ? DEMO_MOMENTS : data.moments;
+  const groups = groupByRelativeDate(displayMoments);
 
   return (
     <div className="min-h-screen bg-background">
@@ -83,10 +86,13 @@ function SharedScrapbook() {
         {error && (
           <p className="text-center text-sm text-muted-foreground">{error}</p>
         )}
-        {!loading && !error && groups.length === 0 && (
-          <p className="text-center font-serif italic text-xl text-foreground/60">
-            No moments to show yet.
-          </p>
+        {isDemo && (
+          <div className="rounded-2xl border border-dashed border-border bg-card/60 px-4 py-3 text-center">
+            <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Demo scrapbook</p>
+            <p className="text-sm text-foreground/75 mt-1 leading-relaxed">
+              A few sample memories so you can see what a shared scrapbook looks like.
+            </p>
+          </div>
         )}
         {groups.map((g) => (
           <section key={g.label}>
