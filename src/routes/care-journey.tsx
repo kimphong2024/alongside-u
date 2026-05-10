@@ -204,7 +204,7 @@ function CareJourney() {
                     <span className="h-6 w-6 rounded-full bg-card border border-border flex items-center justify-center">
                       <Icon className="h-3.5 w-3.5 text-foreground/70" strokeWidth={1.5} />
                     </span>
-                    <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                    <h3 className="text-sm font-medium tracking-normal text-foreground/80">
                       {cat.category}
                     </h3>
                   </div>
