@@ -609,16 +609,16 @@ function ChecklistAccordion({
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="rounded-2xl border bg-card border-border overflow-hidden"
           >
-            <div className="flex items-start gap-3 px-4 py-3">
+            <div className="flex items-center gap-3 px-4 py-3">
               <button
                 onClick={(e) => {
                   if (!isLeaving) handleComplete(item.id, e);
                 }}
-                className="mt-0.5 h-5 w-5 rounded-full flex items-center justify-center border border-border hover:border-sage hover:bg-sage/20 flex-shrink-0 transition"
+                className="h-5 w-5 rounded-full flex items-center justify-center border border-border hover:border-sage hover:bg-sage/20 flex-shrink-0 transition"
                 aria-label="Mark complete"
               />
               <button onClick={() => onToggleOpen(item.id)} className="flex-1 text-left">
-                <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
                     <span className="text-sm font-medium leading-snug block">
                       {item.title}
@@ -627,7 +627,7 @@ function ChecklistAccordion({
                       {item.description}
                     </span>
                   </div>
-                  <ChevronDown className={`h-4 w-4 mt-0.5 text-muted-foreground transition flex-shrink-0 ${open ? "rotate-180" : ""}`} />
+                  <ChevronDown className={`h-4 w-4 text-muted-foreground transition flex-shrink-0 ${open ? "rotate-180" : ""}`} />
                 </div>
               </button>
             </div>
