@@ -113,12 +113,29 @@ function CareJourney() {
   const { state, update, hydrated } = useAppState();
   const [activePhase, setActivePhase] = useState(CARE_JOURNEY[0].id);
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
+  const [progressOpen, setProgressOpen] = useState(false);
 
-  const { totalCount, checkedCount } = useMemo(() => {
+  const { totalCount, checkedCount, completedItems, pendingItems } = useMemo(() => {
     let total = 0;
-    for (const p of CARE_JOURNEY) for (const c of p.categories) total += c.items.length;
-    const checked = Object.values(state?.checkedItems ?? {}).filter(Boolean).length;
-    return { totalCount: total, checkedCount: Math.min(checked, total) };
+    const completed: { id: string; title: string; phase: string; category: string }[] = [];
+    const pending: { id: string; title: string; phase: string; category: string }[] = [];
+    const checks = state?.checkedItems ?? {};
+    for (const p of CARE_JOURNEY) {
+      for (const c of p.categories) {
+        total += c.items.length;
+        for (const item of c.items) {
+          const entry = { id: item.id, title: item.title, phase: p.title, category: c.category };
+          if (checks[item.id]) completed.push(entry);
+          else pending.push(entry);
+        }
+      }
+    }
+    return {
+      totalCount: total,
+      checkedCount: Math.min(completed.length, total),
+      completedItems: completed,
+      pendingItems: pending,
+    };
   }, [state?.checkedItems]);
 
   if (!hydrated) return null;
@@ -146,7 +163,7 @@ function CareJourney() {
               A few suggestions for each chapter.
             </p>
           </div>
-          <HeartMeter ratio={ratio} checked={checkedCount} total={totalCount} />
+          <HeartMeter ratio={ratio} checked={checkedCount} total={totalCount} onClick={() => setProgressOpen(true)} />
         </header>
 
         <div className="flex gap-2 overflow-x-auto pb-1 -mx-5 px-5 scrollbar-none">
@@ -249,6 +266,14 @@ function CareJourney() {
           <ResourcesCarousel />
         </section>
       </div>
+      <ProgressDialog
+        open={progressOpen}
+        onOpenChange={setProgressOpen}
+        completed={completedItems}
+        pending={pendingItems}
+        onUncheck={(id) => update((s) => ({ ...s, checkedItems: { ...s.checkedItems, [id]: false } }))}
+        onCheck={(id) => update((s) => ({ ...s, checkedItems: { ...s.checkedItems, [id]: true } }))}
+      />
       <HeartFlyer />
     </AppShell>
   );
@@ -677,7 +702,7 @@ function ResourcesCarousel() {
 
 /* -------------------- Heart completion meter -------------------- */
 
-function HeartMeter({ ratio, checked, total }: { ratio: number; checked: number; total: number }) {
+function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked: number; total: number; onClick?: () => void }) {
   const r = Math.max(0, Math.min(1, ratio));
   const fillHeight = 24 * r;
   const fillY = 28 - fillHeight;
@@ -712,9 +737,11 @@ function HeartMeter({ ratio, checked, total }: { ratio: number; checked: number;
   }, []);
 
   return (
-    <motion.div
-      className="flex flex-col items-center flex-shrink-0 pt-1 sticky top-2 z-20"
-      aria-label={`${checked} of ${total} tasks complete`}
+    <motion.button
+      type="button"
+      onClick={onClick}
+      className="flex flex-col items-center flex-shrink-0 pt-1 sticky top-2 z-20 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-sage rounded-2xl"
+      aria-label={`View progress: ${checked} of ${total} tasks complete`}
     >
       <motion.svg ref={svgRef} viewBox="0 0 32 32" style={{ width: size, height: size }} aria-hidden>
         <defs>
@@ -750,6 +777,96 @@ function HeartMeter({ ratio, checked, total }: { ratio: number; checked: number;
       >
         {checked}/{total}
       </motion.span>
-    </motion.div>
+    </motion.button>
+  );
+}
+
+/* -------------------- Progress dialog -------------------- */
+
+type ProgressItem = { id: string; title: string; phase: string; category: string };
+
+function ProgressDialog({
+  open,
+  onOpenChange,
+  completed,
+  pending,
+  onUncheck,
+  onCheck,
+}: {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+  completed: ProgressItem[];
+  pending: ProgressItem[];
+  onUncheck: (id: string) => void;
+  onCheck: (id: string) => void;
+}) {
+  const total = completed.length + pending.length;
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="font-serif text-xl">Your progress</DialogTitle>
+          <DialogDescription>
+            {completed.length} of {total} gentle steps complete.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-5 mt-2">
+          <section>
+            <h4 className="text-xs uppercase tracking-[0.14em] text-muted-foreground mb-2 flex items-center gap-2">
+              <Check className="h-3.5 w-3.5 text-sage" strokeWidth={2} />
+              Completed · {completed.length}
+            </h4>
+            {completed.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic">Nothing checked off yet — that's okay.</p>
+            ) : (
+              <ul className="space-y-1.5">
+                {completed.map((it) => (
+                  <li key={it.id} className="flex items-start gap-2 rounded-xl border border-border bg-sage-soft/30 px-3 py-2">
+                    <button
+                      onClick={() => onUncheck(it.id)}
+                      aria-label="Mark as not done"
+                      className="h-5 w-5 mt-0.5 rounded-full bg-sage border border-sage flex items-center justify-center flex-shrink-0 hover:opacity-80"
+                    >
+                      <Check className="h-3 w-3 text-card" strokeWidth={3} />
+                    </button>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm leading-snug text-foreground/80 line-through">{it.title}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{it.phase} · {it.category}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section>
+            <h4 className="text-xs uppercase tracking-[0.14em] text-muted-foreground mb-2 flex items-center gap-2">
+              <Sparkles className="h-3.5 w-3.5 text-foreground/60" strokeWidth={1.6} />
+              Still pending · {pending.length}
+            </h4>
+            {pending.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic">All done. Take a breath.</p>
+            ) : (
+              <ul className="space-y-1.5">
+                {pending.map((it) => (
+                  <li key={it.id} className="flex items-start gap-2 rounded-xl border border-border bg-card px-3 py-2">
+                    <button
+                      onClick={() => onCheck(it.id)}
+                      aria-label="Mark as done"
+                      className="h-5 w-5 mt-0.5 rounded-full bg-card border border-border flex items-center justify-center flex-shrink-0 hover:bg-sage hover:border-sage"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm leading-snug text-foreground">{it.title}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{it.phase} · {it.category}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
