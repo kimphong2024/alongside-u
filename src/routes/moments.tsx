@@ -29,7 +29,6 @@ export const Route = createFileRoute("/moments")({
 function Moments() {
   const { state, update, hydrated } = useAppState();
   const { user } = useAuth();
-  const [tab, setTab] = useState<"journal" | "bucket">("journal");
   const [journalView, setJournalView] = useState<"collage" | "timeline">("collage");
   const [composerOpen, setComposerOpen] = useState(false);
   const [newBucket, setNewBucket] = useState("");
