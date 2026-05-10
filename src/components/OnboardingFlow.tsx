@@ -56,7 +56,7 @@ export function OnboardingFlow() {
         You are not alone. What shall we do today?
       </motion.h1>
 
-      <div className="mt-10 w-full grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div className="mt-10 w-full grid grid-cols-1 sm:grid-cols-2 gap-8 justify-items-stretch">
         {TILES.map((t, i) => {
           const Icon = t.icon;
           return (
