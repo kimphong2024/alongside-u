@@ -4,11 +4,14 @@ import { useNavigate, Link } from "@tanstack/react-router";
 import { ArrowRight, Wind, ListChecks } from "lucide-react";
 import { useAppData } from "@/lib/store";
 import heartImg from "@/assets/arms-hugging-heart.png";
+import processWavesImg from "@/assets/onboarding-process-waves.png";
+import checklistImg from "@/assets/onboarding-checklist.png";
 
 const TILES = [
   {
     title: "Let me process this a bit more",
     icon: Wind,
+    illustration: processWavesImg,
     to: "/support" as const,
     gradient:
       "radial-gradient(120% 100% at 20% 15%, #F4D7DE 0%, #EBD5E6 45%, #E0D2EC 100%)",
@@ -16,6 +19,7 @@ const TILES = [
   {
     title: "Show me what needs to be done",
     icon: ListChecks,
+    illustration: checklistImg,
     to: "/care-journey" as const,
     gradient:
       "radial-gradient(120% 100% at 25% 20%, #DDEAD3 0%, #CFE5CC 50%, #D8EBD4 100%)",
@@ -71,7 +75,12 @@ export function OnboardingFlow() {
                   className="relative aspect-square rounded-3xl border border-border/40 shadow-soft p-6 flex flex-col justify-between overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:shadow-paper"
                   style={{ backgroundImage: t.gradient }}
                 >
-                  <div className="flex items-start justify-between">
+                  <img
+                    src={t.illustration}
+                    alt=""
+                    className="absolute right-2 bottom-16 w-40 md:w-48 lg:w-56 object-contain pointer-events-none select-none mix-blend-multiply opacity-90 transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="relative flex items-start justify-between">
                     <Icon
                       className="h-7 w-7 text-foreground/70"
                       strokeWidth={1.4}
@@ -81,7 +90,7 @@ export function OnboardingFlow() {
                       strokeWidth={1.6}
                     />
                   </div>
-                  <h3 className="font-serif text-2xl leading-tight text-foreground/90 text-balance">
+                  <h3 className="relative font-serif text-2xl leading-tight text-foreground/90 text-balance">
                     {t.title}
                   </h3>
                 </div>
