@@ -481,7 +481,7 @@ function TimelineGroup({ group }: { group: Group }) {
   );
 }
 
-function PeggedCard({ index, children }: { index: number; children: React.ReactNode }) {
+function PeggedCard({ index, children }: { index: number; children: ReactNode }) {
   const tilts = [-3, 2, -1, 3, -2, 1];
   const rotate = tilts[index % tilts.length];
   return (
