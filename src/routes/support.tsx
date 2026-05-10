@@ -75,7 +75,7 @@ function Support() {
 
   const addMember = () => {
     if (!name.trim()) return;
-    const m: FamilyMember = { id: String(Date.now()), name: name.trim(), relationship: rel.trim() || "Family", email: email.trim() || undefined };
+    const m: FamilyMember = { id: crypto.randomUUID(), name: name.trim(), relationship: rel.trim() || "Family", email: email.trim() || undefined };
     update((s) => ({ ...s, family: [...s.family, m] }));
     setName(""); setRel(""); setEmail("");
   };

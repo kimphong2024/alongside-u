@@ -14,6 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
+      bucket_items: {
+        Row: {
+          category: string
+          created_at: string
+          done: boolean
+          id: string
+          owner_id: string
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          done?: boolean
+          id?: string
+          owner_id: string
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          done?: boolean
+          id?: string
+          owner_id?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      check_ins: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          mood: string
+          owner_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          mood: string
+          owner_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          mood?: string
+          owner_id?: string
+        }
+        Relationships: []
+      }
+      checked_items: {
+        Row: {
+          checked_at: string
+          id: string
+          item_key: string
+          owner_id: string
+        }
+        Insert: {
+          checked_at?: string
+          id?: string
+          item_key: string
+          owner_id: string
+        }
+        Update: {
+          checked_at?: string
+          id?: string
+          item_key?: string
+          owner_id?: string
+        }
+        Relationships: []
+      }
       family_members: {
         Row: {
           created_at: string | null
@@ -38,6 +110,45 @@ export type Database = {
           name?: string
           owner_id?: string
           relationship?: string | null
+        }
+        Relationships: []
+      }
+      moments: {
+        Row: {
+          audio: string | null
+          audio_duration: number | null
+          created_at: string
+          date: string
+          id: string
+          note: string
+          owner_id: string
+          photo: string | null
+          title: string
+          video: string | null
+        }
+        Insert: {
+          audio?: string | null
+          audio_duration?: number | null
+          created_at?: string
+          date: string
+          id?: string
+          note?: string
+          owner_id: string
+          photo?: string | null
+          title?: string
+          video?: string | null
+        }
+        Update: {
+          audio?: string | null
+          audio_duration?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          note?: string
+          owner_id?: string
+          photo?: string | null
+          title?: string
+          video?: string | null
         }
         Relationships: []
       }
