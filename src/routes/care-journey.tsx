@@ -680,9 +680,18 @@ function ResourcesCarousel() {
             <CarouselItem key={r.name} className="pl-3 basis-[60%] sm:basis-[40%] md:basis-[28%]">
               <a href={r.url} target="_blank" rel="noreferrer" className="block group">
                 <div
-                  className={`relative aspect-[4/3] rounded-3xl border border-border ${grad} shadow-soft overflow-hidden flex items-center justify-center transition group-hover:shadow-paper`}
+                  className={`relative aspect-[4/3] rounded-3xl border border-border ${r.logo ? "bg-card" : grad} shadow-soft overflow-hidden flex items-center justify-center p-5 transition group-hover:shadow-paper`}
                 >
-                  <Icon className="h-16 w-16 text-foreground/40" strokeWidth={1.2} />
+                  {r.logo ? (
+                    <img
+                      src={r.logo}
+                      alt={`${r.name} logo`}
+                      loading="lazy"
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  ) : (
+                    <Icon className="h-16 w-16 text-foreground/40" strokeWidth={1.2} />
+                  )}
                   <span className="absolute top-3 right-3 h-7 w-7 rounded-full bg-card/80 backdrop-blur border border-border/60 flex items-center justify-center">
                     <ExternalLink className="h-3.5 w-3.5 text-foreground/60" strokeWidth={1.6} />
                   </span>
