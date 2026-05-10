@@ -27,7 +27,7 @@ function AuthPage() {
     setBusy(true);
     setStatus("Redirecting to Singpass…");
     try {
-      await new Promise((r) => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 800));
       setStatus("Verifying your identity…");
 
       const key = "singpass_demo_id";
@@ -40,16 +40,31 @@ function AuthPage() {
       const password = `Sp!${demoId}`;
 
       const signIn = await supabase.auth.signInWithPassword({ email, password });
-      if (signIn.error) {
+      let userId = signIn.data.user?.id;
+      if (signIn.error || !userId) {
         const signUp = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: `${window.location.origin}/` },
         });
         if (signUp.error) throw signUp.error;
-        await supabase.auth.signInWithPassword({ email, password });
+        const retry = await supabase.auth.signInWithPassword({ email, password });
+        userId = retry.data.user?.id;
       }
-      navigate({ to: "/" });
+
+      // Decide destination so we never flash through "/" first
+      let destination: "/" | "/onboarding" = "/onboarding";
+      if (userId) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("completed")
+          .eq("id", userId)
+          .maybeSingle();
+        destination = profile?.completed ? "/" : "/onboarding";
+      }
+
+      // Keep the loading overlay visible across the route change
+      navigate({ to: destination });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Something went wrong";
       toast.error(msg);
@@ -60,12 +75,13 @@ function AuthPage() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center px-5 py-10 bg-cover bg-center"
+      className="min-h-screen flex flex-col items-center justify-center px-5 py-10 bg-cover bg-center relative"
       style={{ backgroundImage: `url(${authBg})` }}
     >
       <motion.div
         initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
+        animate={{ opacity: busy ? 0 : 1, y: 0 }}
+        transition={{ duration: 0.4 }}
         className="w-full max-w-[420px]"
       >
         <button
@@ -78,16 +94,25 @@ function AuthPage() {
           <img src={singpassMock} alt="Sign in with Singpass" className="w-full h-auto block" />
         </button>
 
-        {status && (
-          <p className="text-sm text-muted-foreground text-center mt-4 animate-pulse">
-            {status}
-          </p>
-        )}
-
         <p className="text-xs text-muted-foreground/80 text-center mt-6">
           Powered by Alongside · Demo mode — tap to continue
         </p>
       </motion.div>
+
+      {/* Full-bleed loading overlay — covers the auth UI and persists across navigation */}
+      {busy && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.35 }}
+          className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center gap-4"
+        >
+          <div className="h-8 w-8 rounded-full border-2 border-border border-t-foreground/60 animate-spin" />
+          {status && (
+            <p className="text-sm text-muted-foreground font-serif italic">{status}</p>
+          )}
+        </motion.div>
+      )}
     </div>
   );
 }
