@@ -165,23 +165,26 @@ function Support() {
 
               <section className="space-y-3">
                 <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">Reminders</h3>
-                <div className="-mx-5 px-5 overflow-x-auto scrollbar-none">
-                  <div className="flex gap-3 snap-x snap-mandatory pb-1">
+                <Carousel opts={{ align: "start" }} className="w-full relative">
+                  <CarouselContent>
                     {[
                       { text: "You are doing the best you can with what you have.", grad: "bg-gradient-warm" },
                       { text: "Resting is not abandoning. It is sustaining.", grad: "bg-gradient-sage" },
                       { text: "Asking for help is an act of love - for them, and for you.", grad: "bg-gradient-dawn" },
                       { text: "There is no perfect way to do this.", grad: "bg-gradient-warm" },
                     ].map((q) => (
-                      <div
-                        key={q.text}
-                        className={`snap-start shrink-0 w-[88%] sm:w-[72%] md:w-[60%] min-h-[180px] rounded-2xl ${q.grad} border border-border p-7 shadow-soft flex items-center`}
-                      >
-                        <p className="font-serif italic text-2xl md:text-3xl leading-snug text-foreground/85 text-balance">{q.text}</p>
-                      </div>
+                      <CarouselItem key={q.text} className="basis-[88%] sm:basis-[72%] md:basis-[60%]">
+                        <div
+                          className={`min-h-[200px] rounded-2xl ${q.grad} border border-border p-7 shadow-soft flex items-center`}
+                        >
+                          <p className="font-serif italic leading-snug text-foreground/85 text-balance" style={{ fontSize: 30 }}>{q.text}</p>
+                        </div>
+                      </CarouselItem>
                     ))}
-                  </div>
-                </div>
+                  </CarouselContent>
+                  <CarouselPrevious className="-left-3 md:-left-5" />
+                  <CarouselNext className="-right-3 md:-right-5" />
+                </Carousel>
               </section>
 
               <section className="space-y-3">
