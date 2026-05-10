@@ -458,9 +458,15 @@ function ChecklistAccordion({
         const checked = !!checkedItems[item.id];
         const open = !!openItems[item.id];
         return (
-          <div
+          <motion.div
             key={item.id}
-            className={`rounded-2xl border transition overflow-hidden ${
+            animate={
+              checked
+                ? { opacity: [1, 0.3, 0.7], scale: [1, 0.97, 0.99] }
+                : { opacity: 1, scale: 1 }
+            }
+            transition={{ duration: 0.6, ease: "easeOut", times: [0, 0.55, 1] }}
+            className={`rounded-2xl border overflow-hidden ${
               checked ? "bg-sage-soft/40 border-sage/30" : "bg-card border-border"
             }`}
           >
