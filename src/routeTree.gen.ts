@@ -14,6 +14,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MomentsRouteImport } from './routes/moments'
 import { Route as FamilyRouteImport } from './routes/family'
+import { Route as CareJourneyIntroRouteImport } from './routes/care-journey-intro'
 import { Route as CareJourneyRouteImport } from './routes/care-journey'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
@@ -44,6 +45,11 @@ const FamilyRoute = FamilyRouteImport.update({
   path: '/family',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CareJourneyIntroRoute = CareJourneyIntroRouteImport.update({
+  id: '/care-journey-intro',
+  path: '/care-journey-intro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CareJourneyRoute = CareJourneyRouteImport.update({
   id: '/care-journey',
   path: '/care-journey',
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/care-journey': typeof CareJourneyRoute
+  '/care-journey-intro': typeof CareJourneyIntroRoute
   '/family': typeof FamilyRoute
   '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/care-journey': typeof CareJourneyRoute
+  '/care-journey-intro': typeof CareJourneyIntroRoute
   '/family': typeof FamilyRoute
   '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/care-journey': typeof CareJourneyRoute
+  '/care-journey-intro': typeof CareJourneyIntroRoute
   '/family': typeof FamilyRoute
   '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/care-journey'
+    | '/care-journey-intro'
     | '/family'
     | '/moments'
     | '/onboarding'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/care-journey'
+    | '/care-journey-intro'
     | '/family'
     | '/moments'
     | '/onboarding'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/care-journey'
+    | '/care-journey-intro'
     | '/family'
     | '/moments'
     | '/onboarding'
@@ -139,6 +151,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   CareJourneyRoute: typeof CareJourneyRoute
+  CareJourneyIntroRoute: typeof CareJourneyIntroRoute
   FamilyRoute: typeof FamilyRoute
   MomentsRoute: typeof MomentsRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -184,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FamilyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/care-journey-intro': {
+      id: '/care-journey-intro'
+      path: '/care-journey-intro'
+      fullPath: '/care-journey-intro'
+      preLoaderRoute: typeof CareJourneyIntroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/care-journey': {
       id: '/care-journey'
       path: '/care-journey'
@@ -219,6 +239,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   CareJourneyRoute: CareJourneyRoute,
+  CareJourneyIntroRoute: CareJourneyIntroRoute,
   FamilyRoute: FamilyRoute,
   MomentsRoute: MomentsRoute,
   OnboardingRoute: OnboardingRoute,

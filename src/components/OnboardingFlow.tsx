@@ -20,7 +20,7 @@ const TILES = [
     title: "Show me what needs to be done",
     icon: ListChecks,
     illustration: checklistImg,
-    to: "/care-journey" as const,
+    to: "/care-journey-intro" as const,
     gradient:
       "radial-gradient(120% 100% at 25% 20%, #DDEAD3 0%, #CFE5CC 50%, #D8EBD4 100%)",
   },
@@ -28,15 +28,12 @@ const TILES = [
 
 export function OnboardingFlow() {
   const navigate = useNavigate();
-  const { hydrated, user, onboarding, saveOnboarding } = useAppData();
+  const { hydrated, user } = useAppData();
 
   useEffect(() => {
     if (!hydrated) return;
     if (!user) { navigate({ to: "/auth" }); return; }
-    if (!onboarding.completed) {
-      saveOnboarding({ completed: true });
-    }
-  }, [hydrated, user, onboarding.completed, navigate, saveOnboarding]);
+  }, [hydrated, user, navigate]);
 
   if (!hydrated) return null;
 
