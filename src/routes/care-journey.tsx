@@ -714,6 +714,19 @@ function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked
   const fillHeight = 24 * r;
   const fillY = 28 - fillHeight;
 
+  // Splash on completion (ratio increase)
+  const prevRatioRef = useRef(r);
+  const [splash, setSplash] = useState(false);
+  useEffect(() => {
+    if (r > prevRatioRef.current + 0.0001) {
+      setSplash(true);
+      const t = window.setTimeout(() => setSplash(false), 850);
+      prevRatioRef.current = r;
+      return () => window.clearTimeout(t);
+    }
+    prevRatioRef.current = r;
+  }, [r]);
+
   // Shrink from 4x (h-40) to 1x (h-10) over the first 240px of scroll.
   const { scrollY } = useScroll();
   const size = useTransform(scrollY, [0, 240], [160, 40], { clamp: true });
@@ -722,6 +735,12 @@ function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked
   // Squarer heart path: flatter top lobes, broader shoulders, gentler bottom point.
   const heartPath =
     "M16 26 C 3 19, 3 9, 9 6 C 13 4.5, 15.5 6.5, 16 8.5 C 16.5 6.5, 19 4.5, 23 6 C 29 9, 29 19, 16 26 Z";
+
+  // Wave paths: calm vs splashy (higher amplitude)
+  const waveBackCalm = "M -32 1 Q -24 -1.8, -16 1 T 0 1 T 16 1 T 32 1 T 48 1 T 64 1 L 64 6 L -32 6 Z";
+  const waveBackSplash = "M -32 1 Q -24 -5, -16 1 T 0 1 T 16 1 T 32 1 T 48 1 T 64 1 L 64 6 L -32 6 Z";
+  const waveFrontCalm = "M -32 1.6 Q -24 3.6, -16 1.6 T 0 1.6 T 16 1.6 T 32 1.6 T 48 1.6 T 64 1.6 L 64 6 L -32 6 Z";
+  const waveFrontSplash = "M -32 1.6 Q -24 6.5, -16 1.6 T 0 1.6 T 16 1.6 T 32 1.6 T 48 1.6 T 64 1.6 L 64 6 L -32 6 Z";
 
   const svgRef = useRef<SVGSVGElement | null>(null);
   useEffect(() => {
@@ -743,6 +762,11 @@ function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked
     };
   }, []);
 
+  // Spring config: overshoot when splashing, calm settle otherwise
+  const riseTransition = splash
+    ? { type: "spring" as const, stiffness: 180, damping: 9, mass: 0.9 }
+    : { type: "spring" as const, stiffness: 120, damping: 18 };
+
   return (
     <motion.button
       type="button"
@@ -750,7 +774,14 @@ function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked
       className="flex flex-col items-center flex-shrink-0 pt-1 sticky top-2 z-20 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-sage rounded-2xl"
       aria-label={`View progress: ${checked} of ${total} tasks complete`}
     >
-      <motion.svg ref={svgRef} viewBox="0 0 32 32" style={{ width: size, height: size }} aria-hidden>
+      <motion.svg
+        ref={svgRef}
+        viewBox="0 0 32 32"
+        style={{ width: size, height: size }}
+        animate={splash ? { scale: [1, 1.08, 1] } : { scale: 1 }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
+        aria-hidden
+      >
         <defs>
           <clipPath id="heart-clip">
             <path d={heartPath} />
@@ -767,6 +798,17 @@ function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked
           stroke="var(--sage)"
           strokeWidth="1.2"
         />
+        {/* Splash glow ring */}
+        <motion.path
+          d={heartPath}
+          fill="none"
+          stroke="var(--sage)"
+          strokeWidth="2"
+          initial={false}
+          animate={splash ? { opacity: [0, 0.7, 0], scale: [1, 1.12, 1.18] } : { opacity: 0, scale: 1 }}
+          style={{ transformOrigin: "16px 16px" }}
+          transition={{ duration: 0.75, ease: "easeOut" }}
+        />
         <g clipPath="url(#heart-clip)">
           {/* Still water body */}
           <motion.rect
@@ -774,37 +816,41 @@ function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked
             width="32"
             initial={false}
             animate={{ y: fillY + 1, height: Math.max(0, fillHeight - 1) }}
-            transition={{ type: "spring", stiffness: 120, damping: 18 }}
+            transition={riseTransition}
             fill="url(#heart-fill)"
           />
           {/* Animated wave surface (back layer, slower) */}
           <motion.g
             initial={false}
             animate={{ y: fillY }}
-            transition={{ type: "spring", stiffness: 120, damping: 18 }}
+            transition={riseTransition}
             style={{ display: r > 0 ? "block" : "none" }}
           >
             <motion.path
-              d="M -32 1 Q -24 -1, -16 1 T 0 1 T 16 1 T 32 1 T 48 1 T 64 1 L 64 4 L -32 4 Z"
+              animate={{ d: splash ? waveBackSplash : waveBackCalm, x: [-32, 0] }}
+              transition={{
+                d: { duration: 0.5, ease: "easeOut" },
+                x: { duration: 3.6, ease: "linear", repeat: Infinity },
+              }}
               fill="var(--sage)"
               fillOpacity="0.55"
-              animate={{ x: [-32, 0] }}
-              transition={{ duration: 3.2, ease: "linear", repeat: Infinity }}
             />
           </motion.g>
           {/* Animated wave surface (front layer, faster, brighter) */}
           <motion.g
             initial={false}
             animate={{ y: fillY }}
-            transition={{ type: "spring", stiffness: 120, damping: 18 }}
+            transition={riseTransition}
             style={{ display: r > 0 ? "block" : "none" }}
           >
             <motion.path
-              d="M -32 1.2 Q -24 2.6, -16 1.2 T 0 1.2 T 16 1.2 T 32 1.2 T 48 1.2 T 64 1.2 L 64 4 L -32 4 Z"
+              animate={{ d: splash ? waveFrontSplash : waveFrontCalm, x: [0, -32] }}
+              transition={{
+                d: { duration: 0.5, ease: "easeOut" },
+                x: { duration: 1.8, ease: "linear", repeat: Infinity },
+              }}
               fill="var(--sage)"
               fillOpacity="0.95"
-              animate={{ x: [0, -32] }}
-              transition={{ duration: 2.1, ease: "linear", repeat: Infinity }}
             />
           </motion.g>
         </g>
