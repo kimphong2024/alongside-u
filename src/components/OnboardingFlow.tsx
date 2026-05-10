@@ -28,15 +28,12 @@ const TILES = [
 
 export function OnboardingFlow() {
   const navigate = useNavigate();
-  const { hydrated, user, onboarding, saveOnboarding } = useAppData();
+  const { hydrated, user } = useAppData();
 
   useEffect(() => {
     if (!hydrated) return;
     if (!user) { navigate({ to: "/auth" }); return; }
-    if (!onboarding.completed) {
-      saveOnboarding({ completed: true });
-    }
-  }, [hydrated, user, onboarding.completed, navigate, saveOnboarding]);
+  }, [hydrated, user, navigate]);
 
   if (!hydrated) return null;
 
