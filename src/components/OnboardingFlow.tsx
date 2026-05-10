@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, Link } from "@tanstack/react-router";
-import { ArrowRight, Wind, ListChecks, Images } from "lucide-react";
+import { ArrowRight, Wind, ListChecks } from "lucide-react";
 import { useAppData } from "@/lib/store";
 import heartImg from "@/assets/arms-hugging-heart.png";
 
@@ -19,13 +19,6 @@ const TILES = [
     to: "/care-journey" as const,
     gradient:
       "radial-gradient(120% 100% at 25% 20%, #DDEAD3 0%, #CFE5CC 50%, #D8EBD4 100%)",
-  },
-  {
-    title: "Help me relive my memories",
-    icon: Images,
-    to: "/moments" as const,
-    gradient:
-      "radial-gradient(120% 100% at 25% 15%, #FBE3D2 0%, #F5D4C4 55%, #ECCBC4 100%)",
   },
 ];
 
