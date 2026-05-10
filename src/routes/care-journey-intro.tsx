@@ -22,7 +22,7 @@ type Step = {
   canContinue?: (d: OnboardingData) => boolean;
 };
 
-const RELATIONSHIPS = ["Son", "Daughter", "Spouse", "Grandchild", "Sibling", "Parent", "Friend", "Other"];
+const RELATIONSHIPS = ["Son", "Daughter", "Spouse", "Grandchild", "Sibling", "Parent", "Friend"];
 const ILLNESSES = ["Cancer", "Dementia", "Heart failure", "ALS", "Parkinson's", "Other"];
 const STAGES = ["Recently diagnosed", "Early stage", "Advanced", "Not sure yet"];
 const EMOTIONS = ["Overwhelmed", "Numb", "Anxious", "Lost", "Trying to stay strong", "Managing okay"];
@@ -122,7 +122,7 @@ function RelationshipInline({ value, onChange }: { value?: string; onChange: (v:
             style={{ overflow: "hidden" }}
             className="absolute left-0 top-full z-20 mt-2 w-[min(22rem,80vw)]"
           >
-            <div className="bg-card border border-border rounded-2xl shadow-soft p-3 flex flex-wrap gap-2">
+            <div className="bg-card border border-border rounded-2xl shadow-soft p-3 flex flex-wrap gap-2 items-center">
               {RELATIONSHIPS.map((o) => {
                 const sel = value === o;
                 return (
@@ -140,6 +140,23 @@ function RelationshipInline({ value, onChange }: { value?: string; onChange: (v:
                   </button>
                 );
               })}
+              <input
+                type="text"
+                placeholder="other…"
+                value={value && !RELATIONSHIPS.includes(value) ? value : ""}
+                onChange={(e) => onChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    setOpen(false);
+                  }
+                }}
+                className={`rounded-full border px-3.5 py-1.5 font-serif font-light italic lowercase text-base bg-transparent outline-none transition-all w-28 focus:w-40 placeholder:text-muted-foreground ${
+                  value && !RELATIONSHIPS.includes(value)
+                    ? "border-border/70 shadow-soft text-accent-active"
+                    : "border-border"
+                }`}
+              />
             </div>
           </motion.div>
         )}
