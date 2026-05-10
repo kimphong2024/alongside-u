@@ -63,9 +63,22 @@ export function BreathExercise() {
 function Support() {
   const { state, update, hydrated } = useAppState();
   const [mode, setMode] = useState<"self" | "family">("self");
-  const [name, setName] = useState("");
-  const [rel, setRel] = useState("");
-  const [email, setEmail] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const inviteLink = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    let token = "";
+    try {
+      token = localStorage.getItem("alongside.inviteToken") || "";
+      if (!token) {
+        token = crypto.randomUUID().slice(0, 8);
+        localStorage.setItem("alongside.inviteToken", token);
+      }
+    } catch {
+      token = "preview";
+    }
+    return `${window.location.origin}/join/${token}`;
+  }, []);
 
   if (!hydrated) return null;
 
@@ -73,11 +86,24 @@ function Support() {
   const overwhelmedCount = recent.filter((c) => ["Overwhelmed", "Tired", "Sad", "Numb"].includes(c.mood)).length;
   const showBurnoutNote = overwhelmedCount >= 3;
 
-  const addMember = () => {
-    if (!name.trim()) return;
-    const m: FamilyMember = { id: crypto.randomUUID(), name: name.trim(), relationship: rel.trim() || "Family", email: email.trim() || undefined };
-    update((s) => ({ ...s, family: [...s.family, m] }));
-    setName(""); setRel(""); setEmail("");
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      /* ignore */
+    }
+  };
+  const shareLink = async () => {
+    const text = "I'd like to share my journey progress with you on Alongside.";
+    if (typeof navigator !== "undefined" && (navigator as Navigator & { share?: (d: ShareData) => Promise<void> }).share) {
+      try {
+        await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share({ title: "Alongside", text, url: inviteLink });
+        return;
+      } catch { /* user cancelled */ }
+    }
+    copyLink();
   };
   const removeMember = (id: string) =>
     update((s) => ({ ...s, family: s.family.filter((m) => m.id !== id) }));
