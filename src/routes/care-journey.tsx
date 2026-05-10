@@ -248,65 +248,89 @@ function EmotionalCarousel({
   onToggle: (id: string) => void;
 }) {
   const [active, setActive] = useState<ChecklistItem | null>(null);
+  const [leaving, setLeaving] = useState<Record<string, boolean>>({});
   const gradients = ["bg-gradient-sage", "bg-gradient-warm", "bg-gradient-dawn"];
+
+  const handleComplete = (id: string) => {
+    setLeaving((p) => ({ ...p, [id]: true }));
+    setTimeout(() => {
+      onToggle(id);
+      setLeaving((p) => {
+        const n = { ...p };
+        delete n[id];
+        return n;
+      });
+    }, 550);
+  };
+
+  const visibleItems = items.filter((i) => !checkedItems[i.id]);
+  const allDone = visibleItems.length === 0;
 
   return (
     <>
-      <Carousel opts={{ align: "start", dragFree: true }} className="w-full">
-        <CarouselContent className="-ml-3">
-          {items.map((item, i) => {
-            const checked = !!checkedItems[item.id];
-            const grad = gradients[i % gradients.length];
-            return (
-              <CarouselItem key={item.id} className="pl-3 basis-[72%] sm:basis-[48%] md:basis-[34%]">
-                <motion.button
-                  onClick={() => setActive(item)}
-                  animate={
-                    checked
-                      ? { opacity: [1, 0.25, 0.6], scale: [1, 0.94, 0.97] }
-                      : { opacity: 1, scale: 1 }
-                  }
-                  transition={{ duration: 0.6, ease: "easeOut", times: [0, 0.55, 1] }}
-                  className={`relative w-full text-left rounded-3xl border border-border ${grad} p-4 h-64 flex flex-col shadow-soft hover:shadow-paper`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="text-[10px] uppercase tracking-[0.14em] text-foreground/60 bg-card/70 backdrop-blur px-2 py-1 rounded-full border border-border/60">
-                      Reflect
-                    </span>
-                    <span
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggle(item.id);
-                      }}
-                      role="button"
-                      aria-label="Mark complete"
-                      className={`h-6 w-6 rounded-full flex items-center justify-center border transition ${
-                        checked ? "bg-sage border-sage" : "bg-card/70 border-border"
-                      }`}
-                    >
-                      {checked && <Check className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={3} />}
-                    </span>
-                  </div>
-                  <div className="flex-1 flex items-center justify-center my-1">
-                    {ITEM_IMAGES[item.id] && (
-                      <img
-                        src={ITEM_IMAGES[item.id]}
-                        alt=""
-                        className="max-h-28 w-auto object-contain"
+      {allDone ? (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-3xl border border-sage/30 bg-sage-soft/40 p-6 text-center"
+        >
+          <p className="font-serif text-lg text-foreground">All done for now.</p>
+          <p className="text-sm text-muted-foreground mt-1">Come back when you're ready for the next gentle step.</p>
+        </motion.div>
+      ) : (
+        <Carousel opts={{ align: "start", dragFree: true }} className="w-full">
+          <CarouselContent className="-ml-3">
+            {visibleItems.map((item, i) => {
+              const grad = gradients[i % gradients.length];
+              const isLeaving = !!leaving[item.id];
+              return (
+                <CarouselItem key={item.id} className="pl-3 basis-[72%] sm:basis-[48%] md:basis-[34%]">
+                  <motion.button
+                    onClick={() => setActive(item)}
+                    initial={{ opacity: 1, scale: 1 }}
+                    animate={
+                      isLeaving
+                        ? { opacity: 0, scale: 0.9, filter: "blur(3px)" }
+                        : { opacity: 1, scale: 1, filter: "blur(0px)" }
+                    }
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className={`relative w-full text-left rounded-3xl border border-border ${grad} p-4 h-64 flex flex-col shadow-soft hover:shadow-paper`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="text-[10px] uppercase tracking-[0.14em] text-foreground/60 bg-card/70 backdrop-blur px-2 py-1 rounded-full border border-border/60">
+                        Reflect
+                      </span>
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!isLeaving) handleComplete(item.id);
+                        }}
+                        role="button"
+                        aria-label="Mark complete"
+                        className="h-6 w-6 rounded-full flex items-center justify-center border bg-card/70 border-border transition hover:bg-sage hover:border-sage"
                       />
-                    )}
-                  </div>
-                  <div>
-                    <h4 className="font-serif text-base leading-tight text-foreground">{item.title}</h4>
-                  </div>
-                </motion.button>
-              </CarouselItem>
-            );
-          })}
-        </CarouselContent>
-        <CarouselPrevious className="hidden md:flex -left-4" />
-        <CarouselNext className="hidden md:flex -right-4" />
-      </Carousel>
+                    </div>
+                    <div className="flex-1 flex items-center justify-center my-1">
+                      {ITEM_IMAGES[item.id] && (
+                        <img
+                          src={ITEM_IMAGES[item.id]}
+                          alt=""
+                          className="max-h-28 w-auto object-contain"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="font-serif text-base leading-tight text-foreground">{item.title}</h4>
+                    </div>
+                  </motion.button>
+                </CarouselItem>
+              );
+            })}
+          </CarouselContent>
+          <CarouselPrevious className="hidden md:flex -left-4" />
+          <CarouselNext className="hidden md:flex -right-4" />
+        </Carousel>
+      )}
 
       <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
         <DialogContent className="max-w-md">
