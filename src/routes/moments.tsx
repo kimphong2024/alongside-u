@@ -150,7 +150,7 @@ function Moments() {
         {journalView === "collage" && (
           <MemoryCollage
             loveeName={loveeName}
-            photoMoments={photoMoments}
+            recentMoments={recentMoments}
             totalCount={state.moments.length}
             onOpen={() => setJournalView("timeline")}
             onAdd={() => setComposerOpen(true)}
@@ -190,20 +190,20 @@ function Moments() {
               </div>
             </div>
 
-            {isDemo && (
+            {!hasOwnMoments && (
               <div className="rounded-2xl border border-dashed border-border bg-card/60 px-4 py-3 text-center">
                 <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
                   Demo scrapbook
                 </p>
                 <p className="text-sm text-foreground/75 mt-1 leading-relaxed">
-                  A few sample memories so you can see the clothesline. They'll
-                  step aside as soon as you add your first real moment.
+                  A few sample memories so you can see the clothesline. Add your
+                  own and they'll join right alongside.
                 </p>
               </div>
             )}
 
             {timeline.map((group) => (
-              <TimelineGroup key={group.label} group={group} isDemo={isDemo} />
+              <TimelineGroup key={group.label} group={group} demoIds={demoIds} />
             ))}
           </div>
         )}
