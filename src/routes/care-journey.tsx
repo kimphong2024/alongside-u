@@ -261,7 +261,7 @@ function EmotionalCarousel({
               <CarouselItem key={item.id} className="pl-3 basis-[72%] sm:basis-[48%] md:basis-[34%]">
                 <button
                   onClick={() => setActive(item)}
-                  className={`relative w-full text-left rounded-3xl border border-border ${grad} p-5 h-56 flex flex-col justify-between shadow-soft transition hover:shadow-paper`}
+                  className={`relative w-full text-left rounded-3xl border border-border ${grad} p-4 h-64 flex flex-col shadow-soft transition hover:shadow-paper`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <span className="text-[10px] uppercase tracking-[0.14em] text-foreground/60 bg-card/70 backdrop-blur px-2 py-1 rounded-full border border-border/60">
@@ -281,11 +281,17 @@ function EmotionalCarousel({
                       {checked && <Check className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={3} />}
                     </span>
                   </div>
+                  <div className="flex-1 flex items-center justify-center my-1">
+                    {ITEM_IMAGES[item.id] && (
+                      <img
+                        src={ITEM_IMAGES[item.id]}
+                        alt=""
+                        className="max-h-28 w-auto object-contain"
+                      />
+                    )}
+                  </div>
                   <div>
-                    <h4 className="font-serif text-lg leading-tight text-foreground">{item.title}</h4>
-                    <p className="text-xs text-foreground/70 mt-1.5 leading-relaxed line-clamp-2">
-                      {item.description}
-                    </p>
+                    <h4 className="font-serif text-base leading-tight text-foreground">{item.title}</h4>
                   </div>
                 </button>
               </CarouselItem>
