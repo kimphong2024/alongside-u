@@ -335,29 +335,22 @@ function MemoryCollage({
   onAdd: () => void;
 }) {
   const seedCards = [
-    { id: "seed-tea", src: momentsTea, kind: "photo" as const },
-    { id: "seed-hands", src: momentsHands, kind: "photo" as const },
-    { id: "seed-garden", src: momentsGarden, kind: "photo" as const },
+    { id: "seed-tea", src: momentsTea, kind: "photo" as const, caption: "tea on the porch" },
+    { id: "seed-hands", src: momentsHands, kind: "photo" as const, caption: "her hands" },
+    { id: "seed-garden", src: momentsGarden, kind: "photo" as const, caption: "spring garden" },
   ];
 
-  const userCards = photoMoments.map((m) => ({
+  const userCards = photoMoments.slice(0, 3).map((m, i) => ({
     id: m.id,
     src: (m.photo || m.video)!,
     kind: (m.photo ? "photo" : "video") as "photo" | "video",
+    caption: m.title?.toLowerCase() || seedCards[i]?.caption || "",
   }));
 
-  const cards = (userCards.length > 0 ? userCards : seedCards).slice(0, 7);
+  const cards = (userCards.length > 0 ? userCards : seedCards).slice(0, 3);
 
-  // Hand-tuned scatter so cards overlap like a tossed pile of polaroids.
-  const layout = [
-    { x: -120, y: 30, r: -14, z: 1 },
-    { x: -50, y: -10, r: -4, z: 4 },
-    { x: 30, y: 20, r: 8, z: 6 },
-    { x: 110, y: -5, r: -7, z: 3 },
-    { x: -10, y: 70, r: 12, z: 5 },
-    { x: 90, y: 80, r: -10, z: 2 },
-    { x: -90, y: 95, r: 5, z: 7 },
-  ];
+  // Slight alternating tilt for a hand-pinned clothesline feel.
+  const tilts = [-3, 2, -2];
 
   const tagline =
     totalCount === 0
@@ -384,49 +377,59 @@ function MemoryCollage({
         aria-label="Open memory timeline"
         className="group relative mt-8 mx-auto block w-full max-w-2xl"
       >
-        <div className="relative h-[360px] md:h-[420px] flex items-center justify-center">
-          {cards.map((c, i) => {
-            const l = layout[i % layout.length];
-            return (
-              <motion.div
-                key={c.id}
-                initial={{ opacity: 0, y: -200, rotate: 0 }}
-                animate={{ opacity: 1, x: l.x, y: l.y, rotate: l.r }}
-                transition={{
-                  delay: i * 0.08,
-                  type: "spring",
-                  stiffness: 60,
-                  damping: 12,
-                }}
-                whileHover={{ y: l.y - 8, rotate: l.r * 0.4, transition: { duration: 0.35 } }}
-                style={{ zIndex: l.z }}
-                className="absolute"
-              >
-                <div className="bg-card border border-border p-2 pb-5 shadow-paper paper-grain rounded-md w-[150px] md:w-[170px]">
-                  <div className="relative aspect-[4/5] rounded-sm overflow-hidden bg-muted">
-                    {c.kind === "video" ? (
-                      <video
-                        src={c.src}
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="metadata"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <img src={c.src} alt="" loading="lazy" className="w-full h-full object-cover" />
-                    )}
-                    {c.kind === "video" && (
-                      <span className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-foreground/70 backdrop-blur-sm flex items-center justify-center">
-                        <Film className="h-3 w-3 text-background" strokeWidth={2} />
-                      </span>
+        <div className="relative pt-6 pb-2">
+          {/* Clothesline string */}
+          <div className="absolute left-4 right-4 top-10 border-t border-foreground/20" aria-hidden />
+
+          <div className="relative flex items-start justify-center gap-3 md:gap-6 px-2">
+            {cards.map((c, i) => {
+              const tilt = tilts[i % tilts.length];
+              return (
+                <motion.div
+                  key={c.id}
+                  initial={{ opacity: 0, y: -40, rotate: 0 }}
+                  animate={{ opacity: 1, y: 0, rotate: tilt }}
+                  transition={{ delay: i * 0.12, type: "spring", stiffness: 80, damping: 14 }}
+                  whileHover={{ y: -6, rotate: tilt * 0.4, transition: { duration: 0.3 } }}
+                  className="relative"
+                  style={{ transformOrigin: "top center" }}
+                >
+                  {/* Peg */}
+                  <span
+                    className="absolute left-1/2 -translate-x-1/2 -top-3 h-5 w-3 rounded-sm bg-clay/80 shadow-sm z-10"
+                    aria-hidden
+                  />
+                  <div className="bg-card border border-border p-2 pb-6 shadow-paper paper-grain rounded-md w-[150px] md:w-[180px] mt-2">
+                    <div className="relative aspect-[4/5] rounded-sm overflow-hidden bg-muted">
+                      {c.kind === "video" ? (
+                        <video
+                          src={c.src}
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <img src={c.src} alt="" loading="lazy" className="w-full h-full object-cover" />
+                      )}
+                      {c.kind === "video" && (
+                        <span className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-foreground/70 backdrop-blur-sm flex items-center justify-center">
+                          <Film className="h-3 w-3 text-background" strokeWidth={2} />
+                        </span>
+                      )}
+                    </div>
+                    {c.caption && (
+                      <p className="font-serif italic text-center text-foreground/70 text-sm mt-2 truncate">
+                        {c.caption}
+                      </p>
                     )}
                   </div>
-                </div>
-              </motion.div>
-            );
-          })}
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
 
         <p className="font-serif italic text-2xl md:text-3xl text-foreground/80 text-center mt-4 leading-snug">
