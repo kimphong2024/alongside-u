@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Plus, Sparkles, Check, Play, Pause, Mic, Film } from "lucide-react";
+import { Heart, Plus, Sparkles, Check, Play, Pause, Mic, Film, ArrowLeft } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,7 @@ export const Route = createFileRoute("/moments")({
 function Moments() {
   const { state, update, hydrated } = useAppState();
   const [tab, setTab] = useState<"journal" | "bucket">("journal");
+  const [journalView, setJournalView] = useState<"collage" | "timeline">("collage");
   const [composerOpen, setComposerOpen] = useState(false);
   const [newBucket, setNewBucket] = useState("");
   const [confirmation, setConfirmation] = useState<string | null>(null);
@@ -114,17 +115,8 @@ function Moments() {
   return (
     <AppShell>
       <div className="space-y-6 pb-24 relative">
-        {/* HERO SCRAPBOOK */}
-        <section className="relative -mt-2 isolate">
-          <ScrapbookHero
-            loveeName={loveeName}
-            photoMoments={photoMoments}
-            onAddPhoto={() => setComposerOpen(true)}
-          />
-        </section>
-
         {/* Toggle */}
-        <div className="relative z-10 grid grid-cols-2 gap-1 p-1.5 bg-card border border-border rounded-full shadow-soft max-w-sm mx-auto">
+        <div className="relative z-10 grid grid-cols-2 gap-1 p-1.5 bg-card border border-border rounded-full shadow-soft max-w-sm mx-auto mt-4">
           {[
             { id: "journal", label: "Memory journal" },
             { id: "bucket", label: "Bucket list" },
@@ -148,8 +140,37 @@ function Moments() {
           ))}
         </div>
 
-        {tab === "journal" && (
-          <div className="space-y-12">
+        {tab === "journal" && journalView === "collage" && (
+          <MemoryCollage
+            loveeName={loveeName}
+            photoMoments={photoMoments}
+            totalCount={state.moments.length}
+            onOpen={() => setJournalView("timeline")}
+            onAdd={() => setComposerOpen(true)}
+          />
+        )}
+
+        {tab === "journal" && journalView === "timeline" && (
+          <div className="space-y-10">
+            <div className="flex items-center justify-between max-w-3xl mx-auto px-1">
+              <button
+                onClick={() => setJournalView("collage")}
+                className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground transition"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.8} />
+                Back to collage
+              </button>
+              <Button
+                onClick={() => setComposerOpen(true)}
+                size="sm"
+                variant="ghost"
+                className="rounded-full text-foreground/80 hover:text-foreground"
+              >
+                <Plus className="h-4 w-4 mr-1.5" />
+                Add a moment
+              </Button>
+            </div>
+
             {timeline.length === 0 ? (
               <div className="text-center max-w-md mx-auto flex flex-col items-center">
                 <p className="font-serif italic text-2xl text-foreground/70 leading-snug">
@@ -260,187 +281,137 @@ function Moments() {
   );
 }
 
-/* -------------------- Hero scrapbook -------------------- */
+/* -------------------- Memory collage (default view) -------------------- */
 
-function ScrapbookHero({
+function MemoryCollage({
   loveeName,
   photoMoments,
-  onAddPhoto,
+  totalCount,
+  onOpen,
+  onAdd,
 }: {
   loveeName: string;
   photoMoments: Moment[];
-  onAddPhoto: () => void;
+  totalCount: number;
+  onOpen: () => void;
+  onAdd: () => void;
 }) {
-  // Seed family photos as gentle placeholders before the user adds anything.
   const seedCards = [
-    { id: "seed-tea", src: momentsTea, caption: "tea on the porch" },
-    { id: "seed-hands", src: momentsHands, caption: "her hands" },
-    { id: "seed-garden", src: momentsGarden, caption: "spring garden" },
+    { id: "seed-tea", src: momentsTea, kind: "photo" as const },
+    { id: "seed-hands", src: momentsHands, kind: "photo" as const },
+    { id: "seed-garden", src: momentsGarden, kind: "photo" as const },
   ];
 
   const userCards = photoMoments.map((m) => ({
     id: m.id,
     src: (m.photo || m.video)!,
-    caption: (m.title || new Date(m.date).toLocaleDateString("en-SG", { month: "short", day: "numeric" })).slice(0, 24),
-    momentId: m.id,
     kind: (m.photo ? "photo" : "video") as "photo" | "video",
   }));
 
-  const cards = userCards.length > 0 ? userCards : seedCards;
-  const tilts = [-7, 4, -3, 6, -5];
-  const total = cards.length + 1; // +1 for the "add" slot
-  const spacing = 120;
-  const offsetFor = (i: number) => (i - (total - 1) / 2) * spacing;
+  const cards = (userCards.length > 0 ? userCards : seedCards).slice(0, 7);
 
-  const handleClick = (momentId?: string) => {
-    if (!momentId) return;
-    const el = document.getElementById(`moment-${momentId}`);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
+  // Hand-tuned scatter so cards overlap like a tossed pile of polaroids.
+  const layout = [
+    { x: -120, y: 30, r: -14, z: 1 },
+    { x: -50, y: -10, r: -4, z: 4 },
+    { x: 30, y: 20, r: 8, z: 6 },
+    { x: 110, y: -5, r: -7, z: 3 },
+    { x: -10, y: 70, r: 12, z: 5 },
+    { x: 90, y: 80, r: -10, z: 2 },
+    { x: -90, y: 95, r: 5, z: 7 },
+  ];
+
+  const tagline =
+    totalCount === 0
+      ? "Your scrapbook starts with one quiet moment."
+      : totalCount === 1
+        ? "One quiet moment, kept."
+        : "A lot happened recently.";
 
   return (
-    <div className="relative">
+    <section className="relative pt-2">
       <div className="text-center max-w-xl mx-auto">
         <div className="inline-flex items-center gap-2 text-muted-foreground">
           <Heart className="h-4 w-4" strokeWidth={1.6} />
           <span className="text-xs uppercase tracking-[0.18em]">Scrapbook</span>
         </div>
-        <h1 className="text-5xl md:text-6xl font-serif italic font-light mt-3 text-balance leading-[1.05]">
-          Small things,<br />deeply remembered
-        </h1>
-        <p className="text-muted-foreground mt-4 leading-relaxed">
-          A quiet space to hold meaningful moments with {loveeName} — kept gently, like pages in a family album.
+        <p className="text-muted-foreground mt-3 leading-relaxed text-sm">
+          A quiet space to hold meaningful moments with {loveeName}.
         </p>
       </div>
 
-      <div className="relative h-[320px] md:h-[340px] mt-6 mb-8 mx-auto max-w-3xl overflow-visible">
-        {/* Clothesline (drooping) */}
-        <svg
-          className="absolute inset-x-0 top-3 w-full h-8 pointer-events-none"
-          viewBox="0 0 600 32"
-          preserveAspectRatio="none"
-          aria-hidden
-        >
-          <path
-            d="M 0 6 Q 300 28 600 6"
-            fill="none"
-            stroke="var(--border)"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-          />
-        </svg>
-
-        <AnimatePresence>
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label="Open memory timeline"
+        className="group relative mt-8 mx-auto block w-full max-w-2xl"
+      >
+        <div className="relative h-[360px] md:h-[420px] flex items-center justify-center">
           {cards.map((c, i) => {
-            const tilt = tilts[i % tilts.length];
-            const momentId = "momentId" in c ? (c.momentId as string) : undefined;
+            const l = layout[i % layout.length];
             return (
               <motion.div
                 key={c.id}
-                initial={{ opacity: 0, y: -160, rotate: 0 }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                  rotate: [tilt - 2, tilt + 2, tilt - 1, tilt],
-                }}
-                exit={{ opacity: 0, y: -40 }}
+                initial={{ opacity: 0, y: -200, rotate: 0 }}
+                animate={{ opacity: 1, x: l.x, y: l.y, rotate: l.r }}
                 transition={{
-                  opacity: { delay: i * 0.12, duration: 0.4 },
-                  y: { delay: i * 0.12, type: "spring", stiffness: 70, damping: 9 },
-                  rotate: { delay: i * 0.12 + 0.4, duration: 1.6, ease: "easeOut" },
+                  delay: i * 0.08,
+                  type: "spring",
+                  stiffness: 60,
+                  damping: 12,
                 }}
-                className="absolute top-6 left-1/2 -translate-x-1/2"
-                style={{ marginLeft: `${offsetFor(i)}px`, transformOrigin: "top center" }}
-                whileHover={{ rotate: 0, y: -4, transition: { duration: 0.4 } }}
+                whileHover={{ y: l.y - 8, rotate: l.r * 0.4, transition: { duration: 0.35 } }}
+                style={{ zIndex: l.z }}
+                className="absolute"
               >
-                <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-                  <div
-                    className="w-3 h-4 rounded-sm shadow-soft"
-                    style={{ background: "linear-gradient(180deg, var(--clay) 0%, var(--clay-soft) 100%)" }}
-                  />
+                <div className="bg-card border border-border p-2 pb-5 shadow-paper paper-grain rounded-md w-[150px] md:w-[170px]">
+                  <div className="relative aspect-[4/5] rounded-sm overflow-hidden bg-muted">
+                    {c.kind === "video" ? (
+                      <video
+                        src={c.src}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <img src={c.src} alt="" loading="lazy" className="w-full h-full object-cover" />
+                    )}
+                    {c.kind === "video" && (
+                      <span className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-foreground/70 backdrop-blur-sm flex items-center justify-center">
+                        <Film className="h-3 w-3 text-background" strokeWidth={2} />
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <motion.div
-                  animate={{ rotate: [0, 0.6, -0.6, 0] }}
-                  transition={{ delay: i * 0.12 + 2, duration: 4.2, ease: "easeInOut", repeat: Infinity }}
-                  style={{ transformOrigin: "top center" }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleClick(momentId)}
-                    disabled={!momentId}
-                    className="bg-card border border-border p-2.5 pb-5 shadow-paper paper-grain rounded-md w-[160px] md:w-[180px] block text-left cursor-pointer disabled:cursor-default"
-                  >
-                    <div className="relative aspect-[4/5] rounded-sm overflow-hidden bg-muted">
-                      {"kind" in c && c.kind === "video" ? (
-                        <video
-                          src={c.src}
-                          autoPlay
-                          muted
-                          loop
-                          playsInline
-                          preload="metadata"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <img src={c.src} alt={c.caption} loading="lazy" className="w-full h-full object-cover" />
-                      )}
-                      {"kind" in c && c.kind === "video" && (
-                        <span className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-foreground/70 backdrop-blur-sm flex items-center justify-center">
-                          <Film className="h-3 w-3 text-background" strokeWidth={2} />
-                        </span>
-                      )}
-                    </div>
-                    <p className="font-hand text-lg text-foreground/70 mt-1.5 text-center leading-tight">
-                      {c.caption}
-                    </p>
-                  </button>
-                </motion.div>
               </motion.div>
             );
           })}
+        </div>
 
-          {/* Empty "+" slot to add a new photo */}
-          <motion.div
-            key="add-slot"
-            initial={{ opacity: 0, y: -160 }}
-            animate={{ opacity: 1, y: 0, rotate: 5 }}
-            transition={{
-              opacity: { delay: cards.length * 0.12, duration: 0.4 },
-              y: { delay: cards.length * 0.12, type: "spring", stiffness: 70, damping: 9 },
-            }}
-            className="absolute top-6 left-1/2 -translate-x-1/2"
-            style={{ marginLeft: `${offsetFor(cards.length)}px`, transformOrigin: "top center" }}
-            whileHover={{ rotate: 0, y: -4, transition: { duration: 0.4 } }}
-          >
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-              <div
-                className="w-3 h-4 rounded-sm shadow-soft"
-                style={{ background: "linear-gradient(180deg, var(--clay) 0%, var(--clay-soft) 100%)" }}
-              />
-            </div>
-            <motion.div
-              animate={{ rotate: [0, 0.6, -0.6, 0] }}
-              transition={{ delay: cards.length * 0.12 + 2, duration: 4.2, ease: "easeInOut", repeat: Infinity }}
-              style={{ transformOrigin: "top center" }}
-            >
-              <button
-                type="button"
-                onClick={onAddPhoto}
-                aria-label="Add a photo"
-                className="bg-card/60 border-2 border-dashed border-border hover:border-clay/60 hover:bg-card transition p-2.5 pb-5 rounded-md w-[160px] md:w-[180px] block group"
-              >
-                <div className="aspect-[4/5] rounded-sm bg-muted/40 flex items-center justify-center">
-                  <Plus className="h-8 w-8 text-muted-foreground group-hover:text-foreground transition" strokeWidth={1.4} />
-                </div>
-                <p className="font-hand text-lg text-muted-foreground mt-1.5 text-center leading-tight">
-                  add a photo
-                </p>
-              </button>
-            </motion.div>
-          </motion.div>
-        </AnimatePresence>
+        <p className="font-serif italic text-2xl md:text-3xl text-foreground/80 text-center mt-4 leading-snug">
+          {tagline}
+        </p>
+        <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground text-center mt-2 opacity-0 group-hover:opacity-100 transition">
+          Tap to open the timeline
+        </p>
+      </button>
+
+      <div className="flex justify-center mt-6">
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            onAdd();
+          }}
+          className="h-12 px-6 rounded-full bg-foreground text-background hover:bg-foreground/90 font-serif italic text-base shadow-paper"
+        >
+          <Plus className="h-5 w-5 mr-2" strokeWidth={2} />
+          Add a moment
+        </Button>
       </div>
-    </div>
+    </section>
   );
 }
 
