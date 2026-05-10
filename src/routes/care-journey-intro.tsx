@@ -34,6 +34,19 @@ const PRIORITIES = [
   "Emotional support",
 ];
 
+function lovedOneFor(rel?: string): string {
+  switch ((rel || "").toLowerCase()) {
+    case "son":
+    case "daughter": return "parent";
+    case "grandchild": return "grandparent";
+    case "spouse": return "spouse";
+    case "sibling": return "sibling";
+    case "parent": return "child";
+    case "friend": return "friend";
+    default: return "loved one";
+  }
+}
+
 function ChoiceGrid({
   options, selected, onSelect, multi = false,
 }: { options: string[]; selected?: string | string[]; onSelect: (v: string) => void; multi?: boolean }) {
@@ -213,16 +226,19 @@ function CareJourneyIntro() {
         </h2>
       </div>
     )},
-    { id: "illnessType", canContinue: (d) => !!d.illnessType, render: ({ data, set }) => (
+    { id: "illnessType", canContinue: (d) => !!d.illnessType, render: ({ data, set }) => {
+      const lovedOne = lovedOneFor(data.relationship);
+      return (
       <div className="space-y-6">
         <Header title="What diagnosis did your loved one receive?" subtitle="This helps us personalize guidance and support." />
         <ChoiceGrid options={ILLNESSES} selected={data.illnessType} onSelect={(v) => set("illnessType", v)} />
         <div className="space-y-2 pt-2">
-          <span className="text-sm text-muted-foreground">Stage (optional)</span>
+          <span className="text-sm text-muted-foreground">Where is your {lovedOne} in their diagnosis? (optional)</span>
           <ChoiceGrid options={STAGES} selected={data.illnessStage} onSelect={(v) => set("illnessStage", v)} />
         </div>
       </div>
-    )},
+      );
+    }},
     { id: "emotional", canContinue: (d) => !!d.emotional, render: ({ data, set }) => (
       <div className="space-y-6">
         <Header title="How are you feeling right now?" subtitle="Whatever it is, it's valid." />
