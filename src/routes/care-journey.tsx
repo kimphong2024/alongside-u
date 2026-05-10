@@ -382,6 +382,7 @@ function MedicalTiles({
   onToggle: (id: string) => void;
 }) {
   const [active, setActive] = useState<ChecklistItem | null>(null);
+  const [leaving, setLeaving] = useState<Record<string, boolean>>({});
   const tints = [
     { wrap: "bg-card", icon: "bg-sage-soft/50 text-sage" },
     { wrap: "bg-card", icon: "bg-accent text-accent-active" },
@@ -389,39 +390,73 @@ function MedicalTiles({
     { wrap: "bg-card", icon: "bg-sage-soft/40 text-sage" },
   ];
 
+  const handleComplete = (id: string) => {
+    setLeaving((p) => ({ ...p, [id]: true }));
+    setTimeout(() => {
+      onToggle(id);
+      setLeaving((p) => {
+        const n = { ...p };
+        delete n[id];
+        return n;
+      });
+    }, 550);
+  };
+
+  const visibleItems = items.filter((i) => !checkedItems[i.id]);
+
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
-        {items.map((item, i) => {
-          const checked = !!checkedItems[item.id];
-          const t = tints[i % tints.length];
-          return (
-            <button
-              key={item.id}
-              onClick={() => setActive(item)}
-              className={`relative aspect-square rounded-3xl border ${
-                checked ? "bg-sage-soft/40 border-sage/30" : `${t.wrap} border-border`
-              } shadow-soft p-4 flex flex-col items-center justify-center text-center gap-3 transition hover:shadow-paper`}
-            >
-              {checked && (
-                <span className="absolute top-2.5 right-2.5 h-5 w-5 rounded-full bg-sage flex items-center justify-center">
-                  <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />
+      {visibleItems.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-3xl border border-sage/30 bg-sage-soft/40 p-6 text-center"
+        >
+          <p className="font-serif text-lg text-foreground">All clear here.</p>
+          <p className="text-sm text-muted-foreground mt-1">You've gathered what you need for now.</p>
+        </motion.div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
+          {visibleItems.map((item, i) => {
+            const t = tints[i % tints.length];
+            const isLeaving = !!leaving[item.id];
+            return (
+              <motion.button
+                key={item.id}
+                onClick={() => setActive(item)}
+                initial={{ opacity: 1, scale: 1 }}
+                animate={
+                  isLeaving
+                    ? { opacity: 0, scale: 0.9, filter: "blur(3px)" }
+                    : { opacity: 1, scale: 1, filter: "blur(0px)" }
+                }
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className={`relative aspect-square rounded-3xl border ${t.wrap} border-border shadow-soft p-4 flex flex-col items-center justify-center text-center gap-3 hover:shadow-paper`}
+              >
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!isLeaving) handleComplete(item.id);
+                  }}
+                  role="button"
+                  aria-label="Mark complete"
+                  className="absolute top-2.5 right-2.5 h-5 w-5 rounded-full border border-border bg-card/80 hover:bg-sage hover:border-sage transition"
+                />
+                {ITEM_IMAGES[item.id] ? (
+                  <img src={ITEM_IMAGES[item.id]} alt="" className="h-20 w-20 object-contain" />
+                ) : (
+                  <span className={`h-14 w-14 rounded-2xl flex items-center justify-center ${t.icon}`}>
+                    <Stethoscope className="h-7 w-7" strokeWidth={1.4} />
+                  </span>
+                )}
+                <span className="text-sm font-medium leading-snug text-foreground/85 line-clamp-2">
+                  {item.title}
                 </span>
-              )}
-              {ITEM_IMAGES[item.id] ? (
-                <img src={ITEM_IMAGES[item.id]} alt="" className="h-20 w-20 object-contain" />
-              ) : (
-                <span className={`h-14 w-14 rounded-2xl flex items-center justify-center ${t.icon}`}>
-                  <Stethoscope className="h-7 w-7" strokeWidth={1.4} />
-                </span>
-              )}
-              <span className="text-sm font-medium leading-snug text-foreground/85 line-clamp-2">
-                {item.title}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+              </motion.button>
+            );
+          })}
+        </div>
+      )}
 
       <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
         <DialogContent className="max-w-md">
