@@ -678,7 +678,7 @@ function ResourcesCarousel() {
             <CarouselItem key={r.name} className="pl-3 basis-[60%] sm:basis-[40%] md:basis-[28%]">
               <a href={r.url} target="_blank" rel="noreferrer" className="block group">
                 <div
-                  className={`relative aspect-[4/3] rounded-3xl border border-border ${r.logo ? "bg-card" : grad} shadow-soft overflow-hidden flex items-center justify-center p-5 transition group-hover:shadow-paper`}
+                  className="relative aspect-[4/3] rounded-3xl border border-border bg-card shadow-soft overflow-hidden flex items-center justify-center p-5 transition group-hover:shadow-paper"
                 >
                   {r.logo ? (
                     <img
