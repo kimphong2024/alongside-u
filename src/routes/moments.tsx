@@ -330,8 +330,9 @@ function MemoryCollage({
       caption: m.title?.toLowerCase() || seedCards[i]?.caption || "",
     }));
 
+  // Always mix in seed/demo cards so the clothesline never feels empty.
   const cards: { id: string; src?: string; kind: CardKind; caption: string }[] =
-    (userCards.length > 0 ? userCards : seedCards).slice(0, 3);
+    [...userCards, ...seedCards].slice(0, 3);
 
   // Slight alternating tilt for a hand-pinned clothesline feel.
   const tilts = [-3, 2, -2];
