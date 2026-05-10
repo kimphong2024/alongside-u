@@ -373,9 +373,13 @@ function MedicalTiles({
                   <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />
                 </span>
               )}
-              <span className={`h-14 w-14 rounded-2xl flex items-center justify-center ${t.icon}`}>
-                <Stethoscope className="h-7 w-7" strokeWidth={1.4} />
-              </span>
+              {ITEM_IMAGES[item.id] ? (
+                <img src={ITEM_IMAGES[item.id]} alt="" className="h-20 w-20 object-contain" />
+              ) : (
+                <span className={`h-14 w-14 rounded-2xl flex items-center justify-center ${t.icon}`}>
+                  <Stethoscope className="h-7 w-7" strokeWidth={1.4} />
+                </span>
+              )}
               <span className="text-sm font-medium leading-snug text-foreground/85 line-clamp-2">
                 {item.title}
               </span>
