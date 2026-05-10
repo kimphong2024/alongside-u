@@ -90,7 +90,7 @@ function Support() {
             <LifeBuoy className="h-4 w-4" strokeWidth={1.6} />
             <span className="text-xs uppercase tracking-[0.14em]">Support</span>
           </div>
-          <h1 className="text-4xl font-serif mt-1.5 text-balance">You don't have to carry this alone</h1>
+          <h1 className="text-4xl font-serif mt-1.5 text-balance">Let your support meet you where you are</h1>
           <p className="text-muted-foreground mt-2 leading-relaxed">
             Support yourself, or invite family to walk alongside you.
           </p>
@@ -160,7 +160,7 @@ function Support() {
               <section className="space-y-3">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Wind className="h-4 w-4" strokeWidth={1.6} />
-                  <span className="text-xs uppercase tracking-[0.14em]">A breathing moment</span>
+                  <span className="text-xs uppercase tracking-[0.14em]">Let's take a moment to breathe</span>
                 </div>
                 <BreathExercise />
               </section>
@@ -168,7 +168,7 @@ function Support() {
               <section className="space-y-3">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Phone className="h-4 w-4" strokeWidth={1.6} />
-                  <span className="text-xs uppercase tracking-[0.14em]">If you need to talk</span>
+                  <span className="text-xs uppercase tracking-[0.14em]">If you need a listening ear</span>
                 </div>
                 <div className="grid gap-2">
                   {HELPLINES.map((h) => (
