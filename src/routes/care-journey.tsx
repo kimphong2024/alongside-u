@@ -249,6 +249,7 @@ function CareJourney() {
           <ResourcesCarousel />
         </section>
       </div>
+      <HeartFlyer />
     </AppShell>
   );
 }
