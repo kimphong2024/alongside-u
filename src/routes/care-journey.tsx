@@ -10,6 +10,8 @@ import {
   FileText,
   Heart,
   Home,
+  Info,
+  Lightbulb,
   Scale,
   Sparkles,
   Stethoscope,
