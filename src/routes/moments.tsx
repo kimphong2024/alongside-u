@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import momentsTea from "@/assets/moments-tea.jpg";
 import momentsHands from "@/assets/moments-hands.jpg";
 import momentsGarden from "@/assets/moments-garden.jpg";
+import { DEMO_MOMENTS } from "@/lib/demo-moments";
 
 export const Route = createFileRoute("/moments")({
   head: () => ({
