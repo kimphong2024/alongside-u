@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
 import type { Moment } from "@/lib/store";
+import { DEMO_MOMENTS } from "@/lib/demo-moments";
 
 export const Route = createFileRoute("/scrapbook/$token")({
   head: () => ({
