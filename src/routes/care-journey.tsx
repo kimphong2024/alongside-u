@@ -154,7 +154,7 @@ function CareJourney() {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Compass className="h-4 w-4" strokeWidth={1.6} />
-              <span className="text-xs uppercase tracking-[0.14em]">Care journey</span>
+              <span className="text-sm tracking-normal">Care Journey</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-serif mt-1 text-balance leading-tight">
               A gentle path forward
