@@ -197,6 +197,16 @@ function Moments() {
               >
                 <Plus className="h-4 w-4 mr-1.5" />
                 Add a moment
+              <Button
+                onClick={shareTimeline}
+                disabled={sharing}
+                size="sm"
+                variant="ghost"
+                className="rounded-full text-foreground/80 hover:text-foreground"
+              >
+                <Share2 className="h-4 w-4 mr-1.5" />
+                {sharing ? "Preparing…" : "Share link"}
+              </Button>
               </Button>
             </div>
 
