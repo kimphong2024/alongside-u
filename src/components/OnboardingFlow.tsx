@@ -20,7 +20,7 @@ const TILES = [
     title: "Show me what needs to be done",
     icon: ListChecks,
     illustration: checklistImg,
-    to: "/care-journey" as const,
+    to: "/care-journey-intro" as const,
     gradient:
       "radial-gradient(120% 100% at 25% 20%, #DDEAD3 0%, #CFE5CC 50%, #D8EBD4 100%)",
   },
