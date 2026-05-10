@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LifeBuoy, Wind, Phone, Users, Plus, Mail, Trash2 } from "lucide-react";
+import { LifeBuoy, Wind, Phone, Users, Mail, Trash2, Link2, Copy, Check, Share2, Eye } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAppState, type FamilyMember } from "@/lib/store";
+import { useAppState } from "@/lib/store";
 
 export const Route = createFileRoute("/support")({
   head: () => ({
