@@ -189,11 +189,15 @@ function Moments() {
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
-              {state.bucketList.length === 0 && (
-                <Button onClick={seedBucket} variant="ghost" className="w-full text-sage hover:text-sage rounded-xl">
-                  <Sparkles className="h-4 w-4 mr-2" /> Suggest a few gentle ideas
-                </Button>
-              )}
+              <Button
+                onClick={suggestIdeas}
+                disabled={suggesting}
+                variant="ghost"
+                className="w-full text-sage hover:text-sage rounded-xl"
+              >
+                <Sparkles className={`h-4 w-4 mr-2 ${suggesting ? "animate-pulse" : ""}`} />
+                {suggesting ? "Thinking of gentle ideas…" : "Suggest a few gentle ideas with AI"}
+              </Button>
             </div>
 
             {Object.keys(grouped).length === 0 && (
