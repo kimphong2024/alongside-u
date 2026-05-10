@@ -115,17 +115,8 @@ function Moments() {
   return (
     <AppShell>
       <div className="space-y-6 pb-24 relative">
-        {/* HERO SCRAPBOOK */}
-        <section className="relative -mt-2 isolate">
-          <ScrapbookHero
-            loveeName={loveeName}
-            photoMoments={photoMoments}
-            onAddPhoto={() => setComposerOpen(true)}
-          />
-        </section>
-
         {/* Toggle */}
-        <div className="relative z-10 grid grid-cols-2 gap-1 p-1.5 bg-card border border-border rounded-full shadow-soft max-w-sm mx-auto">
+        <div className="relative z-10 grid grid-cols-2 gap-1 p-1.5 bg-card border border-border rounded-full shadow-soft max-w-sm mx-auto mt-4">
           {[
             { id: "journal", label: "Memory journal" },
             { id: "bucket", label: "Bucket list" },
@@ -149,8 +140,37 @@ function Moments() {
           ))}
         </div>
 
-        {tab === "journal" && (
-          <div className="space-y-12">
+        {tab === "journal" && journalView === "collage" && (
+          <MemoryCollage
+            loveeName={loveeName}
+            photoMoments={photoMoments}
+            totalCount={state.moments.length}
+            onOpen={() => setJournalView("timeline")}
+            onAdd={() => setComposerOpen(true)}
+          />
+        )}
+
+        {tab === "journal" && journalView === "timeline" && (
+          <div className="space-y-10">
+            <div className="flex items-center justify-between max-w-3xl mx-auto px-1">
+              <button
+                onClick={() => setJournalView("collage")}
+                className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground transition"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.8} />
+                Back to collage
+              </button>
+              <Button
+                onClick={() => setComposerOpen(true)}
+                size="sm"
+                variant="ghost"
+                className="rounded-full text-foreground/80 hover:text-foreground"
+              >
+                <Plus className="h-4 w-4 mr-1.5" />
+                Add a moment
+              </Button>
+            </div>
+
             {timeline.length === 0 ? (
               <div className="text-center max-w-md mx-auto flex flex-col items-center">
                 <p className="font-serif italic text-2xl text-foreground/70 leading-snug">
