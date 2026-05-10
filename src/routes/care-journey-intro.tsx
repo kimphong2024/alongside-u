@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowRight, ArrowLeft, Check, ChevronDown } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, ChevronDown, Waves, CircleDashed, Wind, Compass, Shield, Sun, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppData, type OnboardingData } from "@/lib/store";
 
