@@ -251,13 +251,41 @@ function Moments() {
 
 /* -------------------- Hero scrapbook -------------------- */
 
-function ScrapbookHero({ loveeName }: { loveeName: string }) {
-  // Polaroid family photos hanging from a clothesline with pegs.
-  const cards = [
-    { tilt: -7, src: momentsTea, caption: "tea on the porch" },
-    { tilt: 4, src: momentsHands, caption: "her hands" },
-    { tilt: -3, src: momentsGarden, caption: "spring garden" },
+function ScrapbookHero({
+  loveeName,
+  photoMoments,
+  onAddPhoto,
+}: {
+  loveeName: string;
+  photoMoments: Moment[];
+  onAddPhoto: () => void;
+}) {
+  // Seed family photos as gentle placeholders before the user adds anything.
+  const seedCards = [
+    { id: "seed-tea", src: momentsTea, caption: "tea on the porch" },
+    { id: "seed-hands", src: momentsHands, caption: "her hands" },
+    { id: "seed-garden", src: momentsGarden, caption: "spring garden" },
   ];
+
+  const userCards = photoMoments.map((m) => ({
+    id: m.id,
+    src: m.photo!,
+    caption: (m.title || new Date(m.date).toLocaleDateString("en-SG", { month: "short", day: "numeric" })).slice(0, 24),
+    momentId: m.id,
+  }));
+
+  const cards = userCards.length > 0 ? userCards : seedCards;
+  const tilts = [-7, 4, -3, 6, -5];
+  const total = cards.length + 1; // +1 for the "add" slot
+  const spacing = 120;
+  const offsetFor = (i: number) => (i - (total - 1) / 2) * spacing;
+
+  const handleClick = (momentId?: string) => {
+    if (!momentId) return;
+    const el = document.getElementById(`moment-${momentId}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
   return (
     <div className="relative">
       <div className="text-center max-w-xl mx-auto">
@@ -290,56 +318,98 @@ function ScrapbookHero({ loveeName }: { loveeName: string }) {
           />
         </svg>
 
-        {cards.map((c, i) => (
+        <AnimatePresence>
+          {cards.map((c, i) => {
+            const tilt = tilts[i % tilts.length];
+            const momentId = "momentId" in c ? c.momentId : undefined;
+            return (
+              <motion.div
+                key={c.id}
+                initial={{ opacity: 0, y: -160, rotate: 0 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  rotate: [tilt - 2, tilt + 2, tilt - 1, tilt],
+                }}
+                exit={{ opacity: 0, y: -40 }}
+                transition={{
+                  opacity: { delay: i * 0.12, duration: 0.4 },
+                  y: { delay: i * 0.12, type: "spring", stiffness: 70, damping: 9 },
+                  rotate: { delay: i * 0.12 + 0.4, duration: 1.6, ease: "easeOut" },
+                }}
+                className="absolute top-6 left-1/2 -translate-x-1/2"
+                style={{ marginLeft: `${offsetFor(i)}px`, transformOrigin: "top center" }}
+                whileHover={{ rotate: 0, y: -4, transition: { duration: 0.4 } }}
+              >
+                <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                  <div
+                    className="w-3 h-4 rounded-sm shadow-soft"
+                    style={{ background: "linear-gradient(180deg, var(--clay) 0%, var(--clay-soft) 100%)" }}
+                  />
+                </div>
+                <motion.div
+                  animate={{ rotate: [0, 0.6, -0.6, 0] }}
+                  transition={{ delay: i * 0.12 + 2, duration: 4.2, ease: "easeInOut", repeat: Infinity }}
+                  style={{ transformOrigin: "top center" }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleClick(momentId)}
+                    disabled={!momentId}
+                    className="bg-card border border-border p-2.5 pb-5 shadow-paper paper-grain rounded-md w-[160px] md:w-[180px] block text-left cursor-pointer disabled:cursor-default"
+                  >
+                    <div className="aspect-[4/5] rounded-sm overflow-hidden bg-muted">
+                      <img src={c.src} alt={c.caption} loading="lazy" className="w-full h-full object-cover" />
+                    </div>
+                    <p className="font-hand text-lg text-foreground/70 mt-1.5 text-center leading-tight">
+                      {c.caption}
+                    </p>
+                  </button>
+                </motion.div>
+              </motion.div>
+            );
+          })}
+
+          {/* Empty "+" slot to add a new photo */}
           <motion.div
-            key={i}
-            initial={{ opacity: 0, y: -160, rotate: 0 }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              rotate: [c.tilt - 2, c.tilt + 2, c.tilt - 1, c.tilt],
-            }}
+            key="add-slot"
+            initial={{ opacity: 0, y: -160 }}
+            animate={{ opacity: 1, y: 0, rotate: 5 }}
             transition={{
-              opacity: { delay: i * 0.18, duration: 0.4 },
-              y: { delay: i * 0.18, type: "spring", stiffness: 70, damping: 9 },
-              rotate: { delay: i * 0.18 + 0.4, duration: 1.6, ease: "easeOut" },
+              opacity: { delay: cards.length * 0.12, duration: 0.4 },
+              y: { delay: cards.length * 0.12, type: "spring", stiffness: 70, damping: 9 },
             }}
             className="absolute top-6 left-1/2 -translate-x-1/2"
-            style={{ marginLeft: `${(i - 1) * 120 - 60}px`, transformOrigin: "top center" }}
+            style={{ marginLeft: `${offsetFor(cards.length)}px`, transformOrigin: "top center" }}
             whileHover={{ rotate: 0, y: -4, transition: { duration: 0.4 } }}
           >
-            {/* Peg */}
             <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
               <div
                 className="w-3 h-4 rounded-sm shadow-soft"
-                style={{
-                  background: "linear-gradient(180deg, var(--clay) 0%, var(--clay-soft) 100%)",
-                }}
+                style={{ background: "linear-gradient(180deg, var(--clay) 0%, var(--clay-soft) 100%)" }}
               />
             </div>
-
-            {/* Sway loop after settle */}
             <motion.div
               animate={{ rotate: [0, 0.6, -0.6, 0] }}
-              transition={{ delay: i * 0.18 + 2, duration: 4.2, ease: "easeInOut", repeat: Infinity }}
+              transition={{ delay: cards.length * 0.12 + 2, duration: 4.2, ease: "easeInOut", repeat: Infinity }}
               style={{ transformOrigin: "top center" }}
             >
-              <div className="bg-card border border-border p-2.5 pb-5 shadow-paper paper-grain rounded-md w-[160px] md:w-[180px]">
-                <div className="aspect-[4/5] rounded-sm overflow-hidden bg-muted">
-                  <img
-                    src={c.src}
-                    alt={c.caption}
-                    loading="lazy"
-                    className="w-full h-full object-cover"
-                  />
+              <button
+                type="button"
+                onClick={onAddPhoto}
+                aria-label="Add a photo"
+                className="bg-card/60 border-2 border-dashed border-border hover:border-clay/60 hover:bg-card transition p-2.5 pb-5 rounded-md w-[160px] md:w-[180px] block group"
+              >
+                <div className="aspect-[4/5] rounded-sm bg-muted/40 flex items-center justify-center">
+                  <Plus className="h-8 w-8 text-muted-foreground group-hover:text-foreground transition" strokeWidth={1.4} />
                 </div>
-                <p className="font-hand text-lg text-foreground/70 mt-1.5 text-center leading-tight">
-                  {c.caption}
+                <p className="font-hand text-lg text-muted-foreground mt-1.5 text-center leading-tight">
+                  add a photo
                 </p>
-              </div>
+              </button>
             </motion.div>
           </motion.div>
-        ))}
+        </AnimatePresence>
       </div>
     </div>
   );
