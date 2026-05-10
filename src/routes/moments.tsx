@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useAppState, type BucketItem, type Moment } from "@/lib/store";
 import { BUCKET_TEMPLATES } from "@/lib/content";
 import { MomentComposer } from "@/components/MomentComposer";
+import { supabase } from "@/integrations/supabase/client";
 import momentsTea from "@/assets/moments-tea.jpg";
 import momentsHands from "@/assets/moments-hands.jpg";
 import momentsGarden from "@/assets/moments-garden.jpg";
@@ -28,6 +29,7 @@ function Moments() {
   const [composerOpen, setComposerOpen] = useState(false);
   const [newBucket, setNewBucket] = useState("");
   const [confirmation, setConfirmation] = useState<string | null>(null);
+  const [suggesting, setSuggesting] = useState(false);
 
   // Group moments by relative date for the timeline (must be before any early return)
   const timeline = useMemo(() => groupByRelativeDate(state.moments), [state.moments]);
@@ -40,14 +42,41 @@ function Moments() {
 
   const loveeName = state.onboarding.loveeName?.trim() || "your loved one";
 
-  const seedBucket = () => {
-    const seeded: BucketItem[] = BUCKET_TEMPLATES.slice(0, 8).map((t) => ({
-      id: crypto.randomUUID(),
-      title: t.title,
-      category: t.category,
-      done: false,
-    }));
-    update((s) => ({ ...s, bucketList: [...s.bucketList, ...seeded] }));
+  const suggestIdeas = async () => {
+    if (suggesting) return;
+    setSuggesting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("suggest-bucket-ideas", {
+        body: {
+          loveeName,
+          existing: state.bucketList.map((b) => b.title),
+        },
+      });
+      const ideas: { title: string; category: string }[] = data?.ideas ?? [];
+      if (error || ideas.length === 0) {
+        // Fallback to seed templates so the user always gets something
+        const seeded: BucketItem[] = BUCKET_TEMPLATES.slice(0, 6).map((t) => ({
+          id: crypto.randomUUID(),
+          title: t.title,
+          category: t.category,
+          done: false,
+        }));
+        update((s) => ({ ...s, bucketList: [...s.bucketList, ...seeded] }));
+        setConfirmation("Added a few gentle ideas.");
+      } else {
+        const seeded: BucketItem[] = ideas.map((i) => ({
+          id: crypto.randomUUID(),
+          title: i.title,
+          category: i.category || "Personal",
+          done: false,
+        }));
+        update((s) => ({ ...s, bucketList: [...s.bucketList, ...seeded] }));
+        setConfirmation(`${seeded.length} new ideas added.`);
+      }
+      setTimeout(() => setConfirmation(null), 2800);
+    } finally {
+      setSuggesting(false);
+    }
   };
 
   const addBucket = () => {
@@ -160,11 +189,15 @@ function Moments() {
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
-              {state.bucketList.length === 0 && (
-                <Button onClick={seedBucket} variant="ghost" className="w-full text-sage hover:text-sage rounded-xl">
-                  <Sparkles className="h-4 w-4 mr-2" /> Suggest a few gentle ideas
-                </Button>
-              )}
+              <Button
+                onClick={suggestIdeas}
+                disabled={suggesting}
+                variant="ghost"
+                className="w-full text-sage hover:text-sage rounded-xl"
+              >
+                <Sparkles className={`h-4 w-4 mr-2 ${suggesting ? "animate-pulse" : ""}`} />
+                {suggesting ? "Thinking of gentle ideas…" : "Suggest a few gentle ideas with AI"}
+              </Button>
             </div>
 
             {Object.keys(grouped).length === 0 && (
@@ -205,29 +238,7 @@ function Moments() {
         )}
       </div>
 
-      {/* Floating Add Moment Button — hidden on empty journal (inline CTA shown instead) */}
-      <AnimatePresence>
-        {!composerOpen && !(tab === "journal" && timeline.length === 0) && (
-          <motion.button
-            type="button"
-            initial={{ opacity: 0, scale: 0.9, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 10 }}
-            onPointerUp={(event) => {
-              event.preventDefault();
-              setComposerOpen(true);
-            }}
-            onClick={() => setComposerOpen(true)}
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            className="fixed bottom-24 md:bottom-10 right-6 z-[60] h-16 px-6 rounded-full bg-foreground text-background shadow-paper flex items-center gap-2 font-serif italic text-base pointer-events-auto"
-            aria-label="Add a moment"
-          >
-            <Plus className="h-5 w-5" strokeWidth={2} />
-            <span className="hidden sm:inline">Add a moment</span>
-          </motion.button>
-        )}
-      </AnimatePresence>
+      {/* Floating Add Moment Button removed — use the "+" card in the scrapbook hero */}
 
       {/* Confirmation toast */}
       <AnimatePresence>
