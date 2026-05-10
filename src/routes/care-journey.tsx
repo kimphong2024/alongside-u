@@ -412,8 +412,10 @@ function MedicalTiles({
     { wrap: "bg-card", icon: "bg-sage-soft/40 text-sage" },
   ];
 
-  const handleComplete = (id: string) => {
+  const handleComplete = (id: string, e?: React.MouseEvent) => {
     const item = items.find((i) => i.id === id);
+    const origin = originFromEvent(e);
+    if (origin) flyHeart(origin);
     setLeaving((p) => ({ ...p, [id]: true }));
     setTimeout(() => {
       onToggle(id);
