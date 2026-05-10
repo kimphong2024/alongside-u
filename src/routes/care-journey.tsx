@@ -259,9 +259,15 @@ function EmotionalCarousel({
             const grad = gradients[i % gradients.length];
             return (
               <CarouselItem key={item.id} className="pl-3 basis-[72%] sm:basis-[48%] md:basis-[34%]">
-                <button
+                <motion.button
                   onClick={() => setActive(item)}
-                  className={`relative w-full text-left rounded-3xl border border-border ${grad} p-4 h-64 flex flex-col shadow-soft transition hover:shadow-paper`}
+                  animate={
+                    checked
+                      ? { opacity: [1, 0.25, 0.6], scale: [1, 0.94, 0.97] }
+                      : { opacity: 1, scale: 1 }
+                  }
+                  transition={{ duration: 0.6, ease: "easeOut", times: [0, 0.55, 1] }}
+                  className={`relative w-full text-left rounded-3xl border border-border ${grad} p-4 h-64 flex flex-col shadow-soft hover:shadow-paper`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <span className="text-[10px] uppercase tracking-[0.14em] text-foreground/60 bg-card/70 backdrop-blur px-2 py-1 rounded-full border border-border/60">
