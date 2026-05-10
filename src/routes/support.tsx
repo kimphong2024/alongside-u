@@ -137,27 +137,32 @@ function Support() {
               )}
 
               <section className="space-y-3">
+                <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">Reminders</h3>
+                <div className="-mx-5 px-5 overflow-x-auto scrollbar-none">
+                  <div className="flex gap-3 snap-x snap-mandatory pb-1">
+                    {[
+                      { text: "You are doing the best you can with what you have.", grad: "bg-gradient-warm" },
+                      { text: "Resting is not abandoning. It is sustaining.", grad: "bg-gradient-sage" },
+                      { text: "Asking for help is an act of love — for them, and for you.", grad: "bg-gradient-dawn" },
+                      { text: "There is no perfect way to do this.", grad: "bg-gradient-warm" },
+                    ].map((q) => (
+                      <div
+                        key={q.text}
+                        className={`snap-start shrink-0 w-[78%] sm:w-[46%] md:w-[32%] rounded-2xl ${q.grad} border border-border p-5 shadow-soft`}
+                      >
+                        <p className="font-serif italic text-xl leading-snug text-foreground/85">{q.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-3">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Wind className="h-4 w-4" strokeWidth={1.6} />
                   <span className="text-xs uppercase tracking-[0.14em]">A breathing moment</span>
                 </div>
                 <BreathExercise />
-              </section>
-
-              <section className="space-y-3">
-                <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">Reminders</h3>
-                <div className="grid gap-2">
-                  {[
-                    "You are doing the best you can with what you have.",
-                    "Resting is not abandoning. It is sustaining.",
-                    "Asking for help is an act of love — for them, and for you.",
-                    "There is no perfect way to do this.",
-                  ].map((q) => (
-                    <div key={q} className="rounded-2xl bg-card border border-border p-4">
-                      <p className="font-serif text-lg leading-snug text-foreground/85">{q}</p>
-                    </div>
-                  ))}
-                </div>
               </section>
 
               <section className="space-y-3">
