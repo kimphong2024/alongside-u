@@ -41,8 +41,8 @@ function Moments() {
   const loveeName = state.onboarding.loveeName?.trim() || "your loved one";
 
   const seedBucket = () => {
-    const seeded: BucketItem[] = BUCKET_TEMPLATES.slice(0, 8).map((t, i) => ({
-      id: `seed-${i}-${Date.now()}`,
+    const seeded: BucketItem[] = BUCKET_TEMPLATES.slice(0, 8).map((t) => ({
+      id: crypto.randomUUID(),
       title: t.title,
       category: t.category,
       done: false,
@@ -54,7 +54,7 @@ function Moments() {
     if (!newBucket.trim()) return;
     update((s) => ({
       ...s,
-      bucketList: [...s.bucketList, { id: String(Date.now()), title: newBucket.trim(), category: "Personal", done: false }],
+      bucketList: [...s.bucketList, { id: crypto.randomUUID(), title: newBucket.trim(), category: "Personal", done: false }],
     }));
     setNewBucket("");
   };
@@ -67,7 +67,7 @@ function Moments() {
 
   const saveMoment = (m: Omit<Moment, "id" | "date">) => {
     const moment: Moment = {
-      id: String(Date.now()),
+      id: crypto.randomUUID(),
       date: new Date().toISOString().slice(0, 10),
       ...m,
     };
