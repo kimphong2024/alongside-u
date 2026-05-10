@@ -75,7 +75,12 @@ export function OnboardingFlow() {
                   className="relative aspect-square rounded-3xl border border-border/40 shadow-soft p-6 flex flex-col justify-between overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:shadow-paper"
                   style={{ backgroundImage: t.gradient }}
                 >
-                  <div className="flex items-start justify-between">
+                  <img
+                    src={t.illustration}
+                    alt=""
+                    className="absolute right-2 bottom-16 w-40 md:w-48 lg:w-56 object-contain pointer-events-none select-none mix-blend-multiply opacity-90 transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="relative flex items-start justify-between">
                     <Icon
                       className="h-7 w-7 text-foreground/70"
                       strokeWidth={1.4}
@@ -85,7 +90,7 @@ export function OnboardingFlow() {
                       strokeWidth={1.6}
                     />
                   </div>
-                  <h3 className="font-serif text-2xl leading-tight text-foreground/90 text-balance">
+                  <h3 className="relative font-serif text-2xl leading-tight text-foreground/90 text-balance">
                     {t.title}
                   </h3>
                 </div>
