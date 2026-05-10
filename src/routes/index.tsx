@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, LogOut } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { useAppData } from "@/lib/store";
 import { signOut } from "@/hooks/use-auth";
