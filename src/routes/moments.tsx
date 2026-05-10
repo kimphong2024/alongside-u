@@ -94,7 +94,7 @@ function Moments() {
           done: false,
         }));
         update((s) => ({ ...s, bucketList: [...s.bucketList, ...seeded] }));
-        setConfirmation("Added a few gentle ideas.");
+        setConfirmation("Added a few ideas.");
       } else {
         const seeded: BucketItem[] = ideas.map((i) => ({
           id: crypto.randomUUID(),
@@ -212,7 +212,7 @@ function Moments() {
           <div className="text-center">
             <h2 className="font-serif italic text-3xl text-foreground/85">Bucket list</h2>
             <p className="text-sm text-muted-foreground mt-1">
-              Small wishes and gentle plans to share with {loveeName}.
+              Small wishes and plans to share with {loveeName}.
             </p>
           </div>
 
@@ -236,7 +236,7 @@ function Moments() {
               className="w-full text-sage hover:text-sage rounded-xl"
             >
               <Sparkles className={`h-4 w-4 mr-2 ${suggesting ? "animate-pulse" : ""}`} />
-              {suggesting ? "Thinking of gentle ideas…" : "Suggest a few gentle ideas with AI"}
+              {suggesting ? "Thinking of ideas…" : "Suggest a few ideas with AI"}
             </Button>
           </div>
 
@@ -351,7 +351,7 @@ function MemoryCollage({
           Small things,<br />deeply remembered
         </h1>
         <p className="text-muted-foreground mt-4 leading-relaxed text-sm md:text-base max-w-md mx-auto">
-          A quiet space to hold meaningful moments with {loveeName} - kept gently, like pages in a family album.
+          A space to hold meaningful moments with {loveeName} — kept like pages in a family album.
         </p>
       </div>
 

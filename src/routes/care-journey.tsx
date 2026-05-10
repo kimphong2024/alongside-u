@@ -157,7 +157,7 @@ function CareJourney() {
               <span className="text-sm tracking-normal">Care Journey</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-serif mt-1 text-balance leading-tight">
-              A gentle path forward
+              A path forward
             </h1>
             <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
               A few suggestions for each chapter.
@@ -320,7 +320,7 @@ function EmotionalCarousel({
           className="rounded-3xl border border-sage/30 bg-sage-soft/40 p-6 text-center"
         >
           <p className="font-serif text-lg text-foreground">All done for now.</p>
-          <p className="text-sm text-muted-foreground mt-1">Come back when you're ready for the next gentle step.</p>
+          <p className="text-sm text-muted-foreground mt-1">Come back when you're ready for the next step.</p>
         </motion.div>
       ) : (
         <Carousel opts={{ align: "start", dragFree: true }} className="w-full">
@@ -892,7 +892,7 @@ function ProgressDialog({
         <DialogHeader>
           <DialogTitle className="font-serif text-xl">Your progress</DialogTitle>
           <DialogDescription>
-            {completed.length} of {total} gentle steps complete.
+            {completed.length} of {total} steps complete.
           </DialogDescription>
         </DialogHeader>
 
@@ -903,7 +903,7 @@ function ProgressDialog({
               Completed · {completed.length}
             </h4>
             {completed.length === 0 ? (
-              <p className="text-sm text-muted-foreground italic">Nothing checked off yet - that's okay.</p>
+              <p className="text-sm text-muted-foreground italic">Nothing checked off yet.</p>
             ) : (
               <ul className="space-y-1.5">
                 {completed.map((it) => (
