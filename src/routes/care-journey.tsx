@@ -511,38 +511,63 @@ function ChecklistAccordion({
   onToggleOpen: (id: string) => void;
   onToggleCheck: (id: string) => void;
 }) {
+  const [leaving, setLeaving] = useState<Record<string, boolean>>({});
+
+  const handleComplete = (id: string) => {
+    setLeaving((p) => ({ ...p, [id]: true }));
+    setTimeout(() => {
+      onToggleCheck(id);
+      setLeaving((p) => {
+        const n = { ...p };
+        delete n[id];
+        return n;
+      });
+    }, 550);
+  };
+
+  const visibleItems = items.filter((i) => !checkedItems[i.id]);
+
+  if (visibleItems.length === 0) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-2xl border border-sage/30 bg-sage-soft/40 p-5 text-center"
+      >
+        <p className="font-serif text-base text-foreground">All done here.</p>
+      </motion.div>
+    );
+  }
+
   return (
     <div className="space-y-1.5">
-      {items.map((item) => {
-        const checked = !!checkedItems[item.id];
+      {visibleItems.map((item) => {
         const open = !!openItems[item.id];
+        const isLeaving = !!leaving[item.id];
         return (
           <motion.div
             key={item.id}
+            initial={{ opacity: 1, scale: 1, height: "auto" }}
             animate={
-              checked
-                ? { opacity: [1, 0.3, 0.7], scale: [1, 0.97, 0.99] }
-                : { opacity: 1, scale: 1 }
+              isLeaving
+                ? { opacity: 0, scale: 0.96, filter: "blur(2px)" }
+                : { opacity: 1, scale: 1, filter: "blur(0px)" }
             }
-            transition={{ duration: 0.6, ease: "easeOut", times: [0, 0.55, 1] }}
-            className={`rounded-2xl border overflow-hidden ${
-              checked ? "bg-sage-soft/40 border-sage/30" : "bg-card border-border"
-            }`}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="rounded-2xl border bg-card border-border overflow-hidden"
           >
             <div className="flex items-start gap-3 px-4 py-3">
               <button
-                onClick={() => onToggleCheck(item.id)}
-                className={`mt-0.5 h-5 w-5 rounded-full flex items-center justify-center border flex-shrink-0 transition ${
-                  checked ? "bg-sage border-sage" : "border-border hover:border-sage"
-                }`}
+                onClick={() => {
+                  if (!isLeaving) handleComplete(item.id);
+                }}
+                className="mt-0.5 h-5 w-5 rounded-full flex items-center justify-center border border-border hover:border-sage hover:bg-sage/20 flex-shrink-0 transition"
                 aria-label="Mark complete"
-              >
-                {checked && <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />}
-              </button>
+              />
               <button onClick={() => onToggleOpen(item.id)} className="flex-1 text-left">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <span className={`text-sm font-medium leading-snug block ${checked ? "text-muted-foreground" : ""}`}>
+                    <span className="text-sm font-medium leading-snug block">
                       {item.title}
                     </span>
                     <span className="text-xs text-muted-foreground mt-0.5 block leading-relaxed">
