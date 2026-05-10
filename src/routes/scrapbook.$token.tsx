@@ -8,7 +8,7 @@ import { DEMO_MOMENTS } from "@/lib/demo-moments";
 export const Route = createFileRoute("/scrapbook/$token")({
   head: () => ({
     meta: [
-      { title: "A shared scrapbook — Alongside" },
+      { title: "A shared scrapbook - Alongside" },
       { name: "description", content: "A quiet collection of meaningful moments." },
     ],
   }),

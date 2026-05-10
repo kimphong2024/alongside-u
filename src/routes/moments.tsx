@@ -19,7 +19,7 @@ import { DEMO_MOMENTS } from "@/lib/demo-moments";
 export const Route = createFileRoute("/moments")({
   head: () => ({
     meta: [
-      { title: "Moments — Alongside" },
+      { title: "Moments - Alongside" },
       { name: "description", content: "A quiet space to plan and remember meaningful moments." },
     ],
   }),
@@ -263,7 +263,7 @@ function Moments() {
               <div className="text-center py-10 px-6">
                 <Heart className="h-8 w-8 mx-auto text-muted-foreground/50" strokeWidth={1.4} />
                 <p className="text-sm text-muted-foreground mt-3 max-w-xs mx-auto leading-relaxed">
-                  Even the simplest things — a favourite meal, a familiar song — become precious.
+                  Even the simplest things - a favourite meal, a familiar song - become precious.
                 </p>
               </div>
             )}
@@ -297,7 +297,7 @@ function Moments() {
         )}
       </div>
 
-      {/* Floating Add Moment Button removed — use the "+" card in the scrapbook hero */}
+      {/* Floating Add Moment Button removed - use the "+" card in the scrapbook hero */}
 
       {/* Confirmation toast */}
       <AnimatePresence>
@@ -370,7 +370,7 @@ function MemoryCollage({
           Small things,<br />deeply remembered
         </h1>
         <p className="text-muted-foreground mt-4 leading-relaxed text-sm md:text-base max-w-md mx-auto">
-          A quiet space to hold meaningful moments with {loveeName} — kept gently, like pages in a family album.
+          A quiet space to hold meaningful moments with {loveeName} - kept gently, like pages in a family album.
         </p>
       </div>
 
@@ -433,7 +433,7 @@ function MemoryCollage({
               );
             })}
 
-            {/* Empty polaroid — quick add */}
+            {/* Empty polaroid - quick add */}
             <motion.div
               initial={{ opacity: 0, y: -40, rotate: 0 }}
               animate={{ opacity: 1, y: 0, rotate: 4 }}

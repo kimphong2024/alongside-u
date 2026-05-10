@@ -152,7 +152,7 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
               hold this moment
             </h2>
             <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-              A photo, a few words, or just a voice — whatever feels right.
+              A photo, a few words, or just a voice - whatever feels right.
             </p>
           </div>
 
