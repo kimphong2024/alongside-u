@@ -248,65 +248,89 @@ function EmotionalCarousel({
   onToggle: (id: string) => void;
 }) {
   const [active, setActive] = useState<ChecklistItem | null>(null);
+  const [leaving, setLeaving] = useState<Record<string, boolean>>({});
   const gradients = ["bg-gradient-sage", "bg-gradient-warm", "bg-gradient-dawn"];
+
+  const handleComplete = (id: string) => {
+    setLeaving((p) => ({ ...p, [id]: true }));
+    setTimeout(() => {
+      onToggle(id);
+      setLeaving((p) => {
+        const n = { ...p };
+        delete n[id];
+        return n;
+      });
+    }, 550);
+  };
+
+  const visibleItems = items.filter((i) => !checkedItems[i.id]);
+  const allDone = visibleItems.length === 0;
 
   return (
     <>
-      <Carousel opts={{ align: "start", dragFree: true }} className="w-full">
-        <CarouselContent className="-ml-3">
-          {items.map((item, i) => {
-            const checked = !!checkedItems[item.id];
-            const grad = gradients[i % gradients.length];
-            return (
-              <CarouselItem key={item.id} className="pl-3 basis-[72%] sm:basis-[48%] md:basis-[34%]">
-                <motion.button
-                  onClick={() => setActive(item)}
-                  animate={
-                    checked
-                      ? { opacity: [1, 0.25, 0.6], scale: [1, 0.94, 0.97] }
-                      : { opacity: 1, scale: 1 }
-                  }
-                  transition={{ duration: 0.6, ease: "easeOut", times: [0, 0.55, 1] }}
-                  className={`relative w-full text-left rounded-3xl border border-border ${grad} p-4 h-64 flex flex-col shadow-soft hover:shadow-paper`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="text-[10px] uppercase tracking-[0.14em] text-foreground/60 bg-card/70 backdrop-blur px-2 py-1 rounded-full border border-border/60">
-                      Reflect
-                    </span>
-                    <span
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggle(item.id);
-                      }}
-                      role="button"
-                      aria-label="Mark complete"
-                      className={`h-6 w-6 rounded-full flex items-center justify-center border transition ${
-                        checked ? "bg-sage border-sage" : "bg-card/70 border-border"
-                      }`}
-                    >
-                      {checked && <Check className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={3} />}
-                    </span>
-                  </div>
-                  <div className="flex-1 flex items-center justify-center my-1">
-                    {ITEM_IMAGES[item.id] && (
-                      <img
-                        src={ITEM_IMAGES[item.id]}
-                        alt=""
-                        className="max-h-28 w-auto object-contain"
+      {allDone ? (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-3xl border border-sage/30 bg-sage-soft/40 p-6 text-center"
+        >
+          <p className="font-serif text-lg text-foreground">All done for now.</p>
+          <p className="text-sm text-muted-foreground mt-1">Come back when you're ready for the next gentle step.</p>
+        </motion.div>
+      ) : (
+        <Carousel opts={{ align: "start", dragFree: true }} className="w-full">
+          <CarouselContent className="-ml-3">
+            {visibleItems.map((item, i) => {
+              const grad = gradients[i % gradients.length];
+              const isLeaving = !!leaving[item.id];
+              return (
+                <CarouselItem key={item.id} className="pl-3 basis-[72%] sm:basis-[48%] md:basis-[34%]">
+                  <motion.button
+                    onClick={() => setActive(item)}
+                    initial={{ opacity: 1, scale: 1 }}
+                    animate={
+                      isLeaving
+                        ? { opacity: 0, scale: 0.9, filter: "blur(3px)" }
+                        : { opacity: 1, scale: 1, filter: "blur(0px)" }
+                    }
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className={`relative w-full text-left rounded-3xl border border-border ${grad} p-4 h-64 flex flex-col shadow-soft hover:shadow-paper`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="text-[10px] uppercase tracking-[0.14em] text-foreground/60 bg-card/70 backdrop-blur px-2 py-1 rounded-full border border-border/60">
+                        Reflect
+                      </span>
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!isLeaving) handleComplete(item.id);
+                        }}
+                        role="button"
+                        aria-label="Mark complete"
+                        className="h-6 w-6 rounded-full flex items-center justify-center border bg-card/70 border-border transition hover:bg-sage hover:border-sage"
                       />
-                    )}
-                  </div>
-                  <div>
-                    <h4 className="font-serif text-base leading-tight text-foreground">{item.title}</h4>
-                  </div>
-                </motion.button>
-              </CarouselItem>
-            );
-          })}
-        </CarouselContent>
-        <CarouselPrevious className="hidden md:flex -left-4" />
-        <CarouselNext className="hidden md:flex -right-4" />
-      </Carousel>
+                    </div>
+                    <div className="flex-1 flex items-center justify-center my-1">
+                      {ITEM_IMAGES[item.id] && (
+                        <img
+                          src={ITEM_IMAGES[item.id]}
+                          alt=""
+                          className="max-h-28 w-auto object-contain"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="font-serif text-base leading-tight text-foreground">{item.title}</h4>
+                    </div>
+                  </motion.button>
+                </CarouselItem>
+              );
+            })}
+          </CarouselContent>
+          <CarouselPrevious className="hidden md:flex -left-4" />
+          <CarouselNext className="hidden md:flex -right-4" />
+        </Carousel>
+      )}
 
       <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
         <DialogContent className="max-w-md">
@@ -358,6 +382,7 @@ function MedicalTiles({
   onToggle: (id: string) => void;
 }) {
   const [active, setActive] = useState<ChecklistItem | null>(null);
+  const [leaving, setLeaving] = useState<Record<string, boolean>>({});
   const tints = [
     { wrap: "bg-card", icon: "bg-sage-soft/50 text-sage" },
     { wrap: "bg-card", icon: "bg-accent text-accent-active" },
@@ -365,39 +390,73 @@ function MedicalTiles({
     { wrap: "bg-card", icon: "bg-sage-soft/40 text-sage" },
   ];
 
+  const handleComplete = (id: string) => {
+    setLeaving((p) => ({ ...p, [id]: true }));
+    setTimeout(() => {
+      onToggle(id);
+      setLeaving((p) => {
+        const n = { ...p };
+        delete n[id];
+        return n;
+      });
+    }, 550);
+  };
+
+  const visibleItems = items.filter((i) => !checkedItems[i.id]);
+
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
-        {items.map((item, i) => {
-          const checked = !!checkedItems[item.id];
-          const t = tints[i % tints.length];
-          return (
-            <button
-              key={item.id}
-              onClick={() => setActive(item)}
-              className={`relative aspect-square rounded-3xl border ${
-                checked ? "bg-sage-soft/40 border-sage/30" : `${t.wrap} border-border`
-              } shadow-soft p-4 flex flex-col items-center justify-center text-center gap-3 transition hover:shadow-paper`}
-            >
-              {checked && (
-                <span className="absolute top-2.5 right-2.5 h-5 w-5 rounded-full bg-sage flex items-center justify-center">
-                  <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />
+      {visibleItems.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-3xl border border-sage/30 bg-sage-soft/40 p-6 text-center"
+        >
+          <p className="font-serif text-lg text-foreground">All clear here.</p>
+          <p className="text-sm text-muted-foreground mt-1">You've gathered what you need for now.</p>
+        </motion.div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
+          {visibleItems.map((item, i) => {
+            const t = tints[i % tints.length];
+            const isLeaving = !!leaving[item.id];
+            return (
+              <motion.button
+                key={item.id}
+                onClick={() => setActive(item)}
+                initial={{ opacity: 1, scale: 1 }}
+                animate={
+                  isLeaving
+                    ? { opacity: 0, scale: 0.9, filter: "blur(3px)" }
+                    : { opacity: 1, scale: 1, filter: "blur(0px)" }
+                }
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className={`relative aspect-square rounded-3xl border ${t.wrap} border-border shadow-soft p-4 flex flex-col items-center justify-center text-center gap-3 hover:shadow-paper`}
+              >
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!isLeaving) handleComplete(item.id);
+                  }}
+                  role="button"
+                  aria-label="Mark complete"
+                  className="absolute top-2.5 right-2.5 h-5 w-5 rounded-full border border-border bg-card/80 hover:bg-sage hover:border-sage transition"
+                />
+                {ITEM_IMAGES[item.id] ? (
+                  <img src={ITEM_IMAGES[item.id]} alt="" className="h-20 w-20 object-contain" />
+                ) : (
+                  <span className={`h-14 w-14 rounded-2xl flex items-center justify-center ${t.icon}`}>
+                    <Stethoscope className="h-7 w-7" strokeWidth={1.4} />
+                  </span>
+                )}
+                <span className="text-sm font-medium leading-snug text-foreground/85 line-clamp-2">
+                  {item.title}
                 </span>
-              )}
-              {ITEM_IMAGES[item.id] ? (
-                <img src={ITEM_IMAGES[item.id]} alt="" className="h-20 w-20 object-contain" />
-              ) : (
-                <span className={`h-14 w-14 rounded-2xl flex items-center justify-center ${t.icon}`}>
-                  <Stethoscope className="h-7 w-7" strokeWidth={1.4} />
-                </span>
-              )}
-              <span className="text-sm font-medium leading-snug text-foreground/85 line-clamp-2">
-                {item.title}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+              </motion.button>
+            );
+          })}
+        </div>
+      )}
 
       <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
         <DialogContent className="max-w-md">
@@ -452,38 +511,63 @@ function ChecklistAccordion({
   onToggleOpen: (id: string) => void;
   onToggleCheck: (id: string) => void;
 }) {
+  const [leaving, setLeaving] = useState<Record<string, boolean>>({});
+
+  const handleComplete = (id: string) => {
+    setLeaving((p) => ({ ...p, [id]: true }));
+    setTimeout(() => {
+      onToggleCheck(id);
+      setLeaving((p) => {
+        const n = { ...p };
+        delete n[id];
+        return n;
+      });
+    }, 550);
+  };
+
+  const visibleItems = items.filter((i) => !checkedItems[i.id]);
+
+  if (visibleItems.length === 0) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-2xl border border-sage/30 bg-sage-soft/40 p-5 text-center"
+      >
+        <p className="font-serif text-base text-foreground">All done here.</p>
+      </motion.div>
+    );
+  }
+
   return (
     <div className="space-y-1.5">
-      {items.map((item) => {
-        const checked = !!checkedItems[item.id];
+      {visibleItems.map((item) => {
         const open = !!openItems[item.id];
+        const isLeaving = !!leaving[item.id];
         return (
           <motion.div
             key={item.id}
+            initial={{ opacity: 1, scale: 1, height: "auto" }}
             animate={
-              checked
-                ? { opacity: [1, 0.3, 0.7], scale: [1, 0.97, 0.99] }
-                : { opacity: 1, scale: 1 }
+              isLeaving
+                ? { opacity: 0, scale: 0.96, filter: "blur(2px)" }
+                : { opacity: 1, scale: 1, filter: "blur(0px)" }
             }
-            transition={{ duration: 0.6, ease: "easeOut", times: [0, 0.55, 1] }}
-            className={`rounded-2xl border overflow-hidden ${
-              checked ? "bg-sage-soft/40 border-sage/30" : "bg-card border-border"
-            }`}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="rounded-2xl border bg-card border-border overflow-hidden"
           >
             <div className="flex items-start gap-3 px-4 py-3">
               <button
-                onClick={() => onToggleCheck(item.id)}
-                className={`mt-0.5 h-5 w-5 rounded-full flex items-center justify-center border flex-shrink-0 transition ${
-                  checked ? "bg-sage border-sage" : "border-border hover:border-sage"
-                }`}
+                onClick={() => {
+                  if (!isLeaving) handleComplete(item.id);
+                }}
+                className="mt-0.5 h-5 w-5 rounded-full flex items-center justify-center border border-border hover:border-sage hover:bg-sage/20 flex-shrink-0 transition"
                 aria-label="Mark complete"
-              >
-                {checked && <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />}
-              </button>
+              />
               <button onClick={() => onToggleOpen(item.id)} className="flex-1 text-left">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <span className={`text-sm font-medium leading-snug block ${checked ? "text-muted-foreground" : ""}`}>
+                    <span className="text-sm font-medium leading-snug block">
                       {item.title}
                     </span>
                     <span className="text-xs text-muted-foreground mt-0.5 block leading-relaxed">
