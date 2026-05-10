@@ -87,7 +87,11 @@ function Moments() {
       <div className="space-y-6 pb-24 relative">
         {/* HERO SCRAPBOOK */}
         <section className="relative -mt-2 isolate">
-          <ScrapbookHero loveeName={loveeName} />
+          <ScrapbookHero
+            loveeName={loveeName}
+            photoMoments={photoMoments}
+            onAddPhoto={() => setComposerOpen(true)}
+          />
         </section>
 
         {/* Toggle */}
