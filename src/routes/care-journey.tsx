@@ -49,12 +49,14 @@ export const Route = createFileRoute("/care-journey")({
   component: CareJourney,
 });
 
+const EMOTIONAL_CATEGORY = "When you are ready, let's note down what has been happening";
+
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
   "Family Coordination": Users,
   "Medical": Stethoscope,
   "Medical Clarity": Stethoscope,
   "Emotional": Heart,
-  "Emotional Stabilization": Heart,
+  [EMOTIONAL_CATEGORY]: Heart,
   "Financial (Singapore)": Wallet,
   "Legal": Scale,
   "Practical": FileText,
