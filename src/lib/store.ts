@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useSyncExternalStore } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -47,7 +47,6 @@ const defaultLocal: LocalState = { checkedItems: {}, bucketList: [], moments: []
 const isUuid = (s: string) =>
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
 
-// Map db row <-> OnboardingData
 function rowToOnboarding(r: Record<string, unknown> | null): OnboardingData {
   if (!r) return {};
   return {
@@ -93,73 +92,103 @@ function onboardingToRow(d: OnboardingData) {
   };
 }
 
+// ============= Shared singleton store =============
+type StoreSnapshot = {
+  userId: string | null;
+  hydrated: boolean;
+  onboarding: OnboardingData;
+  family: FamilyMember[];
+  local: LocalState;
+};
+
+let snapshot: StoreSnapshot = {
+  userId: null,
+  hydrated: false,
+  onboarding: {},
+  family: [],
+  local: defaultLocal,
+};
+const listeners = new Set<() => void>();
+const subscribe = (l: () => void) => { listeners.add(l); return () => listeners.delete(l); };
+const getSnapshot = () => snapshot;
+const getServerSnapshot = () => snapshot;
+const setSnapshot = (next: Partial<StoreSnapshot>) => {
+  snapshot = { ...snapshot, ...next };
+  listeners.forEach((l) => l());
+};
+
+let loadingForUid: string | null = null;
+async function loadForUser(uid: string) {
+  if (loadingForUid === uid) return;
+  loadingForUid = uid;
+  const [
+    { data: profile },
+    { data: fams },
+    { data: moments },
+    { data: bucket },
+    { data: checkins },
+    { data: checked },
+  ] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", uid).maybeSingle(),
+    supabase.from("family_members").select("*").eq("owner_id", uid).order("created_at", { ascending: true }),
+    supabase.from("moments").select("*").eq("owner_id", uid).order("created_at", { ascending: false }),
+    supabase.from("bucket_items").select("*").eq("owner_id", uid).order("created_at", { ascending: true }),
+    supabase.from("check_ins").select("*").eq("owner_id", uid).order("created_at", { ascending: true }),
+    supabase.from("checked_items").select("*").eq("owner_id", uid),
+  ]);
+  if (snapshot.userId !== uid) return;
+  setSnapshot({
+    hydrated: true,
+    onboarding: rowToOnboarding(profile as Record<string, unknown> | null),
+    family: (fams ?? []).map((f) => ({
+      id: f.id, name: f.name, relationship: f.relationship ?? "Family", email: f.email ?? undefined,
+    })),
+    local: {
+      moments: (moments ?? []).map((m) => ({
+        id: m.id,
+        date: m.date,
+        title: m.title ?? "",
+        note: m.note ?? "",
+        photo: m.photo ?? undefined,
+        video: m.video ?? undefined,
+        audio: m.audio ?? undefined,
+        audioDuration: m.audio_duration ?? undefined,
+      })),
+      bucketList: (bucket ?? []).map((b) => ({
+        id: b.id, title: b.title, category: b.category ?? "Personal", done: !!b.done,
+      })),
+      checkInHistory: (checkins ?? []).map((c) => ({ date: c.date, mood: c.mood })),
+      checkedItems: Object.fromEntries((checked ?? []).map((c) => [c.item_key, true])),
+    },
+  });
+}
+
 export function useAppData() {
   const { user, loading: authLoading } = useAuth();
-  const [onboarding, setOnboarding] = useState<OnboardingData>({});
-  const [family, setFamily] = useState<FamilyMember[]>([]);
-  const [local, setLocal] = useState<LocalState>(defaultLocal);
-  const [hydrated, setHydrated] = useState(false);
+  const snap = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const uidRef = useRef<string | null>(null);
+  uidRef.current = snap.userId;
 
   useEffect(() => {
     if (authLoading) return;
     if (!user) {
-      uidRef.current = null;
-      setLocal(defaultLocal);
-      setOnboarding({});
-      setFamily([]);
-      setHydrated(true);
+      if (snapshot.userId !== null || !snapshot.hydrated) {
+        loadingForUid = null;
+        setSnapshot({ userId: null, hydrated: true, onboarding: {}, family: [], local: defaultLocal });
+      }
       return;
     }
-    uidRef.current = user.id;
-    let cancelled = false;
-    setHydrated(false);
-    (async () => {
-      const [
-        { data: profile },
-        { data: fams },
-        { data: moments },
-        { data: bucket },
-        { data: checkins },
-        { data: checked },
-      ] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
-        supabase.from("family_members").select("*").eq("owner_id", user.id).order("created_at", { ascending: true }),
-        supabase.from("moments").select("*").eq("owner_id", user.id).order("created_at", { ascending: false }),
-        supabase.from("bucket_items").select("*").eq("owner_id", user.id).order("created_at", { ascending: true }),
-        supabase.from("check_ins").select("*").eq("owner_id", user.id).order("created_at", { ascending: true }),
-        supabase.from("checked_items").select("*").eq("owner_id", user.id),
-      ]);
-      if (cancelled) return;
-      setOnboarding(rowToOnboarding(profile as Record<string, unknown> | null));
-      setFamily((fams ?? []).map((f) => ({
-        id: f.id, name: f.name, relationship: f.relationship ?? "Family", email: f.email ?? undefined,
-      })));
-      setLocal({
-        moments: (moments ?? []).map((m) => ({
-          id: m.id,
-          date: m.date,
-          title: m.title ?? "",
-          note: m.note ?? "",
-          photo: m.photo ?? undefined,
-          video: m.video ?? undefined,
-          audio: m.audio ?? undefined,
-          audioDuration: m.audio_duration ?? undefined,
-        })),
-        bucketList: (bucket ?? []).map((b) => ({
-          id: b.id, title: b.title, category: b.category ?? "Personal", done: !!b.done,
-        })),
-        checkInHistory: (checkins ?? []).map((c) => ({ date: c.date, mood: c.mood })),
-        checkedItems: Object.fromEntries((checked ?? []).map((c) => [c.item_key, true])),
-      });
-      setHydrated(true);
-    })();
-    return () => { cancelled = true; };
+    if (snapshot.userId === user.id && snapshot.hydrated) return;
+    if (snapshot.userId !== user.id) {
+      loadingForUid = null;
+      setSnapshot({ userId: user.id, hydrated: false, onboarding: {}, family: [], local: defaultLocal });
+    }
+    void loadForUser(user.id);
   }, [user, authLoading]);
 
   const saveOnboarding = useCallback(async (d: OnboardingData) => {
     if (!user) return;
-    setOnboarding(d);
+    setSnapshot({ onboarding: d });
     await supabase.from("profiles").upsert({ id: user.id, ...onboardingToRow(d) });
   }, [user]);
 
@@ -168,21 +197,21 @@ export function useAppData() {
     const { data, error } = await supabase.from("family_members").insert({
       owner_id: user.id, name: m.name, relationship: m.relationship, email: m.email,
     }).select().single();
-    if (!error && data) setFamily((f) => [...f, { id: data.id, name: data.name, relationship: data.relationship ?? "Family", email: data.email ?? undefined }]);
+    if (!error && data) setSnapshot({
+      family: [...snapshot.family, { id: data.id, name: data.name, relationship: data.relationship ?? "Family", email: data.email ?? undefined }],
+    });
   }, [user]);
 
   const removeFamily = useCallback(async (id: string) => {
     if (!user) return;
-    setFamily((f) => f.filter((x) => x.id !== id));
+    setSnapshot({ family: snapshot.family.filter((x) => x.id !== id) });
     await supabase.from("family_members").delete().eq("id", id);
   }, [user]);
 
-  // Diff prev vs next LocalState and sync changes to cloud
   const syncDiff = (prev: LocalState, next: LocalState) => {
     const uid = uidRef.current;
     if (!uid) return;
 
-    // Moments
     const prevM = new Map(prev.moments.map((m) => [m.id, m]));
     const nextM = new Map(next.moments.map((m) => [m.id, m]));
     next.moments.forEach((m) => {
@@ -206,7 +235,6 @@ export function useAppData() {
       }
     });
 
-    // Bucket items
     const prevB = new Map(prev.bucketList.map((b) => [b.id, b]));
     const nextB = new Map(next.bucketList.map((b) => [b.id, b]));
     next.bucketList.forEach((b) => {
@@ -231,7 +259,6 @@ export function useAppData() {
       }
     });
 
-    // Check-ins (one per date; replace if mood changes)
     const prevC = new Map(prev.checkInHistory.map((c) => [c.date, c.mood]));
     const nextC = new Map(next.checkInHistory.map((c) => [c.date, c.mood]));
     nextC.forEach((mood, date) => {
@@ -248,7 +275,6 @@ export function useAppData() {
       }
     });
 
-    // Checked items (care-journey checkboxes)
     const keys = new Set([...Object.keys(prev.checkedItems), ...Object.keys(next.checkedItems)]);
     keys.forEach((key) => {
       const before = !!prev.checkedItems[key];
@@ -266,23 +292,22 @@ export function useAppData() {
   };
 
   const updateLocal = useCallback((updater: (s: LocalState) => LocalState) => {
-    setLocal((prev) => {
-      const next = updater(prev);
-      syncDiff(prev, next);
-      return next;
-    });
+    const prev = snapshot.local;
+    const next = updater(prev);
+    setSnapshot({ local: next });
+    syncDiff(prev, next);
   }, []);
 
   return {
     user,
     authLoading,
-    hydrated: hydrated && !authLoading,
-    onboarding,
+    hydrated: snap.hydrated && !authLoading,
+    onboarding: snap.onboarding,
     saveOnboarding,
-    family,
+    family: snap.family,
     addFamily,
     removeFamily,
-    local,
+    local: snap.local,
     updateLocal,
   };
 }
