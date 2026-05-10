@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LifeBuoy, Wind, Phone, Users, Plus, Mail, Trash2 } from "lucide-react";
+import { LifeBuoy, Wind, Phone, Mail, Trash2, Link2, Copy, Check, Share2, Eye } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAppState, type FamilyMember } from "@/lib/store";
+import { useAppState } from "@/lib/store";
 
 export const Route = createFileRoute("/support")({
   head: () => ({
@@ -63,9 +63,22 @@ export function BreathExercise() {
 function Support() {
   const { state, update, hydrated } = useAppState();
   const [mode, setMode] = useState<"self" | "family">("self");
-  const [name, setName] = useState("");
-  const [rel, setRel] = useState("");
-  const [email, setEmail] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const inviteLink = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    let token = "";
+    try {
+      token = localStorage.getItem("alongside.inviteToken") || "";
+      if (!token) {
+        token = crypto.randomUUID().slice(0, 8);
+        localStorage.setItem("alongside.inviteToken", token);
+      }
+    } catch {
+      token = "preview";
+    }
+    return `${window.location.origin}/join/${token}`;
+  }, []);
 
   if (!hydrated) return null;
 
@@ -73,11 +86,24 @@ function Support() {
   const overwhelmedCount = recent.filter((c) => ["Overwhelmed", "Tired", "Sad", "Numb"].includes(c.mood)).length;
   const showBurnoutNote = overwhelmedCount >= 3;
 
-  const addMember = () => {
-    if (!name.trim()) return;
-    const m: FamilyMember = { id: crypto.randomUUID(), name: name.trim(), relationship: rel.trim() || "Family", email: email.trim() || undefined };
-    update((s) => ({ ...s, family: [...s.family, m] }));
-    setName(""); setRel(""); setEmail("");
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      /* ignore */
+    }
+  };
+  const shareLink = async () => {
+    const text = "I'd like to share my journey progress with you on Alongside.";
+    if (typeof navigator !== "undefined" && (navigator as Navigator & { share?: (d: ShareData) => Promise<void> }).share) {
+      try {
+        await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share({ title: "Alongside", text, url: inviteLink });
+        return;
+      } catch { /* user cancelled */ }
+    }
+    copyLink();
   };
   const removeMember = (id: string) =>
     update((s) => ({ ...s, family: s.family.filter((m) => m.id !== id) }));
@@ -202,29 +228,56 @@ function Support() {
               transition={{ duration: 0.25 }}
               className="space-y-6"
             >
-              <div className="rounded-2xl bg-card border border-border p-5 space-y-3 shadow-soft">
+              <div className="rounded-2xl bg-card border border-border p-5 space-y-4 shadow-soft">
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Users className="h-4 w-4" strokeWidth={1.6} />
-                  <span className="text-xs uppercase tracking-[0.14em]">Invite gently</span>
+                  <Link2 className="h-4 w-4" strokeWidth={1.6} />
+                  <span className="text-xs uppercase tracking-[0.14em]">Invite link</span>
                 </div>
-                <h2 className="font-serif text-xl">Bring someone into the circle</h2>
-                <div className="space-y-2">
-                  <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="rounded-xl bg-background h-11" />
-                  <div className="grid grid-cols-2 gap-2">
-                    <Input value={rel} onChange={(e) => setRel(e.target.value)} placeholder="Relationship" className="rounded-xl bg-background h-11" />
-                    <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email (optional)" className="rounded-xl bg-background h-11" />
-                  </div>
-                  <Button onClick={addMember} className="w-full rounded-xl bg-foreground text-background hover:bg-foreground/90 h-11">
-                    <Plus className="h-4 w-4 mr-1" /> Add to circle
+                <div className="space-y-1.5">
+                  <h2 className="font-serif text-xl">Bring someone into the circle</h2>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Share this private link with anyone who wants to walk alongside you.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 rounded-xl bg-background border border-border px-3 py-2">
+                  <Input
+                    value={inviteLink}
+                    readOnly
+                    onFocus={(e) => e.currentTarget.select()}
+                    className="border-0 bg-transparent h-9 px-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
+                  />
+                  <button
+                    onClick={copyLink}
+                    aria-label="Copy link"
+                    className="h-9 w-9 rounded-lg hover:bg-muted flex items-center justify-center flex-shrink-0 transition"
+                  >
+                    {copied ? <Check className="h-4 w-4 text-sage" /> : <Copy className="h-4 w-4 text-muted-foreground" />}
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <Button onClick={copyLink} variant="outline" className="rounded-xl h-11">
+                    {copied ? <><Check className="h-4 w-4 mr-1.5" /> Copied</> : <><Copy className="h-4 w-4 mr-1.5" /> Copy link</>}
                   </Button>
+                  <Button onClick={shareLink} className="rounded-xl bg-foreground text-background hover:bg-foreground/90 h-11">
+                    <Share2 className="h-4 w-4 mr-1.5" /> Share
+                  </Button>
+                </div>
+
+                <div className="flex items-start gap-2 rounded-xl bg-sage-soft/40 border border-sage/20 px-3 py-2.5">
+                  <Eye className="h-4 w-4 text-sage mt-0.5 flex-shrink-0" strokeWidth={1.8} />
+                  <p className="text-xs text-foreground/80 leading-relaxed">
+                    Linked accounts can only see your <span className="font-medium">Journey progress</span>. Moments, check-ins, and notes stay private to you.
+                  </p>
                 </div>
               </div>
 
               <section className="space-y-2">
-                <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">Your circle</h3>
+                <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">Linked accounts</h3>
                 {state.family.length === 0 ? (
                   <div className="rounded-2xl bg-card border border-border border-dashed p-6 text-center">
-                    <p className="text-sm text-muted-foreground">No family added yet. Add anyone who would want to help.</p>
+                    <p className="text-sm text-muted-foreground">No one linked yet. Share your invite link to bring someone in.</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -236,7 +289,7 @@ function Support() {
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium">{m.name}</p>
                           <p className="text-xs text-muted-foreground truncate">
-                            {m.relationship}{m.email ? ` · ${m.email}` : ""}
+                            {m.relationship} · sees Journey progress
                           </p>
                         </div>
                         {m.email && (
