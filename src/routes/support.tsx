@@ -90,7 +90,7 @@ function Support() {
             <LifeBuoy className="h-4 w-4" strokeWidth={1.6} />
             <span className="text-xs uppercase tracking-[0.14em]">Support</span>
           </div>
-          <h1 className="text-4xl font-serif mt-1.5 text-balance">You don't have to carry this alone</h1>
+          <h1 className="text-4xl font-serif mt-1.5 text-balance">Let your support meet you where you are</h1>
           <p className="text-muted-foreground mt-2 leading-relaxed">
             Support yourself, or invite family to walk alongside you.
           </p>
