@@ -526,6 +526,7 @@ function ChecklistAccordion({
   const [leaving, setLeaving] = useState<Record<string, boolean>>({});
 
   const handleComplete = (id: string) => {
+    const item = items.find((i) => i.id === id);
     setLeaving((p) => ({ ...p, [id]: true }));
     setTimeout(() => {
       onToggleCheck(id);
@@ -534,6 +535,7 @@ function ChecklistAccordion({
         delete n[id];
         return n;
       });
+      if (item) notifyCompleted(item.title, () => onToggleCheck(id));
     }, 550);
   };
 
