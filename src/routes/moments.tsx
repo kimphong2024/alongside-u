@@ -215,27 +215,21 @@ function Moments() {
               </div>
             </div>
 
-            {timeline.length === 0 ? (
-              <div className="text-center max-w-md mx-auto flex flex-col items-center">
-                <p className="font-serif italic text-2xl text-foreground/70 leading-snug">
-                  Your scrapbook starts with one quiet moment.
+            {isDemo && (
+              <div className="rounded-2xl border border-dashed border-border bg-card/60 px-4 py-3 text-center">
+                <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                  Demo scrapbook
                 </p>
-                <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
-                  Tap the button below to keep your first memory with {loveeName}.
+                <p className="text-sm text-foreground/75 mt-1 leading-relaxed">
+                  A few sample memories so you can see the clothesline. They'll
+                  step aside as soon as you add your first real moment.
                 </p>
-                <Button
-                  onClick={() => setComposerOpen(true)}
-                  className="mt-6 h-12 px-6 rounded-full bg-foreground text-background hover:bg-foreground/90 font-serif italic text-base shadow-paper"
-                >
-                  <Plus className="h-5 w-5 mr-2" strokeWidth={2} />
-                  Add a moment
-                </Button>
               </div>
-            ) : (
-              timeline.map((group) => (
-                <TimelineGroup key={group.label} group={group} />
-              ))
             )}
+
+            {timeline.map((group) => (
+              <TimelineGroup key={group.label} group={group} isDemo={isDemo} />
+            ))}
           </div>
         )}
 
