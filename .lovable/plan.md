@@ -1,21 +1,28 @@
-## Bring back the questionnaire onboarding before /care-journey
+## Make the heart fill more obviously wavy on task completion
 
-When the user picks "Show me what needs to be done" on the welcome screen, run the original multi-step questionnaire (relationship → diagnosis → emotional state → priorities → final) before landing on /care-journey. After they finish it once, future clicks go straight to /care-journey.
+The HeartMeter (src/routes/care-journey.tsx, ~lines 712–820) already has two animated wave layers, but the waves are very low-amplitude (~1px) and the rise on completion is a quiet spring — so finishing a task barely reads as "water filling up". Goal: make each completion feel like a clear, splashy water-rise.
 
-### Changes
+### Changes (single file: `src/routes/care-journey.tsx`, `HeartMeter` component)
 
-**1. New route `src/routes/care-journey-intro.tsx`**
-- Ports the questionnaire from the STOCK project's `OnboardingFlow.tsx` (welcome, relationship, illness/stage, emotional, priorities, final), wired to the existing `useAppData` / `saveOnboarding` (the store already has all matching fields).
-- On finish: `saveOnboarding({ ...data, completed: true })` then `navigate({ to: "/care-journey" })`.
-- On mount: if `onboarding.completed` is already true, redirect immediately to `/care-journey` so it only runs once.
-- Includes `RelationshipInline`, `ChoiceGrid`, `Header` helpers and the same step indicators / Back / Continue chrome.
+1. **Bigger, more visible waves at rest**
+   - Increase wave path amplitude from ~1u to ~2.5–3u peak-to-trough so the surface visibly undulates.
+   - Slightly slow the back wave and keep the front wave faster for a clearer parallax/water feel.
+   - Keep the existing two-layer back/front structure and sage colors.
 
-**2. `src/components/OnboardingFlow.tsx` (the welcome 2-tile screen)**
-- Change the "Show me what needs to be done" tile's `to` from `/care-journey` to `/care-journey-intro`.
-- Remove the side-effect that auto-marks `onboarding.completed = true` on mount, so completion now means "finished the questionnaire". The `/support` tile path is unaffected.
+2. **Splash burst on each completion**
+   - Track the previous `ratio` with a `useRef`. When `ratio` increases, trigger a short "splash" state (~700 ms).
+   - During splash:
+     - Temporarily swap the wave paths for higher-amplitude variants (~5–6u) so the surface visibly sloshes, then ease back to the resting amplitude.
+     - Animate the rect/wave `y` rise with a spring that overshoots (lower damping, e.g. stiffness 180 / damping 10) so the water bobs past its new level and settles — reading clearly as a fill event.
+     - Add a brief heart-scale pulse (1 → 1.06 → 1) and a soft sage glow ring (an extra `<path>` with the heart shape, animated opacity 0 → 0.5 → 0) for emphasis.
+   - After the splash window, revert to the calm resting waves.
 
-**3. No DB changes** - all questionnaire fields already exist on `profiles` and in `OnboardingData`.
+3. **Make sure it's visible even when the heart shrinks on scroll**
+   - The splash effects scale with the SVG, so no extra work — but verify the glow ring stays inside the viewBox.
 
-### Notes
-- The "Let me process this a bit more" tile keeps going straight to `/support` (no questionnaire).
-- A user who has already completed the questionnaire will not see it again; the intro route just forwards them to `/care-journey`.
+No changes to data flow, store, or other components. The trigger is purely the `ratio` prop already passed in.
+
+### Acceptance
+- Waves are clearly undulating at rest (not nearly flat).
+- Checking a task makes the water rise with an obvious slosh/overshoot and a brief heart pulse.
+- Unchecking a task drops the level smoothly without a splash (only fills splash on increase).
