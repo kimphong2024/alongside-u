@@ -86,10 +86,13 @@ function SharedScrapbook() {
         {error && (
           <p className="text-center text-sm text-muted-foreground">{error}</p>
         )}
-        {!loading && !error && groups.length === 0 && (
-          <p className="text-center font-serif italic text-xl text-foreground/60">
-            No moments to show yet.
-          </p>
+        {isDemo && (
+          <div className="rounded-2xl border border-dashed border-border bg-card/60 px-4 py-3 text-center">
+            <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Demo scrapbook</p>
+            <p className="text-sm text-foreground/75 mt-1 leading-relaxed">
+              A few sample memories so you can see what a shared scrapbook looks like.
+            </p>
+          </div>
         )}
         {groups.map((g) => (
           <section key={g.label}>
