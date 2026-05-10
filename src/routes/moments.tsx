@@ -41,14 +41,41 @@ function Moments() {
 
   const loveeName = state.onboarding.loveeName?.trim() || "your loved one";
 
-  const seedBucket = () => {
-    const seeded: BucketItem[] = BUCKET_TEMPLATES.slice(0, 8).map((t) => ({
-      id: crypto.randomUUID(),
-      title: t.title,
-      category: t.category,
-      done: false,
-    }));
-    update((s) => ({ ...s, bucketList: [...s.bucketList, ...seeded] }));
+  const suggestIdeas = async () => {
+    if (suggesting) return;
+    setSuggesting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("suggest-bucket-ideas", {
+        body: {
+          loveeName,
+          existing: state.bucketList.map((b) => b.title),
+        },
+      });
+      const ideas: { title: string; category: string }[] = data?.ideas ?? [];
+      if (error || ideas.length === 0) {
+        // Fallback to seed templates so the user always gets something
+        const seeded: BucketItem[] = BUCKET_TEMPLATES.slice(0, 6).map((t) => ({
+          id: crypto.randomUUID(),
+          title: t.title,
+          category: t.category,
+          done: false,
+        }));
+        update((s) => ({ ...s, bucketList: [...s.bucketList, ...seeded] }));
+        setConfirmation("Added a few gentle ideas.");
+      } else {
+        const seeded: BucketItem[] = ideas.map((i) => ({
+          id: crypto.randomUUID(),
+          title: i.title,
+          category: i.category || "Personal",
+          done: false,
+        }));
+        update((s) => ({ ...s, bucketList: [...s.bucketList, ...seeded] }));
+        setConfirmation(`${seeded.length} new ideas added.`);
+      }
+      setTimeout(() => setConfirmation(null), 2800);
+    } finally {
+      setSuggesting(false);
+    }
   };
 
   const addBucket = () => {
