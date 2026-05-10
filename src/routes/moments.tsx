@@ -63,7 +63,9 @@ function Moments() {
   };
 
   // Group moments by relative date for the timeline (must be before any early return)
-  const timeline = useMemo(() => groupByRelativeDate(state.moments), [state.moments]);
+  const isDemo = state.moments.length === 0;
+  const timelineSource = isDemo ? DEMO_MOMENTS : state.moments;
+  const timeline = useMemo(() => groupByRelativeDate(timelineSource), [timelineSource]);
   const photoMoments = useMemo(
     () => state.moments.filter((m) => !!m.photo || !!m.video).slice(0, 5),
     [state.moments],
