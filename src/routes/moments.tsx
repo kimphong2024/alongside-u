@@ -321,7 +321,7 @@ function ScrapbookHero({
         <AnimatePresence>
           {cards.map((c, i) => {
             const tilt = tilts[i % tilts.length];
-            const momentId = "momentId" in c ? c.momentId : undefined;
+            const momentId = "momentId" in c ? (c.momentId as string) : undefined;
             return (
               <motion.div
                 key={c.id}
