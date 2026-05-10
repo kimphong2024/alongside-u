@@ -4,11 +4,14 @@ import { useNavigate, Link } from "@tanstack/react-router";
 import { ArrowRight, Wind, ListChecks } from "lucide-react";
 import { useAppData } from "@/lib/store";
 import heartImg from "@/assets/arms-hugging-heart.png";
+import processWavesImg from "@/assets/onboarding-process-waves.png";
+import checklistImg from "@/assets/onboarding-checklist.png";
 
 const TILES = [
   {
     title: "Let me process this a bit more",
     icon: Wind,
+    illustration: processWavesImg,
     to: "/support" as const,
     gradient:
       "radial-gradient(120% 100% at 20% 15%, #F4D7DE 0%, #EBD5E6 45%, #E0D2EC 100%)",
@@ -16,6 +19,7 @@ const TILES = [
   {
     title: "Show me what needs to be done",
     icon: ListChecks,
+    illustration: checklistImg,
     to: "/care-journey" as const,
     gradient:
       "radial-gradient(120% 100% at 25% 20%, #DDEAD3 0%, #CFE5CC 50%, #D8EBD4 100%)",
