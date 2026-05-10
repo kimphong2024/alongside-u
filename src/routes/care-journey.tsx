@@ -489,7 +489,7 @@ function MedicalTiles({
                   }}
                   role="button"
                   aria-label="Mark complete"
-                  className="absolute top-2.5 right-2.5 h-5 w-5 rounded-full border border-border bg-card/80 hover:bg-sage hover:border-sage transition"
+                  className="absolute top-4 right-4 h-5 w-5 rounded-full border border-border bg-card/80 hover:bg-sage hover:border-sage transition"
                 />
                 {ITEM_IMAGES[item.id] ? (
                   <img src={ITEM_IMAGES[item.id]} alt="" className="h-20 w-20 object-contain" />
