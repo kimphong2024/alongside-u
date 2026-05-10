@@ -666,12 +666,24 @@ function HeartMeter({ ratio, checked, total }: { ratio: number; checked: number;
   const fillHeight = 24 * r;
   const fillY = 28 - fillHeight;
 
+  // Shrink from 4x (h-40) to 1x (h-10) over the first 240px of scroll.
+  const { scrollY } = useScroll();
+  const size = useTransform(scrollY, [0, 240], [160, 40], { clamp: true });
+  const labelSize = useTransform(scrollY, [0, 240], [16, 10], { clamp: true });
+
+  // Squarer heart path: flatter top lobes, broader shoulders, gentler bottom point.
+  const heartPath =
+    "M16 26 C 3 19, 3 9, 9 6 C 13 4.5, 15.5 6.5, 16 8.5 C 16.5 6.5, 19 4.5, 23 6 C 29 9, 29 19, 16 26 Z";
+
   return (
-    <div className="flex flex-col items-center flex-shrink-0 pt-1" aria-label={`${checked} of ${total} tasks complete`}>
-      <svg viewBox="0 0 32 32" className="h-10 w-10" aria-hidden>
+    <motion.div
+      className="flex flex-col items-center flex-shrink-0 pt-1 sticky top-2 z-20"
+      aria-label={`${checked} of ${total} tasks complete`}
+    >
+      <motion.svg viewBox="0 0 32 32" style={{ width: size, height: size }} aria-hidden>
         <defs>
           <clipPath id="heart-clip">
-            <path d="M16 28 C 4 20, 4 10, 10 7 C 13 5.5, 15.5 7, 16 9 C 16.5 7, 19 5.5, 22 7 C 28 10, 28 20, 16 28 Z" />
+            <path d={heartPath} />
           </clipPath>
           <linearGradient id="heart-fill" x1="0" y1="1" x2="0" y2="0">
             <stop offset="0%" stopColor="var(--sage)" />
@@ -679,7 +691,7 @@ function HeartMeter({ ratio, checked, total }: { ratio: number; checked: number;
           </linearGradient>
         </defs>
         <path
-          d="M16 28 C 4 20, 4 10, 10 7 C 13 5.5, 15.5 7, 16 9 C 16.5 7, 19 5.5, 22 7 C 28 10, 28 20, 16 28 Z"
+          d={heartPath}
           fill="var(--sage)"
           fillOpacity="0.12"
           stroke="var(--sage)"
@@ -695,10 +707,13 @@ function HeartMeter({ ratio, checked, total }: { ratio: number; checked: number;
             fill="url(#heart-fill)"
           />
         </g>
-      </svg>
-      <span className="text-[10px] tabular-nums text-muted-foreground mt-1">
+      </motion.svg>
+      <motion.span
+        className="tabular-nums text-muted-foreground mt-1"
+        style={{ fontSize: labelSize }}
+      >
         {checked}/{total}
-      </span>
-    </div>
+      </motion.span>
+    </motion.div>
   );
 }
