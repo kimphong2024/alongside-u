@@ -513,7 +513,7 @@ function ChecklistAccordion({
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </motion.div>
         );
       })}
     </div>
