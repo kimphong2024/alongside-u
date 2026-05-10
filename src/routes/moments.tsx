@@ -145,33 +145,8 @@ function Moments() {
 
   return (
     <AppShell>
-      <div className="space-y-6 pb-24 relative">
-        {/* Toggle */}
-        <div className="relative z-10 grid grid-cols-2 gap-1 p-1.5 bg-card border border-border rounded-full shadow-soft max-w-sm mx-auto mt-4">
-          {[
-            { id: "journal", label: "Memory journal" },
-            { id: "bucket", label: "Bucket list" },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id as "journal" | "bucket")}
-              className={`relative py-2.5 rounded-full text-sm transition ${
-                tab === t.id ? "text-foreground" : "text-muted-foreground"
-              }`}
-            >
-              {tab === t.id && (
-                <motion.span
-                  layoutId="moments-pill"
-                  className="absolute inset-0 rounded-full bg-gradient-sage shadow-soft"
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                />
-              )}
-              <span className="relative font-serif italic text-base">{t.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {tab === "journal" && journalView === "collage" && (
+      <div className="space-y-10 pb-24 relative">
+        {journalView === "collage" && (
           <MemoryCollage
             loveeName={loveeName}
             photoMoments={photoMoments}
@@ -181,7 +156,7 @@ function Moments() {
           />
         )}
 
-        {tab === "journal" && journalView === "timeline" && (
+        {journalView === "timeline" && (
           <div className="space-y-10">
             <div className="flex items-center justify-between max-w-3xl mx-auto px-1">
               <button
@@ -232,68 +207,74 @@ function Moments() {
           </div>
         )}
 
-        {tab === "bucket" && (
-          <div className="space-y-5 max-w-2xl mx-auto">
-            <div className="rounded-2xl bg-card border border-border p-4 space-y-2 shadow-soft">
-              <div className="flex gap-2">
-                <Input
-                  value={newBucket}
-                  onChange={(e) => setNewBucket(e.target.value)}
-                  placeholder={`Something to share with ${loveeName}…`}
-                  className="rounded-xl bg-background h-11"
-                  onKeyDown={(e) => e.key === "Enter" && addBucket()}
-                />
-                <Button onClick={addBucket} className="rounded-xl bg-foreground text-background hover:bg-foreground/90 h-11">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <Button
-                onClick={suggestIdeas}
-                disabled={suggesting}
-                variant="ghost"
-                className="w-full text-sage hover:text-sage rounded-xl"
-              >
-                <Sparkles className={`h-4 w-4 mr-2 ${suggesting ? "animate-pulse" : ""}`} />
-                {suggesting ? "Thinking of gentle ideas…" : "Suggest a few gentle ideas with AI"}
+        {/* Bucket list section, always below the clothesline */}
+        <div className="space-y-5 max-w-2xl mx-auto pt-4">
+          <div className="text-center">
+            <h2 className="font-serif italic text-3xl text-foreground/85">Bucket list</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Small wishes and gentle plans to share with {loveeName}.
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-card border border-border p-4 space-y-2 shadow-soft">
+            <div className="flex gap-2">
+              <Input
+                value={newBucket}
+                onChange={(e) => setNewBucket(e.target.value)}
+                placeholder={`Something to share with ${loveeName}…`}
+                className="rounded-xl bg-background h-11"
+                onKeyDown={(e) => e.key === "Enter" && addBucket()}
+              />
+              <Button onClick={addBucket} className="rounded-xl bg-foreground text-background hover:bg-foreground/90 h-11">
+                <Plus className="h-4 w-4" />
               </Button>
             </div>
-
-            {Object.keys(grouped).length === 0 && (
-              <div className="text-center py-10 px-6">
-                <Heart className="h-8 w-8 mx-auto text-muted-foreground/50" strokeWidth={1.4} />
-                <p className="text-sm text-muted-foreground mt-3 max-w-xs mx-auto leading-relaxed">
-                  Even the simplest things - a favourite meal, a familiar song - become precious.
-                </p>
-              </div>
-            )}
-
-            {Object.entries(grouped).map(([cat, items]) => (
-              <div key={cat} className="space-y-2">
-                <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">{cat}</h3>
-                <div className="space-y-2">
-                  {items.map((b) => (
-                    <button
-                      key={b.id}
-                      onClick={() => toggleBucket(b.id)}
-                      className={`w-full text-left flex items-center gap-3 p-4 rounded-2xl border transition ${
-                        b.done ? "bg-clay-soft/40 border-clay/30" : "bg-card border-border hover:border-clay/40"
-                      }`}
-                    >
-                      <span className={`h-5 w-5 rounded-full flex items-center justify-center border flex-shrink-0 ${
-                        b.done ? "bg-clay border-clay" : "border-border"
-                      }`}>
-                        {b.done && <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />}
-                      </span>
-                      <span className={`text-sm flex-1 ${b.done ? "text-muted-foreground line-through decoration-muted-foreground/30" : ""}`}>
-                        {b.title}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
+            <Button
+              onClick={suggestIdeas}
+              disabled={suggesting}
+              variant="ghost"
+              className="w-full text-sage hover:text-sage rounded-xl"
+            >
+              <Sparkles className={`h-4 w-4 mr-2 ${suggesting ? "animate-pulse" : ""}`} />
+              {suggesting ? "Thinking of gentle ideas…" : "Suggest a few gentle ideas with AI"}
+            </Button>
           </div>
-        )}
+
+          {Object.keys(grouped).length === 0 && (
+            <div className="text-center py-10 px-6">
+              <Heart className="h-8 w-8 mx-auto text-muted-foreground/50" strokeWidth={1.4} />
+              <p className="text-sm text-muted-foreground mt-3 max-w-xs mx-auto leading-relaxed">
+                Even the simplest things - a favourite meal, a familiar song - become precious.
+              </p>
+            </div>
+          )}
+
+          {Object.entries(grouped).map(([cat, items]) => (
+            <div key={cat} className="space-y-2">
+              <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">{cat}</h3>
+              <div className="space-y-2">
+                {items.map((b) => (
+                  <button
+                    key={b.id}
+                    onClick={() => toggleBucket(b.id)}
+                    className={`w-full text-left flex items-center gap-3 p-4 rounded-2xl border transition ${
+                      b.done ? "bg-clay-soft/40 border-clay/30" : "bg-card border-border hover:border-clay/40"
+                    }`}
+                  >
+                    <span className={`h-5 w-5 rounded-full flex items-center justify-center border flex-shrink-0 ${
+                      b.done ? "bg-clay border-clay" : "border-border"
+                    }`}>
+                      {b.done && <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />}
+                    </span>
+                    <span className={`text-sm flex-1 ${b.done ? "text-muted-foreground line-through decoration-muted-foreground/30" : ""}`}>
+                      {b.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Floating Add Moment Button removed - use the "+" card in the scrapbook hero */}
