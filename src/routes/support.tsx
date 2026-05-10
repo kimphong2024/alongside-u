@@ -160,7 +160,7 @@ function Support() {
               <section className="space-y-3">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Wind className="h-4 w-4" strokeWidth={1.6} />
-                  <span className="text-xs uppercase tracking-[0.14em]">A breathing moment</span>
+                  <span className="text-xs uppercase tracking-[0.14em]">Let's take a moment to breathe</span>
                 </div>
                 <BreathExercise />
               </section>
