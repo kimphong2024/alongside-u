@@ -172,6 +172,7 @@ export type Database = {
           priorities: Json | null
           prognosis: string | null
           relationship: string | null
+          share_token: string | null
           situation: Json | null
           updated_at: string | null
         }
@@ -194,6 +195,7 @@ export type Database = {
           priorities?: Json | null
           prognosis?: string | null
           relationship?: string | null
+          share_token?: string | null
           situation?: Json | null
           updated_at?: string | null
         }
@@ -216,6 +218,7 @@ export type Database = {
           priorities?: Json | null
           prognosis?: string | null
           relationship?: string | null
+          share_token?: string | null
           situation?: Json | null
           updated_at?: string | null
         }

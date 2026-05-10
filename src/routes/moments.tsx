@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Plus, Sparkles, Check, Play, Pause, Mic, Film, ArrowLeft } from "lucide-react";
+import { Heart, Plus, Sparkles, Check, Play, Pause, Mic, Film, ArrowLeft, Share2 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,12 +27,39 @@ export const Route = createFileRoute("/moments")({
 
 function Moments() {
   const { state, update, hydrated } = useAppState();
+  const { user } = useAuth();
   const [tab, setTab] = useState<"journal" | "bucket">("journal");
   const [journalView, setJournalView] = useState<"collage" | "timeline">("collage");
   const [composerOpen, setComposerOpen] = useState(false);
   const [newBucket, setNewBucket] = useState("");
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const [suggesting, setSuggesting] = useState(false);
+  const [sharing, setSharing] = useState(false);
+
+  const shareTimeline = async () => {
+    if (!user || sharing) return;
+    setSharing(true);
+    try {
+      const { data: existing } = await supabase
+        .from("profiles").select("share_token").eq("id", user.id).maybeSingle();
+      let token = existing?.share_token as string | null;
+      if (!token) {
+        token = crypto.randomUUID();
+        await supabase.from("profiles").update({ share_token: token }).eq("id", user.id);
+      }
+      const url = `${window.location.origin}/scrapbook/${token}`;
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: "A shared scrapbook", url });
+        } catch { /* user cancelled */ }
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast.success("Public link copied", { description: url });
+      }
+    } finally {
+      setSharing(false);
+    }
+  };
 
   // Group moments by relative date for the timeline (must be before any early return)
   const timeline = useMemo(() => groupByRelativeDate(state.moments), [state.moments]);
@@ -160,15 +189,27 @@ function Moments() {
                 <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.8} />
                 Back to collage
               </button>
-              <Button
-                onClick={() => setComposerOpen(true)}
-                size="sm"
-                variant="ghost"
-                className="rounded-full text-foreground/80 hover:text-foreground"
-              >
-                <Plus className="h-4 w-4 mr-1.5" />
-                Add a moment
-              </Button>
+              <div className="flex items-center gap-1">
+                <Button
+                  onClick={shareTimeline}
+                  disabled={sharing}
+                  size="sm"
+                  variant="ghost"
+                  className="rounded-full text-foreground/80 hover:text-foreground"
+                >
+                  <Share2 className="h-4 w-4 mr-1.5" />
+                  {sharing ? "Preparing…" : "Share link"}
+                </Button>
+                <Button
+                  onClick={() => setComposerOpen(true)}
+                  size="sm"
+                  variant="ghost"
+                  className="rounded-full text-foreground/80 hover:text-foreground"
+                >
+                  <Plus className="h-4 w-4 mr-1.5" />
+                  Add a moment
+                </Button>
+              </div>
             </div>
 
             {timeline.length === 0 ? (
