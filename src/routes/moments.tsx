@@ -474,18 +474,6 @@ function MemoryCollage({
         </p>
       </button>
 
-      <div className="flex justify-center mt-6">
-        <Button
-          onClick={(e) => {
-            e.stopPropagation();
-            onAdd();
-          }}
-          className="h-12 px-6 rounded-full bg-foreground text-background hover:bg-foreground/90 font-serif italic text-base shadow-paper"
-        >
-          <Plus className="h-5 w-5 mr-2" strokeWidth={2} />
-          Add a moment
-        </Button>
-      </div>
     </section>
   );
 }
