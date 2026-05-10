@@ -691,12 +691,32 @@ function HeartMeter({ ratio, checked, total }: { ratio: number; checked: number;
   const heartPath =
     "M16 26 C 3 19, 3 9, 9 6 C 13 4.5, 15.5 6.5, 16 8.5 C 16.5 6.5, 19 4.5, 23 6 C 29 9, 29 19, 16 26 Z";
 
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  useEffect(() => {
+    const update = () => {
+      const el = svgRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setHeartTarget({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    const interval = window.setInterval(update, 250);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      window.clearInterval(interval);
+      setHeartTarget(null);
+    };
+  }, []);
+
   return (
     <motion.div
       className="flex flex-col items-center flex-shrink-0 pt-1 sticky top-2 z-20"
       aria-label={`${checked} of ${total} tasks complete`}
     >
-      <motion.svg viewBox="0 0 32 32" style={{ width: size, height: size }} aria-hidden>
+      <motion.svg ref={svgRef} viewBox="0 0 32 32" style={{ width: size, height: size }} aria-hidden>
         <defs>
           <clipPath id="heart-clip">
             <path d={heartPath} />
