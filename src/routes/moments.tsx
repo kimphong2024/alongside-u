@@ -61,15 +61,14 @@ function Moments() {
     }
   };
 
-  // Demo moments always remain alongside the user's own moments.
-  const hasOwnMoments = state.moments.length > 0;
-  const timelineSource = useMemo(
-    () => [...state.moments, ...DEMO_MOMENTS],
+  // Group moments by relative date for the timeline (must be before any early return)
+  const isDemo = state.moments.length === 0;
+  const timelineSource = isDemo ? DEMO_MOMENTS : state.moments;
+  const timeline = useMemo(() => groupByRelativeDate(timelineSource), [timelineSource]);
+  const photoMoments = useMemo(
+    () => state.moments.filter((m) => !!m.photo || !!m.video).slice(0, 5),
     [state.moments],
   );
-  const timeline = useMemo(() => groupByRelativeDate(timelineSource), [timelineSource]);
-  const demoIds = useMemo(() => new Set(DEMO_MOMENTS.map((m) => m.id)), []);
-  const recentMoments = useMemo(() => state.moments.slice(0, 3), [state.moments]);
 
   if (!hydrated) return null;
 
@@ -150,7 +149,7 @@ function Moments() {
         {journalView === "collage" && (
           <MemoryCollage
             loveeName={loveeName}
-            recentMoments={recentMoments}
+            photoMoments={photoMoments}
             totalCount={state.moments.length}
             onOpen={() => setJournalView("timeline")}
             onAdd={() => setComposerOpen(true)}
@@ -190,20 +189,20 @@ function Moments() {
               </div>
             </div>
 
-            {!hasOwnMoments && (
+            {isDemo && (
               <div className="rounded-2xl border border-dashed border-border bg-card/60 px-4 py-3 text-center">
                 <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
                   Demo scrapbook
                 </p>
                 <p className="text-sm text-foreground/75 mt-1 leading-relaxed">
-                  A few sample memories so you can see the clothesline. Add your
-                  own and they'll join right alongside.
+                  A few sample memories so you can see the clothesline. They'll
+                  step aside as soon as you add your first real moment.
                 </p>
               </div>
             )}
 
             {timeline.map((group) => (
-              <TimelineGroup key={group.label} group={group} demoIds={demoIds} />
+              <TimelineGroup key={group.label} group={group} isDemo={isDemo} />
             ))}
           </div>
         )}
@@ -304,13 +303,13 @@ function Moments() {
 
 function MemoryCollage({
   loveeName,
-  recentMoments,
+  photoMoments,
   totalCount,
   onOpen,
   onAdd,
 }: {
   loveeName: string;
-  recentMoments: Moment[];
+  photoMoments: Moment[];
   totalCount: number;
   onOpen: () => void;
   onAdd: () => void;
@@ -321,18 +320,14 @@ function MemoryCollage({
     { id: "seed-garden", src: momentsGarden, kind: "photo" as const, caption: "spring garden" },
   ];
 
-  type CardKind = "photo" | "video" | "blank";
-  const userCards: { id: string; src?: string; kind: CardKind; caption: string }[] =
-    recentMoments.slice(0, 3).map((m, i) => ({
-      id: m.id,
-      src: m.photo || m.video,
-      kind: m.video ? "video" : m.photo ? "photo" : "blank",
-      caption: m.title?.toLowerCase() || seedCards[i]?.caption || "",
-    }));
+  const userCards = photoMoments.slice(0, 3).map((m, i) => ({
+    id: m.id,
+    src: (m.photo || m.video)!,
+    kind: (m.photo ? "photo" : "video") as "photo" | "video",
+    caption: m.title?.toLowerCase() || seedCards[i]?.caption || "",
+  }));
 
-  // Always mix in seed/demo cards so the clothesline never feels empty.
-  const cards: { id: string; src?: string; kind: CardKind; caption: string }[] =
-    [...userCards, ...seedCards].slice(0, 3);
+  const cards = (userCards.length > 0 ? userCards : seedCards).slice(0, 3);
 
   // Slight alternating tilt for a hand-pinned clothesline feel.
   const tilts = [-3, 2, -2];
@@ -389,7 +384,7 @@ function MemoryCollage({
                   />
                   <div className="bg-card border border-border p-2 pb-6 shadow-paper paper-grain rounded-md w-[150px] md:w-[180px] mt-2">
                     <div className="relative aspect-[4/5] rounded-sm overflow-hidden bg-muted">
-                      {c.kind === "video" && c.src ? (
+                      {c.kind === "video" ? (
                         <video
                           src={c.src}
                           autoPlay
@@ -399,10 +394,8 @@ function MemoryCollage({
                           preload="metadata"
                           className="w-full h-full object-cover"
                         />
-                      ) : c.kind === "photo" && c.src ? (
-                        <img src={c.src} alt="" loading="lazy" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full bg-muted" aria-hidden />
+                        <img src={c.src} alt="" loading="lazy" className="w-full h-full object-cover" />
                       )}
                       {c.kind === "video" && (
                         <span className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-foreground/70 backdrop-blur-sm flex items-center justify-center">
@@ -488,7 +481,7 @@ function groupByRelativeDate(moments: Moment[]): Group[] {
   return Array.from(map.entries()).map(([label, items]) => ({ label, items }));
 }
 
-function TimelineGroup({ group, demoIds }: { group: Group; demoIds: Set<string> }) {
+function TimelineGroup({ group, isDemo }: { group: Group; isDemo?: boolean }) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 12 }}
@@ -522,7 +515,7 @@ function TimelineGroup({ group, demoIds }: { group: Group; demoIds: Set<string> 
         <div className="relative flex gap-6 overflow-x-auto pb-8 pt-6 px-2 snap-x snap-mandatory scrollbar-none">
           {group.items.map((m, i) => (
             <PeggedCard key={m.id} index={i}>
-              {demoIds.has(m.id) && (
+              {isDemo && (
                 <span className="absolute -top-2 left-1/2 -translate-x-1/2 z-20 text-[9px] uppercase tracking-[0.16em] bg-foreground/85 text-background px-2 py-0.5 rounded-full shadow-soft">
                   Demo
                 </span>
