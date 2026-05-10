@@ -5,6 +5,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight, ArrowLeft, Check, ChevronDown, Waves, CircleDashed, Wind, Compass, Shield, Sun, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppData, type OnboardingData } from "@/lib/store";
+import heartImg from "@/assets/arms-hugging-heart.png";
 
 export const Route = createFileRoute("/care-journey-intro")({
   component: CareJourneyIntro,
@@ -215,7 +216,7 @@ function CareJourneyIntro() {
   const steps: Step[] = [
     { id: "welcome", render: () => (
       <div className="text-center space-y-5 pt-8">
-        <div className="mx-auto h-20 w-20 rounded-full bg-gradient-dawn shadow-glow" />
+        <img src={heartImg} alt="" className="mx-auto h-24 w-24 object-contain" />
         <h1 className="text-4xl md:text-5xl text-balance font-serif">You do not have to navigate this alone.</h1>
         <p className="text-muted-foreground text-balance leading-relaxed max-w-md mx-auto">
           We'll help you organize next steps and create meaningful moments with your loved one — at your own pace.
@@ -303,7 +304,7 @@ function CareJourneyIntro() {
     )},
     { id: "final", render: ({ data }) => (
       <div className="text-center space-y-5 pt-8">
-        <div className="mx-auto h-20 w-20 rounded-full bg-gradient-dawn shadow-glow" />
+        <img src={heartImg} alt="" className="mx-auto h-24 w-24 object-contain" />
         <h1 className="text-4xl font-serif text-balance">Here's a gentle starting point.</h1>
         <p className="text-muted-foreground text-balance max-w-md mx-auto leading-relaxed">
           {data.caregiverName ? `${data.caregiverName}, ` : ""}we've prepared a small set of next steps and a quiet space for meaningful moments. Nothing is urgent. You can return anytime.
@@ -331,7 +332,7 @@ function CareJourneyIntro() {
   return (
     <div className="min-h-screen flex flex-col px-5 py-8 max-w-xl mx-auto w-full">
       <div className="flex items-center gap-3 mb-8">
-        <div className="h-8 w-8 rounded-full bg-gradient-dawn shadow-soft" />
+        <img src={heartImg} alt="" className="h-9 w-9 object-contain" />
         <span className="font-serif text-xl">Alongside</span>
         <div className="ml-auto flex gap-1.5">
           {steps.map((_, i) => (
