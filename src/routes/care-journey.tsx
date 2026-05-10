@@ -401,6 +401,7 @@ function MedicalTiles({
   ];
 
   const handleComplete = (id: string) => {
+    const item = items.find((i) => i.id === id);
     setLeaving((p) => ({ ...p, [id]: true }));
     setTimeout(() => {
       onToggle(id);
@@ -409,6 +410,7 @@ function MedicalTiles({
         delete n[id];
         return n;
       });
+      if (item) notifyCompleted(item.title, () => onToggle(id));
     }, 550);
   };
 
