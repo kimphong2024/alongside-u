@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import {
   BookOpen,
@@ -39,6 +39,15 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { flyHeart, setHeartTarget } from "@/lib/heart-flight";
+import { HeartFlyer } from "@/components/HeartFlyer";
+
+function originFromEvent(e: React.MouseEvent | React.TouchEvent | undefined): { x: number; y: number } | null {
+  if (!e) return null;
+  const t = e.currentTarget as HTMLElement;
+  const r = t.getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+}
 
 function notifyCompleted(title: string, undo: () => void) {
   toast.success(`Marked done · ${title}`, {
@@ -240,6 +249,7 @@ function CareJourney() {
           <ResourcesCarousel />
         </section>
       </div>
+      <HeartFlyer />
     </AppShell>
   );
 }
@@ -259,8 +269,10 @@ function EmotionalCarousel({
   const [leaving, setLeaving] = useState<Record<string, boolean>>({});
   const gradients = ["bg-gradient-sage", "bg-gradient-warm", "bg-gradient-dawn"];
 
-  const handleComplete = (id: string) => {
+  const handleComplete = (id: string, e?: React.MouseEvent) => {
     const item = items.find((i) => i.id === id);
+    const origin = originFromEvent(e);
+    if (origin) flyHeart(origin);
     setLeaving((p) => ({ ...p, [id]: true }));
     setTimeout(() => {
       onToggle(id);
@@ -313,7 +325,7 @@ function EmotionalCarousel({
                       <span
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (!isLeaving) handleComplete(item.id);
+                          if (!isLeaving) handleComplete(item.id, e);
                         }}
                         role="button"
                         aria-label="Mark complete"
@@ -400,8 +412,10 @@ function MedicalTiles({
     { wrap: "bg-card", icon: "bg-sage-soft/40 text-sage" },
   ];
 
-  const handleComplete = (id: string) => {
+  const handleComplete = (id: string, e?: React.MouseEvent) => {
     const item = items.find((i) => i.id === id);
+    const origin = originFromEvent(e);
+    if (origin) flyHeart(origin);
     setLeaving((p) => ({ ...p, [id]: true }));
     setTimeout(() => {
       onToggle(id);
@@ -448,7 +462,7 @@ function MedicalTiles({
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (!isLeaving) handleComplete(item.id);
+                    if (!isLeaving) handleComplete(item.id, e);
                   }}
                   role="button"
                   aria-label="Mark complete"
@@ -525,8 +539,10 @@ function ChecklistAccordion({
 }) {
   const [leaving, setLeaving] = useState<Record<string, boolean>>({});
 
-  const handleComplete = (id: string) => {
+  const handleComplete = (id: string, e?: React.MouseEvent) => {
     const item = items.find((i) => i.id === id);
+    const origin = originFromEvent(e);
+    if (origin) flyHeart(origin);
     setLeaving((p) => ({ ...p, [id]: true }));
     setTimeout(() => {
       onToggleCheck(id);
@@ -572,8 +588,8 @@ function ChecklistAccordion({
           >
             <div className="flex items-start gap-3 px-4 py-3">
               <button
-                onClick={() => {
-                  if (!isLeaving) handleComplete(item.id);
+                onClick={(e) => {
+                  if (!isLeaving) handleComplete(item.id, e);
                 }}
                 className="mt-0.5 h-5 w-5 rounded-full flex items-center justify-center border border-border hover:border-sage hover:bg-sage/20 flex-shrink-0 transition"
                 aria-label="Mark complete"
@@ -675,12 +691,32 @@ function HeartMeter({ ratio, checked, total }: { ratio: number; checked: number;
   const heartPath =
     "M16 26 C 3 19, 3 9, 9 6 C 13 4.5, 15.5 6.5, 16 8.5 C 16.5 6.5, 19 4.5, 23 6 C 29 9, 29 19, 16 26 Z";
 
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  useEffect(() => {
+    const update = () => {
+      const el = svgRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setHeartTarget({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    const interval = window.setInterval(update, 250);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      window.clearInterval(interval);
+      setHeartTarget(null);
+    };
+  }, []);
+
   return (
     <motion.div
       className="flex flex-col items-center flex-shrink-0 pt-1 sticky top-2 z-20"
       aria-label={`${checked} of ${total} tasks complete`}
     >
-      <motion.svg viewBox="0 0 32 32" style={{ width: size, height: size }} aria-hidden>
+      <motion.svg ref={svgRef} viewBox="0 0 32 32" style={{ width: size, height: size }} aria-hidden>
         <defs>
           <clipPath id="heart-clip">
             <path d={heartPath} />
