@@ -70,6 +70,20 @@ function AuthPage() {
     }
   };
 
+  const handleGuest = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.signInAnonymously();
+      if (error) throw error;
+      navigate({ to: "/onboarding" });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Could not continue as guest";
+      toast.error(msg);
+      setBusy(false);
+    }
+  };
+
   const handleForgot = async () => {
     if (!email) {
       toast.error("Enter your email first.");
