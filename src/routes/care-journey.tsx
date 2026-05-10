@@ -306,6 +306,11 @@ function EmotionalCarousel({
         <DialogContent className="max-w-md">
           {active && (
             <>
+              {ITEM_IMAGES[active.id] && (
+                <div className="flex justify-center -mt-2">
+                  <img src={ITEM_IMAGES[active.id]} alt="" className="h-32 w-auto object-contain" />
+                </div>
+              )}
               <DialogHeader>
                 <DialogTitle className="font-serif text-xl">{active.title}</DialogTitle>
                 <DialogDescription>{active.description}</DialogDescription>
