@@ -476,7 +476,7 @@ function groupByRelativeDate(moments: Moment[]): Group[] {
   return Array.from(map.entries()).map(([label, items]) => ({ label, items }));
 }
 
-function TimelineGroup({ group }: { group: Group }) {
+function TimelineGroup({ group, isDemo }: { group: Group; isDemo?: boolean }) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 12 }}
@@ -510,6 +510,11 @@ function TimelineGroup({ group }: { group: Group }) {
         <div className="relative flex gap-6 overflow-x-auto pb-8 pt-6 px-2 snap-x snap-mandatory scrollbar-none">
           {group.items.map((m, i) => (
             <PeggedCard key={m.id} index={i}>
+              {isDemo && (
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 z-20 text-[9px] uppercase tracking-[0.16em] bg-foreground/85 text-background px-2 py-0.5 rounded-full shadow-soft">
+                  Demo
+                </span>
+              )}
               <MomentCard moment={m} index={i} stacked={false} expanded />
             </PeggedCard>
           ))}
