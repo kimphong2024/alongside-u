@@ -1,60 +1,58 @@
 ## Goal
 
-1. Restore a standard login page (email/password sign-up & sign-in, plus Google sign-in).
-2. Move every piece of per-user data (moments, bucket list, mood check-ins, care-journey checkboxes) from `localStorage` into the Lovable Cloud database so it persists per user across devices.
+Refactor `src/routes/care-journey.tsx` so each category type renders with a distinct layout matching the reference mockups, while staying on the existing warm cream + sage palette, serif headings, soft shadows, and rounded-2xl cards already used across the app. No content or data changes — same `CARE_JOURNEY` and `SG_RESOURCES` from `src/lib/content.ts`, same `checkedItems` toggle behavior.
 
-## 1. Login page (`src/routes/auth.tsx`)
+## Layout per category
 
-Replace the Singpass mock with a clean two-tab card:
+Map the category name to a renderer:
 
-- **Sign in** — email + password, "Forgot password?" link.
-- **Sign up** — email + password (with `emailRedirectTo: window.location.origin`).
-- **Continue with Google** button above the form, calling Lovable's managed Google OAuth.
-- After successful sign-in/sign-up → `navigate({ to: "/onboarding" })` (3-tile chooser, per existing rule).
-- Keep the soft `auth-bg.png` background and serif/italic styling so it matches the rest of the app.
-- Add a `/reset-password` route (public) that handles the recovery link and calls `supabase.auth.updateUser({ password })`.
-- Remove the Singpass demo logic, the demo-id localStorage trick, and the `singpass-mock.png` import.
+1. **Emotional Stabilization → horizontal carousel** (ref: modal_1)
+   - Embla via existing `@/components/ui/carousel` (already in project).
+   - Each item = a tall rounded card (~70% viewport width, snap), gradient background using `--gradient-warm` / sage accent, large serif title, short description underneath, and a small check pill in the corner that toggles `checkedItems[item.id]`. Tap card to expand into a sheet/drawer with `why` + `reassurance`, OR keep the existing in-place expand. Plan: tap = toggle expanded overlay on the card.
+   - Free horizontal scroll-snap, no arrows on mobile (arrows shown md+).
 
-Auth settings:
-- Enable Google via Lovable's managed OAuth (`configure_social_auth` with `providers: ["google"]`, keep email enabled).
-- Leave email confirmation **on** (default) — users must verify before signing in.
+2. **Medical Clarity → icon tile grid** (ref: modal_2)
+   - 2-column (sm) / 3-column (md+) grid of square cards, white card bg with soft shadow, centered icon (reuse `iconFor` mapping — Stethoscope etc.), title below in medium weight, tiny check dot top-right.
+   - Tap opens a `Dialog` with full description / why / reassurance and the check toggle.
+   - Icons get a soft tinted circular background using semantic tokens (`bg-sage-soft`, `bg-card`, etc.) — never raw colors.
 
-## 2. Persistent per-user data (cloud)
+3. **Family Coordination → keep current vertical accordion** (ref: modal_4)
+   - This is exactly what the current UI already does. Extract it into a `<ChecklistAccordion>` renderer and use it as the default for any category not explicitly mapped (covers Practical, Legal, Burnout Prevention, etc.).
 
-Today only `profiles` and `family_members` are in the cloud. `moments`, `bucketList`, `checkInHistory`, and `checkedItems` live in `localStorage`. New tables (all with RLS scoped to `auth.uid() = owner_id`):
+4. **Singapore Resources → horizontal "programmes" carousel** (ref: modal_3)
+   - Replace the current vertical list. Render `SG_RESOURCES` as a horizontal scroll-snap row of large rounded image-style cards. Since we don't have illustrations, use gradient tiles (alternating `--gradient-warm`, sage-soft, cream) with the resource icon (lucide) large and centered, name underneath the card (outside, like modal_3), description as a smaller line. Card is a link opening the resource URL in a new tab.
 
-- **`moments`** — `id`, `owner_id`, `date`, `title`, `note`, `photo`, `video`, `audio`, `audio_duration`, `created_at`.
-- **`bucket_items`** — `id`, `owner_id`, `title`, `category`, `done`, `created_at`.
-- **`check_ins`** — `id`, `owner_id`, `date`, `mood`, `created_at`.
-- **`checked_items`** — `id`, `owner_id`, `item_key` (text), `checked_at`. Unique `(owner_id, item_key)`.
+## Branding rules
 
-Each table gets the four standard RLS policies (select/insert/update/delete own rows) and indexes on `owner_id` + the sort column.
+- Only semantic tokens from `src/styles.css` (`--background`, `--card`, `--sage`, `--sage-soft`, `--gradient-warm`, `--shadow-soft`, etc.). No hex / no `text-blue-500`-style classes.
+- Serif (`font-serif`) for card titles in carousel/tiles, sans for body, uppercase tracked labels for section headers (matches existing style).
+- Rounded-2xl, soft borders (`border-border`), soft shadow on elevated cards.
+- Checked state across all layouts uses the same sage tint already used (`bg-sage-soft/40 border-sage/30`) for consistency with the accordion variant.
 
-Photo/video/audio note: moments currently store base64 data URLs. We'll keep the same approach in a `text` column for now (no Storage bucket) so behavior is unchanged — just persisted server-side. Storage migration can be a follow-up if files get large.
+## Implementation
 
-## 3. Refactor `src/lib/store.ts`
+Edit `src/routes/care-journey.tsx` only:
 
-Replace the `localStorage` paths with Supabase reads/writes:
+```text
+CareJourney
+├── Header + HeartMeter           (unchanged)
+├── Phase tabs                    (unchanged)
+├── Phase intro card              (unchanged)
+└── For each category in phase:
+    ├── Section label (icon + uppercase title)
+    └── switch(category):
+        ├── "Emotional Stabilization" → <EmotionalCarousel items=… />
+        ├── "Medical Clarity"         → <MedicalTiles items=… />
+        └── default                   → <ChecklistAccordion items=… />  (current UI)
+└── Singapore resources → <ResourcesCarousel items={SG_RESOURCES} />
+```
 
-- On hydrate: in addition to `profiles` and `family_members`, fetch `moments`, `bucket_items`, `check_ins`, `checked_items` for `user.id`.
-- Add CRUD helpers: `addMoment`, `addBucketItem`, `toggleBucketItem`, `addCheckIn`, `toggleCheckedItem`.
-- Update the `useAppState()` compatibility shim so existing route code (`moments.tsx`, `support.tsx`, `care-journey.tsx`, `index.tsx`) keeps working — diff family-style logic to detect added/removed/toggled items and fire the matching Supabase calls.
-- Remove `loadLocal` / `saveLocal` and the `alongside_local_*` keys.
+New small components live inside the same file (no new files needed): `EmotionalCarousel`, `MedicalTiles`, `ChecklistAccordion`, `ResourcesCarousel`. They all receive the `state.checkedItems` map and the `check(id)` toggle as props, so behavior stays identical.
 
-## 4. Touch points to verify after refactor
-
-- `src/routes/index.tsx` — mood check-in writes go through `addCheckIn`.
-- `src/routes/care-journey.tsx` — checkbox toggles go through `toggleCheckedItem`.
-- `src/routes/moments.tsx` + `MomentComposer` — saving a moment goes through `addMoment`.
-- `src/routes/support.tsx` — bucket list add/toggle/delete go through the new helpers; mood-burnout banner reads from cloud `check_ins`.
-
-## Technical notes
-
-- All DB calls use the browser `supabase` client (publishable key + user session); RLS handles isolation. No edge functions or server functions needed.
-- `useAppState` keeps a synchronous in-memory mirror so UI stays optimistic; mutations write through to Supabase in the background.
-- `singpass-mock.png` asset can be left in `src/assets/` (unused) or deleted later — not blocking.
+The dialog for Medical Clarity uses existing `@/components/ui/dialog`. The carousel uses existing `@/components/ui/carousel` with `opts={{ align: "start", dragFree: true }}`.
 
 ## Out of scope
 
-- Migrating existing `localStorage` data into the cloud for current sessions (users will start fresh after sign-in).
-- Moving photo/video blobs to Supabase Storage (can do later if base64 in `text` becomes a problem).
+- No changes to data shape, store, or routes other than `care-journey.tsx`.
+- No new illustrations generated (resource cards use gradients + lucide icons to avoid asset bloat; can be swapped for real illustrations later).
+- HeartMeter, phase tabs, and overall page header remain untouched.
