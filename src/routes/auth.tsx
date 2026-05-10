@@ -199,6 +199,18 @@ function AuthPage() {
           >
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : tab === "signin" ? "Sign in" : "Create account"}
           </Button>
+
+          <button
+            type="button"
+            onClick={handleGuest}
+            disabled={busy}
+            className="w-full text-center text-sm text-muted-foreground hover:text-foreground transition pt-1 disabled:opacity-50"
+          >
+            Continue as guest
+          </button>
+          <p className="text-[11px] text-muted-foreground/60 text-center -mt-1 leading-relaxed">
+            No account needed — you can save your work later.
+          </p>
         </form>
 
         <p className="text-[11px] text-muted-foreground/70 text-center mt-5 leading-relaxed">
