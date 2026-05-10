@@ -44,13 +44,6 @@ function SharedScrapbook() {
     let cancelled = false;
     (async () => {
       setLoading(true);
-      const { data, error } = await supabase.functions.invoke("public-scrapbook", {
-        body: undefined,
-        method: "GET" as never,
-        headers: {},
-        // pass token via query string by hitting the URL directly
-      });
-      // supabase-js doesn't pass query — fetch directly:
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/public-scrapbook?token=${encodeURIComponent(token)}`;
       const res = await fetch(url, {
         headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? "" },
@@ -64,7 +57,6 @@ function SharedScrapbook() {
       const json = await res.json();
       setData({ loveeName: json.loveeName, moments: json.moments });
       setLoading(false);
-      void data; void error;
     })();
     return () => {
       cancelled = true;
