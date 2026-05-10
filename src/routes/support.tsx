@@ -5,6 +5,7 @@ import { LifeBuoy, Wind, Phone, Mail, Trash2, Link2, Copy, Check, Share2, Eye } 
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { useAppState } from "@/lib/store";
 
 export const Route = createFileRoute("/support")({
