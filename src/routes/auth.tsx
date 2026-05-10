@@ -52,19 +52,8 @@ function AuthPage() {
         userId = retry.data.user?.id;
       }
 
-      // Decide destination so we never flash through "/" first
-      let destination: "/" | "/onboarding" = "/onboarding";
-      if (userId) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("completed")
-          .eq("id", userId)
-          .maybeSingle();
-        destination = profile?.completed ? "/" : "/onboarding";
-      }
-
-      // Keep the loading overlay visible across the route change
-      navigate({ to: destination });
+      // Always land on the 3-tile chooser after login
+      navigate({ to: "/onboarding" });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Something went wrong";
       toast.error(msg);
