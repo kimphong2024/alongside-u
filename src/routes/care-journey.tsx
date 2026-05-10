@@ -204,7 +204,7 @@ function CareJourney() {
               <Sparkles className="h-3.5 w-3.5 text-foreground/70" strokeWidth={1.5} />
             </span>
             <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
-              Singapore resources
+              Care resources in Singapore
             </h3>
           </div>
           <ResourcesCarousel />
