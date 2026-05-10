@@ -539,8 +539,10 @@ function ChecklistAccordion({
 }) {
   const [leaving, setLeaving] = useState<Record<string, boolean>>({});
 
-  const handleComplete = (id: string) => {
+  const handleComplete = (id: string, e?: React.MouseEvent) => {
     const item = items.find((i) => i.id === id);
+    const origin = originFromEvent(e);
+    if (origin) flyHeart(origin);
     setLeaving((p) => ({ ...p, [id]: true }));
     setTimeout(() => {
       onToggleCheck(id);
