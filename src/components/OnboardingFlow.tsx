@@ -52,7 +52,7 @@ export function OnboardingFlow() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-        className="mt-4 w-full text-4xl md:text-5xl lg:text-6xl font-serif font-light text-balance text-left leading-snug"
+        className="mt-4 w-full max-w-2xl mx-auto text-3xl md:text-4xl font-serif font-light text-balance text-center leading-snug"
       >
         You are not alone. What shall we do today?
       </motion.h1>
