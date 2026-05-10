@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Plus, Sparkles, Check, Play, Pause, Mic, Film, ArrowLeft } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
@@ -439,9 +439,6 @@ function groupByRelativeDate(moments: Moment[]): Group[] {
 }
 
 function TimelineGroup({ group }: { group: Group }) {
-  const hasStack = group.items.length > 1;
-  const [expanded, setExpanded] = useState(false);
-
   return (
     <motion.section
       initial={{ opacity: 0, y: 12 }}
@@ -455,68 +452,56 @@ function TimelineGroup({ group }: { group: Group }) {
         <span className="h-px flex-1 bg-border" />
       </div>
 
-      {!hasStack ? (
-        <div className="space-y-6">
+      <div className="relative">
+        {/* Clothesline string with gentle sag */}
+        <svg
+          aria-hidden
+          viewBox="0 0 100 20"
+          preserveAspectRatio="none"
+          className="absolute left-0 right-0 top-3 w-full h-5 pointer-events-none"
+        >
+          <path
+            d="M0,4 Q50,18 100,4"
+            fill="none"
+            stroke="hsl(var(--border))"
+            strokeWidth="0.4"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+
+        <div className="relative flex gap-6 overflow-x-auto pb-8 pt-6 px-2 snap-x snap-mandatory scrollbar-none">
           {group.items.map((m, i) => (
-            <MomentCard key={m.id} moment={m} index={i} />
+            <PeggedCard key={m.id} index={i}>
+              <MomentCard moment={m} index={i} stacked={false} expanded />
+            </PeggedCard>
           ))}
         </div>
-      ) : (
-        <div className="relative mx-auto w-full">
-          {expanded && (
-            <div className="flex justify-end mb-3">
-              <button
-                onClick={() => setExpanded(false)}
-                className="text-xs uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"
-              >
-                Restack
-              </button>
-            </div>
-          )}
-          {!expanded ? (
-            <button
-              type="button"
-              onClick={() => setExpanded(true)}
-              className="block w-full max-w-2xl mx-auto cursor-pointer"
-              aria-label={`Open ${group.items.length} moments`}
-            >
-              <div className="grid grid-cols-2 gap-x-6 gap-y-8">
-                {group.items.slice(0, 4).map((m, i) => (
-                  <MomentCard
-                    key={m.id}
-                    moment={m}
-                    index={i}
-                    stacked={false}
-                    expanded={false}
-                  />
-                ))}
-              </div>
-            </button>
-          ) : (
-            <motion.div
-              layout
-              transition={{ type: "spring", stiffness: 240, damping: 28 }}
-              className="flex gap-6 overflow-x-auto pb-6 pt-2 px-2 snap-x snap-mandatory"
-            >
-              {group.items.map((m, i) => (
-                <MomentCard
-                  key={m.id}
-                  moment={m}
-                  index={i}
-                  stacked={false}
-                  expanded
-                />
-              ))}
-            </motion.div>
-          )}
-          {!expanded && (
-            <p className="text-center text-xs uppercase tracking-[0.18em] text-muted-foreground mt-4">
-              {group.items.length} moments · tap to spread
-            </p>
-          )}
-        </div>
-      )}
+      </div>
     </motion.section>
+  );
+}
+
+function PeggedCard({ index, children }: { index: number; children: ReactNode }) {
+  const tilts = [-3, 2, -1, 3, -2, 1];
+  const rotate = tilts[index % tilts.length];
+  return (
+    <div
+      className="relative flex-shrink-0 snap-center pt-3"
+      style={{ transform: `rotate(${rotate}deg)`, transformOrigin: "top center" }}
+    >
+      {/* Pegs */}
+      <span
+        aria-hidden
+        className="absolute -top-1 left-6 h-2.5 w-2.5 rounded-[3px] bg-clay shadow-soft z-10"
+        style={{ transform: "rotate(12deg)" }}
+      />
+      <span
+        aria-hidden
+        className="absolute -top-1 right-6 h-2.5 w-2.5 rounded-[3px] bg-clay shadow-soft z-10"
+        style={{ transform: "rotate(-12deg)" }}
+      />
+      {children}
+    </div>
   );
 }
 
