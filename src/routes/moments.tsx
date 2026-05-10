@@ -335,29 +335,22 @@ function MemoryCollage({
   onAdd: () => void;
 }) {
   const seedCards = [
-    { id: "seed-tea", src: momentsTea, kind: "photo" as const },
-    { id: "seed-hands", src: momentsHands, kind: "photo" as const },
-    { id: "seed-garden", src: momentsGarden, kind: "photo" as const },
+    { id: "seed-tea", src: momentsTea, kind: "photo" as const, caption: "tea on the porch" },
+    { id: "seed-hands", src: momentsHands, kind: "photo" as const, caption: "her hands" },
+    { id: "seed-garden", src: momentsGarden, kind: "photo" as const, caption: "spring garden" },
   ];
 
-  const userCards = photoMoments.map((m) => ({
+  const userCards = photoMoments.slice(0, 3).map((m, i) => ({
     id: m.id,
     src: (m.photo || m.video)!,
     kind: (m.photo ? "photo" : "video") as "photo" | "video",
+    caption: m.title?.toLowerCase() || seedCards[i]?.caption || "",
   }));
 
-  const cards = (userCards.length > 0 ? userCards : seedCards).slice(0, 7);
+  const cards = (userCards.length > 0 ? userCards : seedCards).slice(0, 3);
 
-  // Hand-tuned scatter so cards overlap like a tossed pile of polaroids.
-  const layout = [
-    { x: -120, y: 30, r: -14, z: 1 },
-    { x: -50, y: -10, r: -4, z: 4 },
-    { x: 30, y: 20, r: 8, z: 6 },
-    { x: 110, y: -5, r: -7, z: 3 },
-    { x: -10, y: 70, r: 12, z: 5 },
-    { x: 90, y: 80, r: -10, z: 2 },
-    { x: -90, y: 95, r: 5, z: 7 },
-  ];
+  // Slight alternating tilt for a hand-pinned clothesline feel.
+  const tilts = [-3, 2, -2];
 
   const tagline =
     totalCount === 0
