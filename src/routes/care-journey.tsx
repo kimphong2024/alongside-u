@@ -325,7 +325,7 @@ function EmotionalCarousel({
                       <span
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (!isLeaving) handleComplete(item.id);
+                          if (!isLeaving) handleComplete(item.id, e);
                         }}
                         role="button"
                         aria-label="Mark complete"
