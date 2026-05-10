@@ -174,9 +174,9 @@ function Support() {
                     ].map((q) => (
                       <div
                         key={q.text}
-                        className={`snap-start shrink-0 w-[78%] sm:w-[46%] md:w-[32%] rounded-2xl ${q.grad} border border-border p-5 shadow-soft`}
+                        className={`snap-start shrink-0 w-[88%] sm:w-[72%] md:w-[60%] min-h-[180px] rounded-2xl ${q.grad} border border-border p-7 shadow-soft flex items-center`}
                       >
-                        <p className="font-serif italic text-xl leading-snug text-foreground/85">{q.text}</p>
+                        <p className="font-serif italic text-2xl md:text-3xl leading-snug text-foreground/85 text-balance">{q.text}</p>
                       </div>
                     ))}
                   </div>
