@@ -54,7 +54,7 @@ export function OnboardingFlow() {
         transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
         className="mt-4 w-full max-w-2xl mx-auto text-3xl md:text-4xl font-serif font-light text-balance text-center leading-snug"
       >
-        You are not alone. What shall we do today?
+        Welcome back. What shall we do today?
       </motion.h1>
 
       <div className="mt-10 w-full grid grid-cols-1 sm:grid-cols-2 gap-8 justify-items-stretch">

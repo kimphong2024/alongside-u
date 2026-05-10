@@ -217,9 +217,9 @@ function CareJourneyIntro() {
     { id: "welcome", render: () => (
       <div className="text-center space-y-5 pt-8">
         <img src={heartImg} alt="" className="mx-auto h-24 w-24 object-contain" />
-        <h1 className="text-4xl md:text-5xl text-balance font-serif">You do not have to navigate this alone.</h1>
+        <h1 className="text-4xl md:text-5xl text-balance font-serif">Let's set up your space.</h1>
         <p className="text-muted-foreground text-balance leading-relaxed max-w-md mx-auto">
-          We'll help you organize next steps and create meaningful moments with your loved one — at your own pace.
+          A few quick questions so we can tailor what shows up next.
         </p>
       </div>
     )},
@@ -249,7 +249,7 @@ function CareJourneyIntro() {
     }},
     { id: "emotional", canContinue: (d) => !!d.emotional, render: ({ data, set }) => (
       <div className="space-y-6">
-        <Header title="How are you feeling right now?" subtitle="Whatever it is, it's valid." />
+        <Header title="How are you feeling right now?" />
         <div className="grid grid-cols-2 gap-3">
           {EMOTIONS.map((o) => {
             const Icon = EMOTION_ICONS[o];
@@ -275,7 +275,7 @@ function CareJourneyIntro() {
         {data.emotional && (
           <motion.p initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
             className="text-sm text-foreground/80 bg-sage-soft rounded-xl p-4 leading-relaxed">
-            It's okay to take things one step at a time.
+            Thanks for sharing. We'll keep this in mind.
           </motion.p>
         )}
       </div>
@@ -304,9 +304,9 @@ function CareJourneyIntro() {
     { id: "final", render: ({ data }) => (
       <div className="text-center space-y-5 pt-8">
         <img src={heartImg} alt="" className="mx-auto h-24 w-24 object-contain" />
-        <h1 className="text-4xl font-serif text-balance">Here's a gentle starting point.</h1>
+        <h1 className="text-4xl font-serif text-balance">You're set.</h1>
         <p className="text-muted-foreground text-balance max-w-md mx-auto leading-relaxed">
-          {data.caregiverName ? `${data.caregiverName}, ` : ""}we've prepared a small set of next steps and a quiet space for meaningful moments. Nothing is urgent. You can return anytime.
+          {data.caregiverName ? `${data.caregiverName}, ` : ""}we've prepared a starting set of next steps and a space for moments. Come back whenever.
         </p>
       </div>
     )},

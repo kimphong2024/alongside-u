@@ -77,7 +77,7 @@ function Today() {
                 You're doing the best you can.
               </h1>
               <p className="text-muted-foreground leading-relaxed text-[15px]">
-                A few gentle things you may want to look into today. Move at your own pace - nothing here is urgent.
+                A few things worth a look today. Move at your own pace.
               </p>
             </div>
           </div>
@@ -85,7 +85,7 @@ function Today() {
 
         {/* FOCUS CARDS */}
         <section className="space-y-5">
-          <SectionLabel label="A gentle focus for today" />
+          <SectionLabel label="Today's focus" />
           <div className="space-y-4">
             {focuses.map((f, i) => (
               <motion.div
@@ -117,11 +117,11 @@ function Today() {
 
         {/* CHECK-IN */}
         <section className="space-y-5">
-          <SectionLabel label="A gentle check-in" />
+          <SectionLabel label="Check in" />
           <div className="rounded-[1.75rem] bg-gradient-warm border border-border p-7 shadow-soft">
             <h3 className="font-serif text-2xl leading-snug">How are you feeling, right now?</h3>
             <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-              Whatever it is, it's valid. You can return to this anytime.
+              You can come back to this anytime.
             </p>
             <div className="flex flex-wrap gap-2.5 mt-6">
               {moods.map((m) => {

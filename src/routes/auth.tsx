@@ -112,7 +112,7 @@ function AuthPage() {
             Welcome to Alongside
           </h1>
           <p className="text-sm text-muted-foreground mt-1.5">
-            A gentle place to walk this journey.
+            A place to walk this journey.
           </p>
         </div>
 
@@ -214,7 +214,7 @@ function AuthPage() {
         </form>
 
         <p className="text-[11px] text-muted-foreground/70 text-center mt-5 leading-relaxed">
-          By continuing you agree to our gentle promise to keep your reflections private.
+          By continuing you agree to our promise to keep your reflections private.
         </p>
       </motion.div>
 
