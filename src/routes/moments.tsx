@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import momentsTea from "@/assets/moments-tea.jpg";
 import momentsHands from "@/assets/moments-hands.jpg";
 import momentsGarden from "@/assets/moments-garden.jpg";
+import { DEMO_MOMENTS } from "@/lib/demo-moments";
 
 export const Route = createFileRoute("/moments")({
   head: () => ({
@@ -62,7 +63,9 @@ function Moments() {
   };
 
   // Group moments by relative date for the timeline (must be before any early return)
-  const timeline = useMemo(() => groupByRelativeDate(state.moments), [state.moments]);
+  const isDemo = state.moments.length === 0;
+  const timelineSource = isDemo ? DEMO_MOMENTS : state.moments;
+  const timeline = useMemo(() => groupByRelativeDate(timelineSource), [timelineSource]);
   const photoMoments = useMemo(
     () => state.moments.filter((m) => !!m.photo || !!m.video).slice(0, 5),
     [state.moments],
@@ -212,27 +215,21 @@ function Moments() {
               </div>
             </div>
 
-            {timeline.length === 0 ? (
-              <div className="text-center max-w-md mx-auto flex flex-col items-center">
-                <p className="font-serif italic text-2xl text-foreground/70 leading-snug">
-                  Your scrapbook starts with one quiet moment.
+            {isDemo && (
+              <div className="rounded-2xl border border-dashed border-border bg-card/60 px-4 py-3 text-center">
+                <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                  Demo scrapbook
                 </p>
-                <p className="text-sm text-muted-foreground mt-3 leading-relaxed">
-                  Tap the button below to keep your first memory with {loveeName}.
+                <p className="text-sm text-foreground/75 mt-1 leading-relaxed">
+                  A few sample memories so you can see the clothesline. They'll
+                  step aside as soon as you add your first real moment.
                 </p>
-                <Button
-                  onClick={() => setComposerOpen(true)}
-                  className="mt-6 h-12 px-6 rounded-full bg-foreground text-background hover:bg-foreground/90 font-serif italic text-base shadow-paper"
-                >
-                  <Plus className="h-5 w-5 mr-2" strokeWidth={2} />
-                  Add a moment
-                </Button>
               </div>
-            ) : (
-              timeline.map((group) => (
-                <TimelineGroup key={group.label} group={group} />
-              ))
             )}
+
+            {timeline.map((group) => (
+              <TimelineGroup key={group.label} group={group} isDemo={isDemo} />
+            ))}
           </div>
         )}
 
@@ -479,7 +476,7 @@ function groupByRelativeDate(moments: Moment[]): Group[] {
   return Array.from(map.entries()).map(([label, items]) => ({ label, items }));
 }
 
-function TimelineGroup({ group }: { group: Group }) {
+function TimelineGroup({ group, isDemo }: { group: Group; isDemo?: boolean }) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 12 }}
@@ -513,6 +510,11 @@ function TimelineGroup({ group }: { group: Group }) {
         <div className="relative flex gap-6 overflow-x-auto pb-8 pt-6 px-2 snap-x snap-mandatory scrollbar-none">
           {group.items.map((m, i) => (
             <PeggedCard key={m.id} index={i}>
+              {isDemo && (
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 z-20 text-[9px] uppercase tracking-[0.16em] bg-foreground/85 text-background px-2 py-0.5 rounded-full shadow-soft">
+                  Demo
+                </span>
+              )}
               <MomentCard moment={m} index={i} stacked={false} expanded />
             </PeggedCard>
           ))}
