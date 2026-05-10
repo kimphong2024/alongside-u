@@ -63,7 +63,9 @@ function SharedScrapbook() {
     };
   }, [token]);
 
-  const groups = groupByRelativeDate(data.moments);
+  const isDemo = !loading && !error && data.moments.length === 0;
+  const displayMoments = isDemo ? DEMO_MOMENTS : data.moments;
+  const groups = groupByRelativeDate(displayMoments);
 
   return (
     <div className="min-h-screen bg-background">
