@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useAppState, type BucketItem, type Moment } from "@/lib/store";
 import { BUCKET_TEMPLATES } from "@/lib/content";
 import { MomentComposer } from "@/components/MomentComposer";
+import { supabase } from "@/integrations/supabase/client";
 import momentsTea from "@/assets/moments-tea.jpg";
 import momentsHands from "@/assets/moments-hands.jpg";
 import momentsGarden from "@/assets/moments-garden.jpg";
