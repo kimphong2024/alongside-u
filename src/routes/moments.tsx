@@ -61,14 +61,15 @@ function Moments() {
     }
   };
 
-  // Group moments by relative date for the timeline (must be before any early return)
-  const isDemo = state.moments.length === 0;
-  const timelineSource = isDemo ? DEMO_MOMENTS : state.moments;
-  const timeline = useMemo(() => groupByRelativeDate(timelineSource), [timelineSource]);
-  const photoMoments = useMemo(
-    () => state.moments.filter((m) => !!m.photo || !!m.video).slice(0, 5),
+  // Demo moments always remain alongside the user's own moments.
+  const hasOwnMoments = state.moments.length > 0;
+  const timelineSource = useMemo(
+    () => [...state.moments, ...DEMO_MOMENTS],
     [state.moments],
   );
+  const timeline = useMemo(() => groupByRelativeDate(timelineSource), [timelineSource]);
+  const demoIds = useMemo(() => new Set(DEMO_MOMENTS.map((m) => m.id)), []);
+  const recentMoments = useMemo(() => state.moments.slice(0, 3), [state.moments]);
 
   if (!hydrated) return null;
 
