@@ -299,7 +299,7 @@ function EmotionalCarousel({
                   <div>
                     <h4 className="font-serif text-base leading-tight text-foreground">{item.title}</h4>
                   </div>
-                </button>
+                </motion.button>
               </CarouselItem>
             );
           })}
