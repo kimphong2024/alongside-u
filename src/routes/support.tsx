@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LifeBuoy, Wind, Phone, Users, Mail, Trash2, Link2, Copy, Check, Share2, Eye } from "lucide-react";
+import { LifeBuoy, Wind, Phone, Mail, Trash2, Link2, Copy, Check, Share2, Eye } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
