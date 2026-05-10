@@ -34,6 +34,25 @@ const PRIORITIES = [
   "Emotional support",
 ];
 
+function lovedOneFor(rel?: string): string {
+  switch ((rel || "").toLowerCase()) {
+    case "son":
+    case "daughter": return "parent";
+    case "grandchild": return "grandparent";
+    case "spouse": return "spouse";
+    case "sibling": return "sibling";
+    case "parent": return "child";
+    case "friend": return "friend";
+    default: return "loved one";
+  }
+}
+  "Understanding what to do next",
+  "Managing responsibilities",
+  "Spending meaningful time together",
+  "Coordinating family updates",
+  "Emotional support",
+];
+
 function ChoiceGrid({
   options, selected, onSelect, multi = false,
 }: { options: string[]; selected?: string | string[]; onSelect: (v: string) => void; multi?: boolean }) {
