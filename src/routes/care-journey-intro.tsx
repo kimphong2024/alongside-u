@@ -22,7 +22,7 @@ type Step = {
   canContinue?: (d: OnboardingData) => boolean;
 };
 
-const RELATIONSHIPS = ["Son", "Daughter", "Spouse", "Grandchild", "Sibling", "Parent", "Friend", "Other"];
+const RELATIONSHIPS = ["Son", "Daughter", "Spouse", "Grandchild", "Sibling", "Parent", "Friend"];
 const ILLNESSES = ["Cancer", "Dementia", "Heart failure", "ALS", "Parkinson's", "Other"];
 const STAGES = ["Recently diagnosed", "Early stage", "Advanced", "Not sure yet"];
 const EMOTIONS = ["Overwhelmed", "Numb", "Anxious", "Lost", "Trying to stay strong", "Managing okay"];
