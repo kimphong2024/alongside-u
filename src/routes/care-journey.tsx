@@ -39,6 +39,26 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
+import imgPause from "@/assets/care/01_pause_process_emotions.png";
+import imgSupport from "@/assets/care/02_identify_support_person.png";
+import imgDoctor from "@/assets/care/03_write_doctor_contact.png";
+import imgDocs from "@/assets/care/04_gather_medical_documents.png";
+import imgPauseDecisions from "@/assets/care/05_avoid_big_decisions.png";
+import imgDiagnosis from "@/assets/care/06_understand_diagnosis.png";
+import imgPrognosis from "@/assets/care/07_clarify_prognosis.png";
+import imgGoals from "@/assets/care/08_ask_treatment_goals.png";
+import imgSummary from "@/assets/care/09_request_medical_summary.png";
+
+const ITEM_IMAGES: Record<string, string> = {
+  p2: imgSupport,
+  p3: imgDoctor,
+  p4: imgDocs,
+  m1: imgDiagnosis,
+  m2: imgPrognosis,
+  m3: imgGoals,
+  m4: imgSummary,
+};
+
 export const Route = createFileRoute("/care-journey")({
   head: () => ({
     meta: [
