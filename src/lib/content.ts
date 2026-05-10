@@ -176,14 +176,22 @@ export const CARE_JOURNEY: ChecklistPhase[] = [
   },
 ];
 
-export const SG_RESOURCES = [
-  { name: "Agency for Integrated Care (AIC)", desc: "One-stop caregiver support, equipment loan, subsidies.", url: "https://www.aic.sg" },
-  { name: "Singapore Hospice Council", desc: "Directory of hospice and palliative providers.", url: "https://singaporehospice.org.sg" },
-  { name: "HCA Hospice", desc: "Home hospice care across Singapore.", url: "https://www.hca.org.sg" },
-  { name: "MediShield Life", desc: "National basic health insurance.", url: "https://www.moh.gov.sg/medishield-life" },
-  { name: "Advance Care Planning", desc: "Living Matters — start the conversation.", url: "https://www.livingmatters.sg" },
-  { name: "Office of the Public Guardian (LPA)", desc: "Lasting Power of Attorney.", url: "https://www.msf.gov.sg/opg" },
-  { name: "CHAS Subsidies", desc: "Community Health Assist Scheme.", url: "https://www.chas.sg" },
+import aicLogo from "@/assets/resource-logos/aic.png";
+import hospiceCouncilLogo from "@/assets/resource-logos/hospice-council.png";
+import hcaLogo from "@/assets/resource-logos/hca.png";
+import medishieldLogo from "@/assets/resource-logos/medishield.png";
+import myLegacyLogo from "@/assets/resource-logos/my-legacy.png";
+import opgLogo from "@/assets/resource-logos/opg.png";
+import chasLogo from "@/assets/resource-logos/chas.png";
+
+export const SG_RESOURCES: { name: string; desc: string; url: string; logo?: string }[] = [
+  { name: "Agency for Integrated Care (AIC)", desc: "One-stop caregiver support, equipment loan, subsidies.", url: "https://www.aic.sg", logo: aicLogo },
+  { name: "Singapore Hospice Council", desc: "Directory of hospice and palliative providers.", url: "https://singaporehospice.org.sg", logo: hospiceCouncilLogo },
+  { name: "HCA Hospice", desc: "Home hospice care across Singapore.", url: "https://www.hca.org.sg", logo: hcaLogo },
+  { name: "MediShield Life", desc: "National basic health insurance.", url: "https://www.moh.gov.sg/medishield-life", logo: medishieldLogo },
+  { name: "Advance Care Planning", desc: "My Legacy — start the conversation.", url: "https://www.mylegacy.life.gov.sg", logo: myLegacyLogo },
+  { name: "Office of the Public Guardian (LPA)", desc: "Lasting Power of Attorney.", url: "https://www.msf.gov.sg/opg", logo: opgLogo },
+  { name: "CHAS Subsidies", desc: "Community Health Assist Scheme.", url: "https://www.chas.sg", logo: chasLogo },
   { name: "Singapore Cancer Society", desc: "Patient services, hospice, financial help.", url: "https://www.singaporecancersociety.org.sg" },
 ];
 
