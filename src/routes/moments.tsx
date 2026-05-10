@@ -28,6 +28,7 @@ function Moments() {
   const [composerOpen, setComposerOpen] = useState(false);
   const [newBucket, setNewBucket] = useState("");
   const [confirmation, setConfirmation] = useState<string | null>(null);
+  const [suggesting, setSuggesting] = useState(false);
 
   // Group moments by relative date for the timeline (must be before any early return)
   const timeline = useMemo(() => groupByRelativeDate(state.moments), [state.moments]);
