@@ -388,7 +388,7 @@ function MemoryCollage({
                   />
                   <div className="bg-card border border-border p-2 pb-6 shadow-paper paper-grain rounded-md w-[150px] md:w-[180px] mt-2">
                     <div className="relative aspect-[4/5] rounded-sm overflow-hidden bg-muted">
-                      {c.kind === "video" ? (
+                      {c.kind === "video" && c.src ? (
                         <video
                           src={c.src}
                           autoPlay
@@ -398,8 +398,10 @@ function MemoryCollage({
                           preload="metadata"
                           className="w-full h-full object-cover"
                         />
-                      ) : (
+                      ) : c.kind === "photo" && c.src ? (
                         <img src={c.src} alt="" loading="lazy" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full bg-muted" aria-hidden />
                       )}
                       {c.kind === "video" && (
                         <span className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-foreground/70 backdrop-blur-sm flex items-center justify-center">
