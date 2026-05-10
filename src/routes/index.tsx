@@ -1,10 +1,10 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, LogOut } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { useAppData } from "@/lib/store";
-import { signOut } from "@/hooks/use-auth";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -80,13 +80,6 @@ function Today() {
                 A few gentle things you may want to look into today. Move at your own pace — nothing here is urgent.
               </p>
             </div>
-            <button
-              onClick={signOut}
-              className="h-9 w-9 rounded-full hover:bg-muted flex items-center justify-center flex-shrink-0"
-              aria-label="Sign out"
-            >
-              <LogOut className="h-4 w-4 text-muted-foreground" />
-            </button>
           </div>
         </section>
 

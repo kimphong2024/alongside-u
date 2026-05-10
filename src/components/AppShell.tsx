@@ -1,8 +1,10 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { Compass, Heart, LifeBuoy } from "lucide-react";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { Compass, Heart, LifeBuoy, LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
+import { toast } from "sonner";
 import flowerLogo from "@/assets/flower-logo.png";
+import { useAuth, signOut } from "@/hooks/use-auth";
 
 const tabs = [
   { to: "/care-journey", label: "Journey", icon: Compass },
@@ -12,6 +14,14 @@ const tabs = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut();
+    toast.success("Signed out");
+    navigate({ to: "/auth" });
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -20,6 +30,16 @@ export function AppShell({ children }: { children: ReactNode }) {
           <img src={flowerLogo} alt="" className="h-10 w-10 object-contain" />
           <span className="font-serif text-2xl tracking-tight">Alongside</span>
         </Link>
+        {user && (
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-1.5 h-9 px-2 sm:px-3 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition"
+            aria-label="Log out"
+          >
+            <LogOut className="h-4 w-4" strokeWidth={1.6} />
+            <span className="hidden sm:inline text-sm">Log out</span>
+          </button>
+        )}
       </header>
 
       <motion.main
