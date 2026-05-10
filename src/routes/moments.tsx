@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Plus, Sparkles, Check, Play, Pause, Mic, Film, ArrowLeft } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
