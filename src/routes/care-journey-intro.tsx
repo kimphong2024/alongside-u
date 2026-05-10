@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowRight, ArrowLeft, Check, ChevronDown } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, ChevronDown, Waves, CircleDashed, Wind, Compass, Shield, Sun, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppData, type OnboardingData } from "@/lib/store";
 
@@ -26,6 +26,14 @@ const RELATIONSHIPS = ["Son", "Daughter", "Spouse", "Grandchild", "Sibling", "Pa
 const ILLNESSES = ["Cancer", "Dementia", "Heart failure", "ALS", "Parkinson's", "Other"];
 const STAGES = ["Recently diagnosed", "Early stage", "Advanced", "Not sure yet"];
 const EMOTIONS = ["Overwhelmed", "Numb", "Anxious", "Lost", "Trying to stay strong", "Managing okay"];
+const EMOTION_ICONS: Record<string, LucideIcon> = {
+  Overwhelmed: Waves,
+  Numb: CircleDashed,
+  Anxious: Wind,
+  Lost: Compass,
+  "Trying to stay strong": Shield,
+  "Managing okay": Sun,
+};
 const PRIORITIES = [
   "Understanding what to do next",
   "Managing responsibilities",
@@ -242,7 +250,28 @@ function CareJourneyIntro() {
     { id: "emotional", canContinue: (d) => !!d.emotional, render: ({ data, set }) => (
       <div className="space-y-6">
         <Header title="How are you feeling right now?" subtitle="Whatever it is, it's valid." />
-        <ChoiceGrid options={EMOTIONS} selected={data.emotional} onSelect={(v) => set("emotional", v)} />
+        <div className="grid grid-cols-2 gap-3">
+          {EMOTIONS.map((o) => {
+            const Icon = EMOTION_ICONS[o];
+            const sel = data.emotional === o;
+            return (
+              <button
+                key={o}
+                type="button"
+                onClick={() => set("emotional", o)}
+                className={`group relative text-left px-4 py-4 rounded-2xl border transition-all duration-200 flex items-center gap-3 ${
+                  sel
+                    ? "bg-card border-border/70 shadow-soft text-accent-active"
+                    : "bg-transparent border-border text-foreground hover:bg-card/60"
+                }`}
+              >
+                <Icon className="h-5 w-5 shrink-0 opacity-70" strokeWidth={1.6} />
+                <span className="text-sm font-medium">{o}</span>
+                {sel && <Check className="absolute top-3 right-3 h-4 w-4 text-accent-active" strokeWidth={2.4} />}
+              </button>
+            );
+          })}
+        </div>
         {data.emotional && (
           <motion.p initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
             className="text-sm text-foreground/80 bg-sage-soft rounded-xl p-4 leading-relaxed">
