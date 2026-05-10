@@ -777,6 +777,96 @@ function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked
       >
         {checked}/{total}
       </motion.span>
-    </motion.div>
+    </motion.button>
+  );
+}
+
+/* -------------------- Progress dialog -------------------- */
+
+type ProgressItem = { id: string; title: string; phase: string; category: string };
+
+function ProgressDialog({
+  open,
+  onOpenChange,
+  completed,
+  pending,
+  onUncheck,
+  onCheck,
+}: {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+  completed: ProgressItem[];
+  pending: ProgressItem[];
+  onUncheck: (id: string) => void;
+  onCheck: (id: string) => void;
+}) {
+  const total = completed.length + pending.length;
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="font-serif text-xl">Your progress</DialogTitle>
+          <DialogDescription>
+            {completed.length} of {total} gentle steps complete.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-5 mt-2">
+          <section>
+            <h4 className="text-xs uppercase tracking-[0.14em] text-muted-foreground mb-2 flex items-center gap-2">
+              <Check className="h-3.5 w-3.5 text-sage" strokeWidth={2} />
+              Completed · {completed.length}
+            </h4>
+            {completed.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic">Nothing checked off yet — that's okay.</p>
+            ) : (
+              <ul className="space-y-1.5">
+                {completed.map((it) => (
+                  <li key={it.id} className="flex items-start gap-2 rounded-xl border border-border bg-sage-soft/30 px-3 py-2">
+                    <button
+                      onClick={() => onUncheck(it.id)}
+                      aria-label="Mark as not done"
+                      className="h-5 w-5 mt-0.5 rounded-full bg-sage border border-sage flex items-center justify-center flex-shrink-0 hover:opacity-80"
+                    >
+                      <Check className="h-3 w-3 text-card" strokeWidth={3} />
+                    </button>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm leading-snug text-foreground/80 line-through">{it.title}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{it.phase} · {it.category}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section>
+            <h4 className="text-xs uppercase tracking-[0.14em] text-muted-foreground mb-2 flex items-center gap-2">
+              <Sparkles className="h-3.5 w-3.5 text-foreground/60" strokeWidth={1.6} />
+              Still pending · {pending.length}
+            </h4>
+            {pending.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic">All done. Take a breath.</p>
+            ) : (
+              <ul className="space-y-1.5">
+                {pending.map((it) => (
+                  <li key={it.id} className="flex items-start gap-2 rounded-xl border border-border bg-card px-3 py-2">
+                    <button
+                      onClick={() => onCheck(it.id)}
+                      aria-label="Mark as done"
+                      className="h-5 w-5 mt-0.5 rounded-full bg-card border border-border flex items-center justify-center flex-shrink-0 hover:bg-sage hover:border-sage"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm leading-snug text-foreground">{it.title}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">{it.phase} · {it.category}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
