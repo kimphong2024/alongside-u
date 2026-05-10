@@ -702,7 +702,7 @@ function ResourcesCarousel() {
 
 /* -------------------- Heart completion meter -------------------- */
 
-function HeartMeter({ ratio, checked, total }: { ratio: number; checked: number; total: number }) {
+function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked: number; total: number; onClick?: () => void }) {
   const r = Math.max(0, Math.min(1, ratio));
   const fillHeight = 24 * r;
   const fillY = 28 - fillHeight;
@@ -737,9 +737,11 @@ function HeartMeter({ ratio, checked, total }: { ratio: number; checked: number;
   }, []);
 
   return (
-    <motion.div
-      className="flex flex-col items-center flex-shrink-0 pt-1 sticky top-2 z-20"
-      aria-label={`${checked} of ${total} tasks complete`}
+    <motion.button
+      type="button"
+      onClick={onClick}
+      className="flex flex-col items-center flex-shrink-0 pt-1 sticky top-2 z-20 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-sage rounded-2xl"
+      aria-label={`View progress: ${checked} of ${total} tasks complete`}
     >
       <motion.svg ref={svgRef} viewBox="0 0 32 32" style={{ width: size, height: size }} aria-hidden>
         <defs>
