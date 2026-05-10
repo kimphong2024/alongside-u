@@ -1,41 +1,28 @@
-## Problem
-
-When you tap the collage to open the timeline, each day currently renders as either a single centered polaroid or a 2-col grid / horizontal strip of polaroids. The actual clothesline string + pegs that were supposed to anchor each day are gone, so the timeline feels like a plain card list instead of a hung row of memories.
-
 ## Goal
 
-Restore the clothesline-per-day look in `src/routes/moments.tsx > TimelineGroup`: a thin string stretched across the day, with each moment's polaroid hanging under two little pegs.
+When a user opens the **Timeline (clothesline)** view in Moments and has no real entries yet, show a warm, demo clothesline of photos pegged across several days — a Chinese woman quietly spending time with her senior dad in different everyday situations.
 
-## Changes (only `src/routes/moments.tsx`)
+## What you'll see
 
-1. **TimelineGroup layout**
-   - Keep the existing day label divider on top.
-   - Replace the `!hasStack` / stacked branches with a single clothesline row:
-     - A relatively-positioned container with a 1px sage/border line near the top (the string), full width, with a slight horizontal "sag" using a CSS gradient or a thin SVG curve.
-     - A horizontally scrollable, snap-x flex row of `MomentCard`s hanging from the string.
-   - Each card is wrapped in a `<div>` that adds:
-     - Two small peg dots (rounded clay/sage circles, 8–10px) absolutely positioned at the top-left and top-right of the polaroid, sitting on top of the string.
-     - A tiny shadow under each peg.
-     - Alternating slight rotation (-3°/+2°/-1°) so cards look loosely hung.
-   - The polaroid card itself stays as `MomentCard` but rendered with `stacked={false} expanded` size so it's compact and consistent.
+- 6 generated photos, each poignant and tender (not posed/stocky):
+  1. Pouring tea for her dad at a small kitchen table, morning light
+  2. Helping her dad button his shirt, sitting on the edge of the bed
+  3. Holding hands while walking slowly through an HDB void deck garden
+  4. Looking at an old photo album together on the sofa, warm lamp light
+  5. Sharing a bowl of noodles at a hawker centre, dad smiling faintly
+  6. Resting head on dad's shoulder at the hospital bedside, late afternoon
 
-2. **Empty-day / single-item handling**
-   - Even with one moment, render the clothesline (just one hanging card centered).
-   - Drop the "tap to spread / restack" affordance — the row scrolls horizontally instead. Remove the `expanded` toggle state and the "Restack" button.
+- Pegged across **3 demo days** on the clothesline — labels like "Today", "Yesterday", "3 days ago" — so the user sees the timeline rhythm immediately.
 
-3. **Sag effect (lightweight)**
-   - String: a `<div>` with `border-top: 1px solid hsl(var(--border))` plus a subtle drop using `transform: translateY` per card peg position is overkill — instead, use a single SVG path `M0,8 Q50%,20 100%,8` with `stroke="hsl(var(--border))"` `stroke-width="1"` placed behind the cards. Keep it simple, no animation.
+- Each peg has a short, gentle caption (e.g. "Morning tea, the quiet kind" / "He still buttons the top one himself").
 
-4. **Pegs**
-   - Implement as a small subcomponent `Pegs()` returning two absolutely positioned spans:
-     - `className="absolute -top-2 left-3 h-2.5 w-2.5 rounded-[3px] bg-clay shadow-soft rotate-12"`
-     - mirror on `right-3` with `-rotate-12`.
-   - Sits inside the wrapper div above the polaroid; the polaroid gets `mt-4` so the pegs visually clamp the top edge.
+- A small "Demo" tag on the cards so it's clear these are sample memories, not real ones.
 
-5. **No backend, store, or routing changes.** The existing `groupByRelativeDate`, `state.moments`, and the collage → timeline transition stay as-is.
+- The demo automatically disappears the moment the user adds their own first real moment.
 
-## Out of scope
+## Technical notes
 
-- The empty-state copy ("Your scrapbook starts with one quiet moment.") — keep as-is.
-- Collage view — unchanged.
-- Bucket list tab — unchanged.
+- Generate 6 images into `src/assets/demo-clothesline/` using the imagegen tool (standard quality, photographic, soft natural light, Chinese woman + senior father, Singapore/East Asian context, no text in image).
+- New file `src/lib/demo-moments.ts` exports a `DEMO_MOMENTS: Moment[]` array with stable ids, dates offset from `new Date()` (today, yesterday, -3 days), the 6 imported images, titles and notes.
+- In `src/routes/moments.tsx`, where the timeline currently renders the "empty" branch (line ~215), if `state.moments.length === 0` use `DEMO_MOMENTS` to feed `groupByRelativeDate` instead, and pass an `isDemo` flag down to `TimelineGroup` / `PeggedCard` so cards render a small "Demo" pill in the corner.
+- No DB writes, no changes to `Moment` type, no impact on the public scrapbook share — demo is purely local UI for the empty state.
