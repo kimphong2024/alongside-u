@@ -26,13 +26,11 @@ export const CARE_JOURNEY: ChecklistPhase[] = [
     subtitle: "Pause. Breathe. You don't have to act on everything at once.",
     categories: [
       {
-        category: "Emotional Stabilization",
+        category: "When you are ready, let's note down what has been happening",
         items: [
-          { id: "p1", title: "Pause and process emotions", description: "Give yourself a quiet moment.", why: "Shock and grief are valid responses. They don't need to be fixed.", reassurance: "There is no right way to feel right now." },
           { id: "p2", title: "Identify one immediate support person", description: "A friend, sibling or neighbour you trust.", why: "Carrying this alone is harder than it needs to be.", reassurance: "Even one person makes a difference." },
           { id: "p3", title: "Write down doctor's name and contact", description: "Note the consulting doctor and ward.", why: "Memory is unreliable under stress. Writing it down helps.", reassurance: "Small notes save future worry." },
           { id: "p4", title: "Gather medical documents", description: "Reports, prescriptions, referrals in one place.", why: "Future appointments will go more smoothly.", reassurance: "A single folder is enough for now." },
-          { id: "p5", title: "Avoid making big decisions today", description: "Defer non-urgent choices.", why: "Decisions made in shock often need revisiting.", reassurance: "Tomorrow is soon enough." },
         ],
       },
       {
