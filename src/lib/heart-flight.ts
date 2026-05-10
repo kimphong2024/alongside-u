@@ -13,7 +13,9 @@ export function flyHeart(origin: Origin) {
 
 export function onFly(l: FlyListener) {
   flyListeners.add(l);
-  return () => flyListeners.delete(l);
+  return () => {
+    flyListeners.delete(l);
+  };
 }
 
 export function setHeartTarget(t: Origin | null) {
