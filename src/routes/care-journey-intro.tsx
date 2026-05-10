@@ -26,6 +26,14 @@ const RELATIONSHIPS = ["Son", "Daughter", "Spouse", "Grandchild", "Sibling", "Pa
 const ILLNESSES = ["Cancer", "Dementia", "Heart failure", "ALS", "Parkinson's", "Other"];
 const STAGES = ["Recently diagnosed", "Early stage", "Advanced", "Not sure yet"];
 const EMOTIONS = ["Overwhelmed", "Numb", "Anxious", "Lost", "Trying to stay strong", "Managing okay"];
+const EMOTION_ICONS: Record<string, LucideIcon> = {
+  Overwhelmed: Waves,
+  Numb: CircleDashed,
+  Anxious: Wind,
+  Lost: Compass,
+  "Trying to stay strong": Shield,
+  "Managing okay": Sun,
+};
 const PRIORITIES = [
   "Understanding what to do next",
   "Managing responsibilities",
