@@ -269,9 +269,10 @@ function ScrapbookHero({
 
   const userCards = photoMoments.map((m) => ({
     id: m.id,
-    src: m.photo!,
+    src: (m.photo || m.video)!,
     caption: (m.title || new Date(m.date).toLocaleDateString("en-SG", { month: "short", day: "numeric" })).slice(0, 24),
     momentId: m.id,
+    kind: (m.photo ? "photo" : "video") as "photo" | "video",
   }));
 
   const cards = userCards.length > 0 ? userCards : seedCards;
