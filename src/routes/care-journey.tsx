@@ -711,7 +711,8 @@ function ResourcesCarousel() {
 
 function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked: number; total: number; onClick?: () => void }) {
   const r = Math.max(0, Math.min(1, ratio));
-  const fillHeight = 24 * r;
+  const visualR = r === 0 ? 0 : 0.25 + 0.75 * r;
+  const fillHeight = 24 * visualR;
   const fillY = 28 - fillHeight;
 
   // Splash on completion (ratio increase)
