@@ -38,6 +38,14 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+function notifyCompleted(title: string, undo: () => void) {
+  toast.success(`Marked done · ${title}`, {
+    duration: 5000,
+    action: { label: "Undo", onClick: undo },
+  });
+}
 
 import imgPause from "@/assets/care/01_pause_process_emotions.png";
 import imgSupport from "@/assets/care/02_identify_support_person.png";
@@ -252,6 +260,7 @@ function EmotionalCarousel({
   const gradients = ["bg-gradient-sage", "bg-gradient-warm", "bg-gradient-dawn"];
 
   const handleComplete = (id: string) => {
+    const item = items.find((i) => i.id === id);
     setLeaving((p) => ({ ...p, [id]: true }));
     setTimeout(() => {
       onToggle(id);
@@ -260,6 +269,7 @@ function EmotionalCarousel({
         delete n[id];
         return n;
       });
+      if (item) notifyCompleted(item.title, () => onToggle(id));
     }, 550);
   };
 
@@ -391,6 +401,7 @@ function MedicalTiles({
   ];
 
   const handleComplete = (id: string) => {
+    const item = items.find((i) => i.id === id);
     setLeaving((p) => ({ ...p, [id]: true }));
     setTimeout(() => {
       onToggle(id);
@@ -399,6 +410,7 @@ function MedicalTiles({
         delete n[id];
         return n;
       });
+      if (item) notifyCompleted(item.title, () => onToggle(id));
     }, 550);
   };
 
@@ -514,6 +526,7 @@ function ChecklistAccordion({
   const [leaving, setLeaving] = useState<Record<string, boolean>>({});
 
   const handleComplete = (id: string) => {
+    const item = items.find((i) => i.id === id);
     setLeaving((p) => ({ ...p, [id]: true }));
     setTimeout(() => {
       onToggleCheck(id);
@@ -522,6 +535,7 @@ function ChecklistAccordion({
         delete n[id];
         return n;
       });
+      if (item) notifyCompleted(item.title, () => onToggleCheck(id));
     }, 550);
   };
 
