@@ -359,8 +359,25 @@ function ScrapbookHero({
                     disabled={!momentId}
                     className="bg-card border border-border p-2.5 pb-5 shadow-paper paper-grain rounded-md w-[160px] md:w-[180px] block text-left cursor-pointer disabled:cursor-default"
                   >
-                    <div className="aspect-[4/5] rounded-sm overflow-hidden bg-muted">
-                      <img src={c.src} alt={c.caption} loading="lazy" className="w-full h-full object-cover" />
+                    <div className="relative aspect-[4/5] rounded-sm overflow-hidden bg-muted">
+                      {"kind" in c && c.kind === "video" ? (
+                        <video
+                          src={c.src}
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <img src={c.src} alt={c.caption} loading="lazy" className="w-full h-full object-cover" />
+                      )}
+                      {"kind" in c && c.kind === "video" && (
+                        <span className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-foreground/70 backdrop-blur-sm flex items-center justify-center">
+                          <Film className="h-3 w-3 text-background" strokeWidth={2} />
+                        </span>
+                      )}
                     </div>
                     <p className="font-hand text-lg text-foreground/70 mt-1.5 text-center leading-tight">
                       {c.caption}
