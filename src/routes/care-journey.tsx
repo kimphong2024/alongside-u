@@ -770,14 +770,45 @@ function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked
           strokeWidth="1.2"
         />
         <g clipPath="url(#heart-clip)">
+          {/* Still water body */}
           <motion.rect
             x="0"
             width="32"
             initial={false}
-            animate={{ y: fillY, height: fillHeight }}
+            animate={{ y: fillY + 1, height: Math.max(0, fillHeight - 1) }}
             transition={{ type: "spring", stiffness: 120, damping: 18 }}
             fill="url(#heart-fill)"
           />
+          {/* Animated wave surface (back layer, slower) */}
+          <motion.g
+            initial={false}
+            animate={{ y: fillY }}
+            transition={{ type: "spring", stiffness: 120, damping: 18 }}
+            style={{ display: r > 0 ? "block" : "none" }}
+          >
+            <motion.path
+              d="M -32 1 Q -24 -1, -16 1 T 0 1 T 16 1 T 32 1 T 48 1 T 64 1 L 64 4 L -32 4 Z"
+              fill="var(--sage)"
+              fillOpacity="0.55"
+              animate={{ x: [-32, 0] }}
+              transition={{ duration: 3.2, ease: "linear", repeat: Infinity }}
+            />
+          </motion.g>
+          {/* Animated wave surface (front layer, faster, brighter) */}
+          <motion.g
+            initial={false}
+            animate={{ y: fillY }}
+            transition={{ type: "spring", stiffness: 120, damping: 18 }}
+            style={{ display: r > 0 ? "block" : "none" }}
+          >
+            <motion.path
+              d="M -32 1.2 Q -24 2.6, -16 1.2 T 0 1.2 T 16 1.2 T 32 1.2 T 48 1.2 T 64 1.2 L 64 4 L -32 4 Z"
+              fill="var(--sage)"
+              fillOpacity="0.95"
+              animate={{ x: [0, -32] }}
+              transition={{ duration: 2.1, ease: "linear", repeat: Infinity }}
+            />
+          </motion.g>
         </g>
       </motion.svg>
       <motion.span
