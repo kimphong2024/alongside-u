@@ -113,12 +113,29 @@ function CareJourney() {
   const { state, update, hydrated } = useAppState();
   const [activePhase, setActivePhase] = useState(CARE_JOURNEY[0].id);
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
+  const [progressOpen, setProgressOpen] = useState(false);
 
-  const { totalCount, checkedCount } = useMemo(() => {
+  const { totalCount, checkedCount, completedItems, pendingItems } = useMemo(() => {
     let total = 0;
-    for (const p of CARE_JOURNEY) for (const c of p.categories) total += c.items.length;
-    const checked = Object.values(state?.checkedItems ?? {}).filter(Boolean).length;
-    return { totalCount: total, checkedCount: Math.min(checked, total) };
+    const completed: { id: string; title: string; phase: string; category: string }[] = [];
+    const pending: { id: string; title: string; phase: string; category: string }[] = [];
+    const checks = state?.checkedItems ?? {};
+    for (const p of CARE_JOURNEY) {
+      for (const c of p.categories) {
+        total += c.items.length;
+        for (const item of c.items) {
+          const entry = { id: item.id, title: item.title, phase: p.title, category: c.category };
+          if (checks[item.id]) completed.push(entry);
+          else pending.push(entry);
+        }
+      }
+    }
+    return {
+      totalCount: total,
+      checkedCount: Math.min(completed.length, total),
+      completedItems: completed,
+      pendingItems: pending,
+    };
   }, [state?.checkedItems]);
 
   if (!hydrated) return null;
