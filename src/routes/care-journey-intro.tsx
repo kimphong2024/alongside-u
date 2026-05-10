@@ -213,16 +213,19 @@ function CareJourneyIntro() {
         </h2>
       </div>
     )},
-    { id: "illnessType", canContinue: (d) => !!d.illnessType, render: ({ data, set }) => (
+    { id: "illnessType", canContinue: (d) => !!d.illnessType, render: ({ data, set }) => {
+      const lovedOne = lovedOneFor(data.relationship);
+      return (
       <div className="space-y-6">
         <Header title="What diagnosis did your loved one receive?" subtitle="This helps us personalize guidance and support." />
         <ChoiceGrid options={ILLNESSES} selected={data.illnessType} onSelect={(v) => set("illnessType", v)} />
         <div className="space-y-2 pt-2">
-          <span className="text-sm text-muted-foreground">Stage (optional)</span>
+          <span className="text-sm text-muted-foreground">Where is your {lovedOne} in their diagnosis? (optional)</span>
           <ChoiceGrid options={STAGES} selected={data.illnessStage} onSelect={(v) => set("illnessStage", v)} />
         </div>
       </div>
-    )},
+      );
+    }},
     { id: "emotional", canContinue: (d) => !!d.emotional, render: ({ data, set }) => (
       <div className="space-y-6">
         <Header title="How are you feeling right now?" subtitle="Whatever it is, it's valid." />
