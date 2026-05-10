@@ -38,6 +38,14 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+function notifyCompleted(title: string, undo: () => void) {
+  toast.success(`Marked done · ${title}`, {
+    duration: 5000,
+    action: { label: "Undo", onClick: undo },
+  });
+}
 
 import imgPause from "@/assets/care/01_pause_process_emotions.png";
 import imgSupport from "@/assets/care/02_identify_support_person.png";
