@@ -361,13 +361,16 @@ function MemoryCollage({
 
   return (
     <section className="relative pt-2">
-      <div className="text-center max-w-xl mx-auto">
+      <div className="text-center max-w-2xl mx-auto">
         <div className="inline-flex items-center gap-2 text-muted-foreground">
           <Heart className="h-4 w-4" strokeWidth={1.6} />
           <span className="text-xs uppercase tracking-[0.18em]">Scrapbook</span>
         </div>
-        <p className="text-muted-foreground mt-3 leading-relaxed text-sm">
-          A quiet space to hold meaningful moments with {loveeName}.
+        <h1 className="font-serif italic text-4xl md:text-5xl text-foreground/90 leading-[1.1] mt-4">
+          Small things,<br />deeply remembered
+        </h1>
+        <p className="text-muted-foreground mt-4 leading-relaxed text-sm md:text-base max-w-md mx-auto">
+          A quiet space to hold meaningful moments with {loveeName} — kept gently, like pages in a family album.
         </p>
       </div>
 
