@@ -5,6 +5,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight, ArrowLeft, Check, ChevronDown, Waves, CircleDashed, Wind, Compass, Shield, Sun, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppData, type OnboardingData } from "@/lib/store";
+import heartImg from "@/assets/arms-hugging-heart.png";
 
 export const Route = createFileRoute("/care-journey-intro")({
   component: CareJourneyIntro,
