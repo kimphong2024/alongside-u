@@ -46,12 +46,6 @@ function lovedOneFor(rel?: string): string {
     default: return "loved one";
   }
 }
-  "Understanding what to do next",
-  "Managing responsibilities",
-  "Spending meaningful time together",
-  "Coordinating family updates",
-  "Emotional support",
-];
 
 function ChoiceGrid({
   options, selected, onSelect, multi = false,
