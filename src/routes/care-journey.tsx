@@ -266,6 +266,14 @@ function CareJourney() {
           <ResourcesCarousel />
         </section>
       </div>
+      <ProgressDialog
+        open={progressOpen}
+        onOpenChange={setProgressOpen}
+        completed={completedItems}
+        pending={pendingItems}
+        onUncheck={(id) => update((s) => ({ ...s, checkedItems: { ...s.checkedItems, [id]: false } }))}
+        onCheck={(id) => update((s) => ({ ...s, checkedItems: { ...s.checkedItems, [id]: true } }))}
+      />
       <HeartFlyer />
     </AppShell>
   );
