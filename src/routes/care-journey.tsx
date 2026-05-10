@@ -39,6 +39,26 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
+import imgPause from "@/assets/care/01_pause_process_emotions.png";
+import imgSupport from "@/assets/care/02_identify_support_person.png";
+import imgDoctor from "@/assets/care/03_write_doctor_contact.png";
+import imgDocs from "@/assets/care/04_gather_medical_documents.png";
+import imgPauseDecisions from "@/assets/care/05_avoid_big_decisions.png";
+import imgDiagnosis from "@/assets/care/06_understand_diagnosis.png";
+import imgPrognosis from "@/assets/care/07_clarify_prognosis.png";
+import imgGoals from "@/assets/care/08_ask_treatment_goals.png";
+import imgSummary from "@/assets/care/09_request_medical_summary.png";
+
+const ITEM_IMAGES: Record<string, string> = {
+  p2: imgSupport,
+  p3: imgDoctor,
+  p4: imgDocs,
+  m1: imgDiagnosis,
+  m2: imgPrognosis,
+  m3: imgGoals,
+  m4: imgSummary,
+};
+
 export const Route = createFileRoute("/care-journey")({
   head: () => ({
     meta: [
@@ -157,24 +177,26 @@ function CareJourney() {
 
                   {cat.category === EMOTIONAL_CATEGORY ? (
                     <div className="space-y-3">
-                      <div className="rounded-2xl border border-border bg-gradient-sage px-4 py-3 flex items-start gap-3">
-                        <span className="h-7 w-7 rounded-full bg-card/70 border border-border/60 flex items-center justify-center flex-shrink-0">
-                          <Info className="h-4 w-4 text-foreground/70" strokeWidth={1.6} />
-                        </span>
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium leading-snug">Quick Check</p>
+                      <div className="rounded-2xl border border-border bg-gradient-sage px-4 py-3 flex items-center gap-3">
+                        <img src={imgPause} alt="" className="h-14 w-14 object-contain flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <Info className="h-3.5 w-3.5 text-foreground/70" strokeWidth={1.8} />
+                            <p className="text-sm font-medium leading-snug">Quick Check</p>
+                          </div>
                           <p className="text-xs text-foreground/70 mt-0.5 leading-relaxed">
                             If you have had the time to pause and process all of this.
                           </p>
                         </div>
                       </div>
                       <EmotionalCarousel items={cat.items} checkedItems={state.checkedItems} onToggle={check} />
-                      <div className="rounded-2xl border border-border bg-gradient-warm px-4 py-3 flex items-start gap-3">
-                        <span className="h-7 w-7 rounded-full bg-card/70 border border-border/60 flex items-center justify-center flex-shrink-0">
-                          <Lightbulb className="h-4 w-4 text-foreground/70" strokeWidth={1.6} />
-                        </span>
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium leading-snug">Tip</p>
+                      <div className="rounded-2xl border border-border bg-gradient-warm px-4 py-3 flex items-center gap-3">
+                        <img src={imgPauseDecisions} alt="" className="h-14 w-14 object-contain flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <Lightbulb className="h-3.5 w-3.5 text-foreground/70" strokeWidth={1.8} />
+                            <p className="text-sm font-medium leading-snug">Tip</p>
+                          </div>
                           <p className="text-xs text-foreground/70 mt-0.5 leading-relaxed">
                             Big decisions today can wait.
                           </p>
@@ -239,7 +261,7 @@ function EmotionalCarousel({
               <CarouselItem key={item.id} className="pl-3 basis-[72%] sm:basis-[48%] md:basis-[34%]">
                 <button
                   onClick={() => setActive(item)}
-                  className={`relative w-full text-left rounded-3xl border border-border ${grad} p-5 h-56 flex flex-col justify-between shadow-soft transition hover:shadow-paper`}
+                  className={`relative w-full text-left rounded-3xl border border-border ${grad} p-4 h-64 flex flex-col shadow-soft transition hover:shadow-paper`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <span className="text-[10px] uppercase tracking-[0.14em] text-foreground/60 bg-card/70 backdrop-blur px-2 py-1 rounded-full border border-border/60">
@@ -259,11 +281,17 @@ function EmotionalCarousel({
                       {checked && <Check className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={3} />}
                     </span>
                   </div>
+                  <div className="flex-1 flex items-center justify-center my-1">
+                    {ITEM_IMAGES[item.id] && (
+                      <img
+                        src={ITEM_IMAGES[item.id]}
+                        alt=""
+                        className="max-h-28 w-auto object-contain"
+                      />
+                    )}
+                  </div>
                   <div>
-                    <h4 className="font-serif text-lg leading-tight text-foreground">{item.title}</h4>
-                    <p className="text-xs text-foreground/70 mt-1.5 leading-relaxed line-clamp-2">
-                      {item.description}
-                    </p>
+                    <h4 className="font-serif text-base leading-tight text-foreground">{item.title}</h4>
                   </div>
                 </button>
               </CarouselItem>
@@ -278,6 +306,11 @@ function EmotionalCarousel({
         <DialogContent className="max-w-md">
           {active && (
             <>
+              {ITEM_IMAGES[active.id] && (
+                <div className="flex justify-center -mt-2">
+                  <img src={ITEM_IMAGES[active.id]} alt="" className="h-32 w-auto object-contain" />
+                </div>
+              )}
               <DialogHeader>
                 <DialogTitle className="font-serif text-xl">{active.title}</DialogTitle>
                 <DialogDescription>{active.description}</DialogDescription>
@@ -345,9 +378,13 @@ function MedicalTiles({
                   <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />
                 </span>
               )}
-              <span className={`h-14 w-14 rounded-2xl flex items-center justify-center ${t.icon}`}>
-                <Stethoscope className="h-7 w-7" strokeWidth={1.4} />
-              </span>
+              {ITEM_IMAGES[item.id] ? (
+                <img src={ITEM_IMAGES[item.id]} alt="" className="h-20 w-20 object-contain" />
+              ) : (
+                <span className={`h-14 w-14 rounded-2xl flex items-center justify-center ${t.icon}`}>
+                  <Stethoscope className="h-7 w-7" strokeWidth={1.4} />
+                </span>
+              )}
               <span className="text-sm font-medium leading-snug text-foreground/85 line-clamp-2">
                 {item.title}
               </span>
@@ -360,6 +397,11 @@ function MedicalTiles({
         <DialogContent className="max-w-md">
           {active && (
             <>
+              {ITEM_IMAGES[active.id] && (
+                <div className="flex justify-center -mt-2">
+                  <img src={ITEM_IMAGES[active.id]} alt="" className="h-32 w-auto object-contain" />
+                </div>
+              )}
               <DialogHeader>
                 <DialogTitle className="font-serif text-xl">{active.title}</DialogTitle>
                 <DialogDescription>{active.description}</DialogDescription>
