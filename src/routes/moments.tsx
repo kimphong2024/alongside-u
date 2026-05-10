@@ -327,7 +327,8 @@ function MemoryCollage({
     caption: m.title?.toLowerCase() || seedCards[i]?.caption || "",
   }));
 
-  const cards = (userCards.length > 0 ? userCards : seedCards).slice(0, 3);
+  const hasUserMoments = totalCount > 0;
+  const cards = (hasUserMoments ? userCards : seedCards).slice(0, 3);
 
   // Slight alternating tilt for a hand-pinned clothesline feel.
   const tilts = [-3, 2, -2];
