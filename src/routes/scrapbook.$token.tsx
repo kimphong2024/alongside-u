@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import type { Moment } from "@/lib/store";
 
 export const Route = createFileRoute("/scrapbook/$token")({
