@@ -78,7 +78,7 @@ export function OnboardingFlow() {
                   <img
                     src={t.illustration}
                     alt=""
-                    className="absolute right-2 bottom-16 w-40 md:w-48 lg:w-56 object-contain pointer-events-none select-none mix-blend-multiply opacity-90 transition-transform duration-500 group-hover:scale-105"
+                    className="absolute inset-x-0 top-1/2 -translate-y-[58%] mx-auto w-[78%] max-h-[68%] object-contain pointer-events-none select-none opacity-95 transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="relative flex items-start justify-between">
                     <Icon
