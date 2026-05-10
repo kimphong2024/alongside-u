@@ -168,7 +168,7 @@ function Support() {
               <section className="space-y-3">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Phone className="h-4 w-4" strokeWidth={1.6} />
-                  <span className="text-xs uppercase tracking-[0.14em]">If you need to talk</span>
+                  <span className="text-xs uppercase tracking-[0.14em]">If you need a listening ear</span>
                 </div>
                 <div className="grid gap-2">
                   {HELPLINES.map((h) => (
