@@ -442,7 +442,7 @@ function MedicalTiles({
           <p className="text-sm text-muted-foreground mt-1">You've gathered what you need for now.</p>
         </motion.div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
           {visibleItems.map((item, i) => {
             const t = tints[i % tints.length];
             const isLeaving = !!leaving[item.id];
