@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import authBg from "@/assets/auth-bg.png";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — Alongside" }] }),
+  head: () => ({ meta: [{ title: "Sign in - Alongside" }] }),
   component: AuthPage,
 });
 
@@ -93,7 +93,7 @@ function AuthPage() {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     if (error) toast.error(error.message);
-    else toast.success("Reset link sent — check your inbox.");
+    else toast.success("Reset link sent - check your inbox.");
   };
 
   return (
@@ -209,7 +209,7 @@ function AuthPage() {
             Continue as guest
           </button>
           <p className="text-[11px] text-muted-foreground/60 text-center -mt-1 leading-relaxed">
-            No account needed — you can save your work later.
+            No account needed - you can save your work later.
           </p>
         </form>
 

@@ -79,7 +79,7 @@ const ITEM_IMAGES: Record<string, string> = {
 export const Route = createFileRoute("/care-journey")({
   head: () => ({
     meta: [
-      { title: "Care Journey — Alongside" },
+      { title: "Care Journey - Alongside" },
       { name: "description", content: "Gentle, structured guidance through each phase of caregiving." },
     ],
   }),
@@ -827,7 +827,7 @@ function ProgressDialog({
               Completed · {completed.length}
             </h4>
             {completed.length === 0 ? (
-              <p className="text-sm text-muted-foreground italic">Nothing checked off yet — that's okay.</p>
+              <p className="text-sm text-muted-foreground italic">Nothing checked off yet - that's okay.</p>
             ) : (
               <ul className="space-y-1.5">
                 {completed.map((it) => (

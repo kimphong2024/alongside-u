@@ -38,7 +38,7 @@ export const CARE_JOURNEY: ChecklistPhase[] = [
         items: [
           { id: "m1", title: "Understand the diagnosis", description: "Ask the doctor to explain in plain language.", why: "Clarity reduces anxiety more than answers.", reassurance: "It's okay to ask the same question twice." },
           { id: "m2", title: "Clarify the prognosis", description: "Ask about likely course and timing, gently.", why: "Knowing helps you prioritise what matters most.", reassurance: "You can pause this conversation anytime." },
-          { id: "m3", title: "Ask about treatment goals", description: "Cure, control, or comfort — which is realistic?", why: "Goals shape every decision ahead.", reassurance: "There are no wrong answers." },
+          { id: "m3", title: "Ask about treatment goals", description: "Cure, control, or comfort - which is realistic?", why: "Goals shape every decision ahead.", reassurance: "There are no wrong answers." },
           { id: "m4", title: "Request a written medical summary", description: "Most hospitals provide one on request.", why: "Useful for second opinions and family updates.", reassurance: "You don't have to remember everything." },
         ],
       },
@@ -47,7 +47,7 @@ export const CARE_JOURNEY: ChecklistPhase[] = [
         items: [
           { id: "f1", title: "Inform immediate family", description: "Share what you know, gently.", why: "They will want to support you and your loved one.", reassurance: "You can share more details later." },
           { id: "f2", title: "Decide on a communication approach", description: "One group chat, weekly updates, or via one relative.", why: "Repeating news is emotionally exhausting.", reassurance: "Choose what feels lightest for you." },
-          { id: "f3", title: "Identify a primary caregiver", description: "Often this becomes you — but it can be shared.", why: "Clear roles reduce family friction.", reassurance: "This can change over time." },
+          { id: "f3", title: "Identify a primary caregiver", description: "Often this becomes you - but it can be shared.", why: "Clear roles reduce family friction.", reassurance: "This can change over time." },
         ],
       },
     ],
@@ -63,7 +63,7 @@ export const CARE_JOURNEY: ChecklistPhase[] = [
           { id: "w1", title: "Schedule specialist consultations", description: "Oncologist, palliative team, or relevant specialists.", why: "Early appointments give more options.", reassurance: "Bring someone with you if you can." },
           { id: "w2", title: "Organize medications", description: "List names, dosages and timings.", why: "Prevents missed doses and confusion.", reassurance: "A simple notebook is enough." },
           { id: "w3", title: "Understand treatment pathways", description: "Ask what comes next, and what alternatives exist.", why: "Knowing the path makes the road feel shorter.", reassurance: "Plans can change. That's normal." },
-          { id: "w4", title: "Discuss palliative care options", description: "Palliative care is comfort care — it doesn't mean giving up.", why: "Early palliative input often improves quality of life.", reassurance: "Asking about it is wise, not pessimistic." },
+          { id: "w4", title: "Discuss palliative care options", description: "Palliative care is comfort care - it doesn't mean giving up.", why: "Early palliative input often improves quality of life.", reassurance: "Asking about it is wise, not pessimistic." },
           { id: "w5", title: "Prepare emergency contacts", description: "Doctor, hospital, family, ambulance (995 in SG).", why: "Saves precious minutes during stressful moments.", reassurance: "Print one copy for the fridge." },
         ],
       },
@@ -107,7 +107,7 @@ export const CARE_JOURNEY: ChecklistPhase[] = [
       {
         category: "Family Coordination",
         items: [
-          { id: "fm1", title: "Create a shared caregiving schedule", description: "Visits, meals, appointments — visible to everyone.", why: "Reduces last-minute coordination stress.", reassurance: "Even a shared note works." },
+          { id: "fm1", title: "Create a shared caregiving schedule", description: "Visits, meals, appointments - visible to everyone.", why: "Reduces last-minute coordination stress.", reassurance: "Even a shared note works." },
           { id: "fm2", title: "Coordinate visitation gently", description: "Quality over quantity.", why: "Too many visitors can be tiring.", reassurance: "Quiet visits count too." },
           { id: "fm3", title: "Clarify caregiving responsibilities", description: "Who handles meds, meals, finances, appointments.", why: "Clear roles reduce friction.", reassurance: "Roles can shift as needed." },
         ],
@@ -189,7 +189,7 @@ export const SG_RESOURCES: { name: string; desc: string; url: string; logo?: str
   { name: "Singapore Hospice Council", desc: "Directory of hospice and palliative providers.", url: "https://singaporehospice.org.sg", logo: hospiceCouncilLogo },
   { name: "HCA Hospice", desc: "Home hospice care across Singapore.", url: "https://www.hca.org.sg", logo: hcaLogo },
   { name: "MediShield Life", desc: "National basic health insurance.", url: "https://www.moh.gov.sg/medishield-life", logo: medishieldLogo },
-  { name: "Advance Care Planning", desc: "My Legacy — start the conversation.", url: "https://www.mylegacy.life.gov.sg", logo: myLegacyLogo },
+  { name: "Advance Care Planning", desc: "My Legacy - start the conversation.", url: "https://www.mylegacy.life.gov.sg", logo: myLegacyLogo },
   { name: "Office of the Public Guardian (LPA)", desc: "Lasting Power of Attorney.", url: "https://www.msf.gov.sg/opg", logo: opgLogo },
   { name: "CHAS Subsidies", desc: "Community Health Assist Scheme.", url: "https://www.chas.sg", logo: chasLogo },
   { name: "Singapore Cancer Society", desc: "Patient services, hospice, financial help.", url: "https://www.singaporecancersociety.org.sg" },

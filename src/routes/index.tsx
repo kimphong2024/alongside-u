@@ -9,7 +9,7 @@ import { useAppData } from "@/lib/store";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Today — Alongside" },
+      { title: "Today - Alongside" },
       { name: "description", content: "A calm, gentle starting point for caregivers in Singapore navigating terminal illness." },
     ],
   }),
@@ -77,7 +77,7 @@ function Today() {
                 You're doing the best you can.
               </h1>
               <p className="text-muted-foreground leading-relaxed text-[15px]">
-                A few gentle things you may want to look into today. Move at your own pace — nothing here is urgent.
+                A few gentle things you may want to look into today. Move at your own pace - nothing here is urgent.
               </p>
             </div>
           </div>

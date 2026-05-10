@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import authBg from "@/assets/auth-bg.png";
 
 export const Route = createFileRoute("/reset-password")({
-  head: () => ({ meta: [{ title: "Reset password — Alongside" }] }),
+  head: () => ({ meta: [{ title: "Reset password - Alongside" }] }),
   component: ResetPasswordPage,
 });
 

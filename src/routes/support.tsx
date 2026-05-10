@@ -10,7 +10,7 @@ import { useAppState } from "@/lib/store";
 export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
-      { title: "Support — Alongside" },
+      { title: "Support - Alongside" },
       { name: "description", content: "Support yourself, or invite family to support you." },
     ],
   }),
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/support")({
 
 const HELPLINES = [
   { name: "Samaritans of Singapore (SOS)", number: "1-767", desc: "24-hour emotional support." },
-  { name: "Caregiver Support — AIC", number: "1800 650 6060", desc: "Mon–Fri, 8.30am–8.30pm; Sat 8.30am–4pm." },
+  { name: "Caregiver Support - AIC", number: "1800 650 6060", desc: "Mon–Fri, 8.30am–8.30pm; Sat 8.30am–4pm." },
   { name: "Singapore Hospice Council", number: "6538 2231", desc: "Information on hospice & palliative care." },
   { name: "Emergency", number: "995", desc: "Ambulance & medical emergencies." },
 ];
@@ -169,7 +169,7 @@ function Support() {
                     {[
                       { text: "You are doing the best you can with what you have.", grad: "bg-gradient-warm" },
                       { text: "Resting is not abandoning. It is sustaining.", grad: "bg-gradient-sage" },
-                      { text: "Asking for help is an act of love — for them, and for you.", grad: "bg-gradient-dawn" },
+                      { text: "Asking for help is an act of love - for them, and for you.", grad: "bg-gradient-dawn" },
                       { text: "There is no perfect way to do this.", grad: "bg-gradient-warm" },
                     ].map((q) => (
                       <div
@@ -310,9 +310,9 @@ function Support() {
                 <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">Suggested ways to share</h3>
                 <div className="grid gap-2">
                   {[
-                    { title: "Weekly family update", desc: "One short message every Sunday — saves repeating." },
+                    { title: "Weekly family update", desc: "One short message every Sunday - saves repeating." },
                     { title: "Visit calendar", desc: "Spread visits across the week so everyone gets quiet time." },
-                    { title: "Task circle", desc: "Groceries, meals, transport — small things, shared." },
+                    { title: "Task circle", desc: "Groceries, meals, transport - small things, shared." },
                   ].map((s) => (
                     <div key={s.title} className="rounded-2xl bg-gradient-warm border border-border p-4">
                       <p className="font-serif text-lg">{s.title}</p>
