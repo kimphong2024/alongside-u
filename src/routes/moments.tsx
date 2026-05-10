@@ -27,12 +27,39 @@ export const Route = createFileRoute("/moments")({
 
 function Moments() {
   const { state, update, hydrated } = useAppState();
+  const { user } = useAuth();
   const [tab, setTab] = useState<"journal" | "bucket">("journal");
   const [journalView, setJournalView] = useState<"collage" | "timeline">("collage");
   const [composerOpen, setComposerOpen] = useState(false);
   const [newBucket, setNewBucket] = useState("");
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const [suggesting, setSuggesting] = useState(false);
+  const [sharing, setSharing] = useState(false);
+
+  const shareTimeline = async () => {
+    if (!user || sharing) return;
+    setSharing(true);
+    try {
+      const { data: existing } = await supabase
+        .from("profiles").select("share_token").eq("id", user.id).maybeSingle();
+      let token = existing?.share_token as string | null;
+      if (!token) {
+        token = crypto.randomUUID();
+        await supabase.from("profiles").update({ share_token: token }).eq("id", user.id);
+      }
+      const url = `${window.location.origin}/scrapbook/${token}`;
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: "A shared scrapbook", url });
+        } catch { /* user cancelled */ }
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast.success("Public link copied", { description: url });
+      }
+    } finally {
+      setSharing(false);
+    }
+  };
 
   // Group moments by relative date for the timeline (must be before any early return)
   const timeline = useMemo(() => groupByRelativeDate(state.moments), [state.moments]);
