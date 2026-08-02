@@ -2,6 +2,13 @@ project_id = "eyoefpihxjzdxdumsofp"
 
 [auth]
 enable_anonymous_sign_ins = true
+site_url = "https://alongside-u-production.up.railway.app"
+additional_redirect_urls = [
+  "https://alongside-u-production.up.railway.app",
+  "https://alongside-u-production.up.railway.app/onboarding",
+  "https://alongside-u-production.up.railway.app/reset-password",
+  "http://localhost:3000",
+]
 
 [auth.email]
 enable_confirmations = false
