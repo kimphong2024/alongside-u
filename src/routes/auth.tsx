@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Lock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,12 +56,12 @@ function AuthPage() {
     if (busy) return;
     setBusy(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/onboarding` },
       });
-      if (result.error) throw result.error;
-      if (result.redirected) return;
-      navigate({ to: "/onboarding" });
+      if (error) throw error;
+      // Browser redirects to Google; nothing more to do here.
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Could not sign in with Google";
       toast.error(msg);

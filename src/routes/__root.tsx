@@ -81,8 +81,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "Alongside - A gentle companion for caregivers" },
       { name: "twitter:description", content: "A compassionate companion for caregivers in Singapore navigating terminal illness - with clarity, support, and meaningful moments." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3216228f-70ae-4307-825f-40ebf540ef5f/id-preview-1612a916--ea730b34-10ea-4f6c-81fc-74346e7acf81.lovable.app-1778326659450.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3216228f-70ae-4307-825f-40ebf540ef5f/id-preview-1612a916--ea730b34-10ea-4f6c-81fc-74346e7acf81.lovable.app-1778326659450.png" },
+      { property: "og:image", content: "/og-image.png" },
+      { name: "twitter:image", content: "/og-image.png" },
     ],
     links: [
       {

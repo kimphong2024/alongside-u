@@ -1,4 +1,4 @@
-// Lovable AI bucket-list idea suggestions for a Singaporean caregiving context.
+// AI bucket-list idea suggestions for a Singaporean caregiving context (Gemini API).
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -9,8 +9,8 @@ Deno.serve(async (req) => {
 
   try {
     const { loveeName = "your loved one", existing = [] } = await req.json().catch(() => ({}));
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("Missing LOVABLE_API_KEY");
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    if (!GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY");
 
     const prompt = `You are a gentle companion app for caregivers in Singapore.
 Generate 8 short, meaningful bucket-list ideas a caregiver could share with ${loveeName}.
@@ -20,14 +20,14 @@ Avoid duplicates of: ${existing.slice(0, 30).join("; ") || "none"}.
 Return STRICT JSON only: {"ideas":[{"title":"...","category":"Experiences|Legacy|Connection|Simple Joys"}]}.
 Keep each title under 10 words, warm and concrete.`;
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${GEMINI_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "gemini-2.5-flash",
         messages: [{ role: "user", content: prompt }],
         response_format: { type: "json_object" },
       }),
