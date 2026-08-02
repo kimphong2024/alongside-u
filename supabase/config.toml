@@ -1,4 +1,10 @@
-project_id = "qeoxenjbbzxewewijqtt"
+project_id = "eyoefpihxjzdxdumsofp"
+
+[auth]
+enable_anonymous_sign_ins = true
+
+[auth.email]
+enable_confirmations = false
 
 [functions.public-scrapbook]
 verify_jwt = false
