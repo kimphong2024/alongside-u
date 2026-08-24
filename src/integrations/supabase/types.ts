@@ -86,6 +86,51 @@ export type Database = {
         }
         Relationships: []
       }
+      consultations: {
+        Row: {
+          action_steps: Json
+          audio: string | null
+          audio_duration: number | null
+          audio_mime: string | null
+          created_at: string
+          date: string
+          id: string
+          owner_id: string
+          status: string
+          summary: string | null
+          title: string
+          transcript: string | null
+        }
+        Insert: {
+          action_steps?: Json
+          audio?: string | null
+          audio_duration?: number | null
+          audio_mime?: string | null
+          created_at?: string
+          date: string
+          id?: string
+          owner_id: string
+          status?: string
+          summary?: string | null
+          title?: string
+          transcript?: string | null
+        }
+        Update: {
+          action_steps?: Json
+          audio?: string | null
+          audio_duration?: number | null
+          audio_mime?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          owner_id?: string
+          status?: string
+          summary?: string | null
+          title?: string
+          transcript?: string | null
+        }
+        Relationships: []
+      }
       family_members: {
         Row: {
           created_at: string | null
@@ -110,6 +155,42 @@ export type Database = {
           name?: string
           owner_id?: string
           relationship?: string | null
+        }
+        Relationships: []
+      }
+      health_records: {
+        Row: {
+          created_at: string
+          date: string
+          file: string | null
+          id: string
+          kind: string
+          mime: string | null
+          note: string
+          owner_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          file?: string | null
+          id?: string
+          kind?: string
+          mime?: string | null
+          note?: string
+          owner_id: string
+          title?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          file?: string | null
+          id?: string
+          kind?: string
+          mime?: string | null
+          note?: string
+          owner_id?: string
+          title?: string
         }
         Relationships: []
       }
