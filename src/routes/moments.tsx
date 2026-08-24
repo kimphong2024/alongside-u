@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Plus, Sparkles, Check, Play, Pause, Mic, Film, ArrowLeft, Share2 } from "lucide-react";
+import { Heart, Plus, Sparkles, Check, Play, Pause, Mic, Film, ArrowLeft, Share2, Instagram } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useAppState, type BucketItem, type Moment } from "@/lib/store";
 import { BUCKET_TEMPLATES } from "@/lib/content";
 import { MomentComposer } from "@/components/MomentComposer";
+import { ImportMomentsSheet } from "@/components/ImportMomentsSheet";
 import { supabase } from "@/integrations/supabase/client";
 import momentsTea from "@/assets/moments-tea.jpg";
 import momentsHands from "@/assets/moments-hands.jpg";
@@ -31,6 +32,7 @@ function Moments() {
   const { user } = useAuth();
   const [journalView, setJournalView] = useState<"collage" | "timeline">("collage");
   const [composerOpen, setComposerOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [newBucket, setNewBucket] = useState("");
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const [suggesting, setSuggesting] = useState(false);
@@ -168,6 +170,15 @@ function Moments() {
               </button>
               <div className="flex items-center gap-1">
                 <Button
+                  onClick={() => setImportOpen(true)}
+                  size="sm"
+                  variant="ghost"
+                  className="rounded-full text-foreground/80 hover:text-foreground"
+                >
+                  <Instagram className="h-4 w-4 mr-1.5" />
+                  Import
+                </Button>
+                <Button
                   onClick={shareTimeline}
                   disabled={sharing}
                   size="sm"
@@ -295,6 +306,11 @@ function Moments() {
       </AnimatePresence>
 
       <MomentComposer open={composerOpen} onOpenChange={setComposerOpen} onSave={saveMoment} />
+      <ImportMomentsSheet
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        onImport={(imported) => update((s) => ({ ...s, moments: [...imported, ...s.moments] }))}
+      />
     </AppShell>
   );
 }
