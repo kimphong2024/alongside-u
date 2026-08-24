@@ -155,6 +155,7 @@ function Moments() {
             totalCount={state.moments.length}
             onOpen={() => setJournalView("timeline")}
             onAdd={() => setComposerOpen(true)}
+            onImport={() => setImportOpen(true)}
           />
         )}
 
@@ -323,12 +324,14 @@ function MemoryCollage({
   totalCount,
   onOpen,
   onAdd,
+  onImport,
 }: {
   loveeName: string;
   photoMoments: Moment[];
   totalCount: number;
   onOpen: () => void;
   onAdd: () => void;
+  onImport: () => void;
 }) {
   const seedCards = [
     { id: "seed-tea", src: momentsTea, kind: "photo" as const, caption: "tea on the porch" },
@@ -471,6 +474,16 @@ function MemoryCollage({
         </p>
       </button>
 
+      <div className="flex justify-center mt-6">
+        <button
+          type="button"
+          onClick={onImport}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card paper-grain shadow-soft text-sm text-foreground/75 hover:text-foreground hover:bg-muted/40 transition"
+        >
+          <Instagram className="h-4 w-4" strokeWidth={1.6} />
+          Bring in photos from Instagram or Facebook
+        </button>
+      </div>
     </section>
   );
 }
