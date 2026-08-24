@@ -13,12 +13,14 @@ import { Route as SupportRouteImport } from './routes/support'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as MomentsRouteImport } from './routes/moments'
+import { Route as HealthRouteImport } from './routes/health'
 import { Route as FamilyRouteImport } from './routes/family'
 import { Route as CareJourneyIntroRouteImport } from './routes/care-journey-intro'
 import { Route as CareJourneyRouteImport } from './routes/care-journey'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ScrapbookTokenRouteImport } from './routes/scrapbook.$token'
+import { Route as HealthGuideRouteImport } from './routes/health_.guide'
 
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
@@ -38,6 +40,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const MomentsRoute = MomentsRouteImport.update({
   id: '/moments',
   path: '/moments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HealthRoute = HealthRouteImport.update({
+  id: '/health',
+  path: '/health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FamilyRoute = FamilyRouteImport.update({
@@ -70,6 +77,11 @@ const ScrapbookTokenRoute = ScrapbookTokenRouteImport.update({
   path: '/scrapbook/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HealthGuideRoute = HealthGuideRouteImport.update({
+  id: '/health_/guide',
+  path: '/health/guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -77,10 +89,12 @@ export interface FileRoutesByFullPath {
   '/care-journey': typeof CareJourneyRoute
   '/care-journey-intro': typeof CareJourneyIntroRoute
   '/family': typeof FamilyRoute
+  '/health': typeof HealthRoute
   '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/support': typeof SupportRoute
+  '/health/guide': typeof HealthGuideRoute
   '/scrapbook/$token': typeof ScrapbookTokenRoute
 }
 export interface FileRoutesByTo {
@@ -89,10 +103,12 @@ export interface FileRoutesByTo {
   '/care-journey': typeof CareJourneyRoute
   '/care-journey-intro': typeof CareJourneyIntroRoute
   '/family': typeof FamilyRoute
+  '/health': typeof HealthRoute
   '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/support': typeof SupportRoute
+  '/health/guide': typeof HealthGuideRoute
   '/scrapbook/$token': typeof ScrapbookTokenRoute
 }
 export interface FileRoutesById {
@@ -102,10 +118,12 @@ export interface FileRoutesById {
   '/care-journey': typeof CareJourneyRoute
   '/care-journey-intro': typeof CareJourneyIntroRoute
   '/family': typeof FamilyRoute
+  '/health': typeof HealthRoute
   '/moments': typeof MomentsRoute
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/support': typeof SupportRoute
+  '/health_/guide': typeof HealthGuideRoute
   '/scrapbook/$token': typeof ScrapbookTokenRoute
 }
 export interface FileRouteTypes {
@@ -116,10 +134,12 @@ export interface FileRouteTypes {
     | '/care-journey'
     | '/care-journey-intro'
     | '/family'
+    | '/health'
     | '/moments'
     | '/onboarding'
     | '/reset-password'
     | '/support'
+    | '/health/guide'
     | '/scrapbook/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -128,10 +148,12 @@ export interface FileRouteTypes {
     | '/care-journey'
     | '/care-journey-intro'
     | '/family'
+    | '/health'
     | '/moments'
     | '/onboarding'
     | '/reset-password'
     | '/support'
+    | '/health/guide'
     | '/scrapbook/$token'
   id:
     | '__root__'
@@ -140,10 +162,12 @@ export interface FileRouteTypes {
     | '/care-journey'
     | '/care-journey-intro'
     | '/family'
+    | '/health'
     | '/moments'
     | '/onboarding'
     | '/reset-password'
     | '/support'
+    | '/health_/guide'
     | '/scrapbook/$token'
   fileRoutesById: FileRoutesById
 }
@@ -153,10 +177,12 @@ export interface RootRouteChildren {
   CareJourneyRoute: typeof CareJourneyRoute
   CareJourneyIntroRoute: typeof CareJourneyIntroRoute
   FamilyRoute: typeof FamilyRoute
+  HealthRoute: typeof HealthRoute
   MomentsRoute: typeof MomentsRoute
   OnboardingRoute: typeof OnboardingRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SupportRoute: typeof SupportRoute
+  HealthGuideRoute: typeof HealthGuideRoute
   ScrapbookTokenRoute: typeof ScrapbookTokenRoute
 }
 
@@ -188,6 +214,13 @@ declare module '@tanstack/react-router' {
       path: '/moments'
       fullPath: '/moments'
       preLoaderRoute: typeof MomentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/health': {
+      id: '/health'
+      path: '/health'
+      fullPath: '/health'
+      preLoaderRoute: typeof HealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/family': {
@@ -232,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScrapbookTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/health_/guide': {
+      id: '/health_/guide'
+      path: '/health/guide'
+      fullPath: '/health/guide'
+      preLoaderRoute: typeof HealthGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -241,10 +281,12 @@ const rootRouteChildren: RootRouteChildren = {
   CareJourneyRoute: CareJourneyRoute,
   CareJourneyIntroRoute: CareJourneyIntroRoute,
   FamilyRoute: FamilyRoute,
+  HealthRoute: HealthRoute,
   MomentsRoute: MomentsRoute,
   OnboardingRoute: OnboardingRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SupportRoute: SupportRoute,
+  HealthGuideRoute: HealthGuideRoute,
   ScrapbookTokenRoute: ScrapbookTokenRoute,
 }
 export const routeTree = rootRouteImport

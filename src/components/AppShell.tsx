@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Compass, Heart, LifeBuoy, LogOut } from "lucide-react";
+import { Compass, Heart, LifeBuoy, LogOut, Stethoscope } from "lucide-react";
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { toast } from "sonner";
@@ -8,6 +8,7 @@ import { useAuth, signOut } from "@/hooks/use-auth";
 
 const tabs = [
   { to: "/care-journey", label: "Journey", icon: Compass },
+  { to: "/health", label: "Health", icon: Stethoscope },
   { to: "/moments", label: "Moments", icon: Heart },
   { to: "/support", label: "Support", icon: LifeBuoy },
 ] as const;
