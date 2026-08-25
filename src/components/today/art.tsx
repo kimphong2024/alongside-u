@@ -176,9 +176,9 @@ function ChecklistArt() {
   );
 }
 
-export function TeaCupArt() {
+export function TeaCupArt({ className = "h-16 w-24" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 120 80" className="h-16 w-24">
+    <svg viewBox="22 26 68 46" className={className}>
       <path
         d="M30 50 q4 -4 8 -8 M40 46 q3 -5 6 -10 M50 48 q2 -4 4 -8"
         stroke={STROKE}

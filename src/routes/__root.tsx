@@ -8,6 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 
+import { MotionConfig } from "framer-motion";
 import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -130,8 +131,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
-      <Toaster />
+      <MotionConfig reducedMotion="user">
+        <Outlet />
+        <Toaster />
+      </MotionConfig>
     </QueryClientProvider>
   );
 }

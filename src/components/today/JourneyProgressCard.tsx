@@ -1,43 +1,45 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Compass } from "lucide-react";
 
 type Props = {
-  checkedCount: number;
-  totalCount: number;
-  nextItemTitle?: string;
+  phaseTitle: string;
+  checkedInPhase: number;
+  totalInPhase: number;
+  allDone: boolean;
 };
 
-export function JourneyProgressCard({ checkedCount, totalCount, nextItemTitle }: Props) {
-  const ratio = totalCount > 0 ? checkedCount / totalCount : 0;
+// Phase-scoped on purpose: "2 of 6 in this chapter" is gentle; "0 of 44" is a wall.
+export function JourneyProgressCard({ phaseTitle, checkedInPhase, totalInPhase, allDone }: Props) {
+  const ratio = totalInPhase > 0 ? checkedInPhase / totalInPhase : 0;
   return (
-    <Link to="/care-journey" className="block group">
-      <div className="rounded-[1.75rem] bg-card border border-border p-7 shadow-soft hover:shadow-paper transition-all duration-500">
-        <div className="flex items-baseline justify-between gap-3">
-          <h3 className="font-serif text-2xl leading-snug">The journey so far</h3>
-          <span className="text-sm text-muted-foreground tabular-nums shrink-0">
-            {checkedCount} of {totalCount}
-          </span>
-        </div>
-        <div className="mt-4 h-1.5 rounded-full bg-muted overflow-hidden">
-          <div
-            className="h-full rounded-full bg-sage transition-all duration-700"
-            style={{ width: `${Math.max(ratio * 100, checkedCount > 0 ? 4 : 0)}%` }}
-          />
-        </div>
-        <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
-          {nextItemTitle ? (
-            <>
-              Up next: <span className="text-foreground/80">{nextItemTitle}</span>
-            </>
-          ) : (
-            "Every step is done. That took real strength."
-          )}
-        </p>
-        <div className="flex items-center gap-1.5 mt-4 text-sm text-foreground/70 group-hover:text-foreground transition">
-          <span>Open the journey</span>
-          <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition" />
-        </div>
+    <Link
+      to="/care-journey"
+      className="group block rounded-2xl bg-card border border-border p-5 shadow-soft hover:shadow-paper transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <Compass className="h-4 w-4" strokeWidth={1.6} />
+        <span className="text-sm">The journey</span>
       </div>
+      {allDone ? (
+        <p className="font-serif text-xl leading-snug mt-2">Every step is done.</p>
+      ) : (
+        <>
+          <p className="font-serif text-xl leading-snug mt-2">{phaseTitle}</p>
+          <div className="mt-3 h-1.5 rounded-full bg-muted overflow-hidden">
+            <div
+              className="h-full rounded-full bg-sage transition-all duration-700"
+              style={{ width: `${Math.max(ratio * 100, checkedInPhase > 0 ? 6 : 0)}%` }}
+            />
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            {checkedInPhase} of {totalInPhase} in this chapter
+          </p>
+        </>
+      )}
+      <span className="inline-flex items-center gap-1.5 mt-3 text-sm text-foreground/75 group-hover:text-foreground transition">
+        Open the journey
+        <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition" />
+      </span>
     </Link>
   );
 }

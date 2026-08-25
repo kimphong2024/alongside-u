@@ -79,7 +79,7 @@ export function NextUpSection({
           <div className="rounded-2xl bg-card border border-border p-4 shadow-soft paper-grain flex items-start gap-3">
             <button
               onClick={() => onToggleStep(step.consultationId, step.stepIndex)}
-              className="mt-0.5 h-5 w-5 rounded-full border border-border bg-background flex items-center justify-center shrink-0 hover:border-sage transition"
+              className="mt-0.5 h-5 w-5 rounded-full border border-border bg-background flex items-center justify-center shrink-0 hover:border-sage transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               aria-label="Mark step done"
             >
               <Check className="h-3 w-3 opacity-0" strokeWidth={2.5} />
@@ -103,7 +103,7 @@ export function NextUpSection({
           <Link
             to="/health"
             search={{ view: "team" }}
-            className="rounded-2xl bg-card border border-border p-4 shadow-soft paper-grain flex items-center gap-3 hover:bg-muted/30 transition"
+            className="rounded-2xl bg-card border border-border p-4 shadow-soft paper-grain flex items-center gap-3 hover:bg-muted/30 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <div className="h-9 w-9 rounded-full bg-clay-soft/40 flex items-center justify-center shrink-0">
               <CalendarDays className="h-4 w-4 text-foreground/70" strokeWidth={1.6} />
@@ -132,7 +132,7 @@ export function NextUpSection({
         >
           <Link
             to="/care-journey"
-            className="rounded-2xl bg-card border border-border p-4 shadow-soft paper-grain flex items-center gap-3 hover:bg-muted/30 transition"
+            className="rounded-2xl bg-card border border-border p-4 shadow-soft paper-grain flex items-center gap-3 hover:bg-muted/30 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <div className="h-9 w-9 rounded-full bg-sage-soft/50 flex items-center justify-center shrink-0">
               <Compass className="h-4 w-4 text-foreground/70" strokeWidth={1.6} />

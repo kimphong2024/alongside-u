@@ -8,10 +8,13 @@ type Props = {
 
 export function MomentPrompt({ loveeName, pendingBucketTitle }: Props) {
   return (
-    <Link to="/moments" className="block">
+    <Link
+      to="/moments"
+      className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
+    >
       <div className="polaroid-left bg-card border border-border p-5 pb-7 shadow-paper paper-grain rounded-md hover:rotate-0 transition-transform duration-700">
-        <div className="aspect-[5/3] rounded-sm bg-gradient-sage flex items-center justify-center">
-          <TeaCupArt />
+        <div className="aspect-[5/2.2] rounded-sm bg-gradient-sage flex items-center justify-center">
+          <TeaCupArt className="h-24 w-auto sm:h-32" />
         </div>
         {pendingBucketTitle ? (
           <>
