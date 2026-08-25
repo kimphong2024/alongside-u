@@ -18,12 +18,7 @@ export const Route = createFileRoute("/support")({
   component: Support,
 });
 
-const HELPLINES = [
-  { name: "Samaritans of Singapore (SOS)", number: "1-767", desc: "24-hour emotional support." },
-  { name: "Caregiver Support - AIC", number: "1800 650 6060", desc: "Mon–Fri, 8.30am–8.30pm; Sat 8.30am–4pm." },
-  { name: "Singapore Hospice Council", number: "6538 2231", desc: "Information on hospice & palliative care." },
-  { name: "Emergency", number: "995", desc: "Ambulance & medical emergencies." },
-];
+import { HELPLINES } from "@/lib/content";
 
 export function BreathExercise() {
   const [running, setRunning] = useState(false);

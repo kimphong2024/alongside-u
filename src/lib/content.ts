@@ -211,3 +211,10 @@ export const BUCKET_TEMPLATES = [
   { category: "Simple Joys", title: "A familiar drink at a kopitiam" },
   { category: "Simple Joys", title: "A short drive past their old neighbourhood" },
 ];
+
+export const HELPLINES: { name: string; number: string; desc: string }[] = [
+  { name: "Samaritans of Singapore (SOS)", number: "1-767", desc: "24-hour emotional support." },
+  { name: "Caregiver Support - AIC", number: "1800 650 6060", desc: "Mon–Fri, 8.30am–8.30pm; Sat 8.30am–4pm." },
+  { name: "Singapore Hospice Council", number: "6538 2231", desc: "Information on hospice & palliative care." },
+  { name: "Emergency", number: "995", desc: "Ambulance & medical emergencies." },
+];

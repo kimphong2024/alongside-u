@@ -13,6 +13,9 @@ const TILES = [
     icon: Wind,
     illustration: processWavesImg,
     to: "/support" as const,
+    // This path skips the intake questionnaire, so it must mark onboarding
+    // complete itself or the Today gate bounces the user back here forever.
+    completes: true,
     gradient:
       "radial-gradient(120% 100% at 20% 15%, #F4D7DE 0%, #EBD5E6 45%, #E0D2EC 100%)",
   },
@@ -21,6 +24,7 @@ const TILES = [
     icon: ListChecks,
     illustration: checklistImg,
     to: "/care-journey-intro" as const,
+    completes: false,
     gradient:
       "radial-gradient(120% 100% at 25% 20%, #DDEAD3 0%, #CFE5CC 50%, #D8EBD4 100%)",
   },
@@ -28,7 +32,7 @@ const TILES = [
 
 export function OnboardingFlow() {
   const navigate = useNavigate();
-  const { hydrated, user } = useAppData();
+  const { hydrated, user, onboarding, saveOnboarding } = useAppData();
 
   useEffect(() => {
     if (!hydrated) return;
@@ -67,7 +71,15 @@ export function OnboardingFlow() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 + i * 0.07, ease: "easeOut" }}
             >
-              <Link to={t.to} className="block group">
+              <Link
+                to={t.to}
+                className="block group"
+                onClick={() => {
+                  // Spread the current onboarding — saveOnboarding upserts the
+                  // full profiles row and would null out absent fields.
+                  if (t.completes) void saveOnboarding({ ...onboarding, completed: true });
+                }}
+              >
                 <div
                   className="relative aspect-square rounded-3xl border border-border/40 shadow-soft p-6 flex flex-col justify-between overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:shadow-paper"
                   style={{ backgroundImage: t.gradient }}

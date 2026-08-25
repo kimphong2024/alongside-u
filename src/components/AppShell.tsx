@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Compass, Heart, LifeBuoy, LogOut, Stethoscope } from "lucide-react";
+import { Compass, Heart, LogOut, Stethoscope, Sun, UserRound } from "lucide-react";
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { toast } from "sonner";
@@ -7,10 +7,11 @@ import flowerLogo from "@/assets/flower-logo.png";
 import { useAuth, signOut } from "@/hooks/use-auth";
 
 const tabs = [
+  { to: "/", label: "Today", icon: Sun },
   { to: "/care-journey", label: "Journey", icon: Compass },
   { to: "/health", label: "Health", icon: Stethoscope },
   { to: "/moments", label: "Moments", icon: Heart },
-  { to: "/support", label: "Support", icon: LifeBuoy },
+  { to: "/support", label: "You", icon: UserRound },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -59,7 +60,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="mx-auto max-w-2xl px-4 pb-4">
           <div className="rounded-3xl bg-card/90 backdrop-blur-xl border border-border/70 shadow-soft px-2 py-2 flex justify-between">
             {tabs.map(({ to, label, icon: Icon }) => {
-              const active = pathname.startsWith(to);
+              const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
               return (
                 <Link
                   key={to}
