@@ -48,7 +48,7 @@ export function MessageDoctorCard() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="w-full text-left rounded-2xl bg-card border border-border shadow-soft p-4 paper-grain hover:bg-muted/30 transition flex items-center gap-3"
+        className="w-full text-left rounded-2xl bg-card border border-border shadow-soft p-4 paper-grain hover:bg-muted/30 transition flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <div className="h-10 w-10 rounded-full bg-sage-soft/50 flex items-center justify-center shrink-0">
           <MessageCircle className="h-5 w-5 text-foreground/70" strokeWidth={1.6} />
@@ -82,7 +82,7 @@ export function MessageDoctorCard() {
               <button
                 key={s}
                 onClick={() => setSubject(s)}
-                className={`px-3 py-1.5 rounded-full text-xs border transition ${
+                className={`px-3 py-1.5 rounded-full text-xs border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                   subject === s
                     ? "bg-foreground text-background border-foreground"
                     : "bg-background border-border text-muted-foreground hover:text-foreground"

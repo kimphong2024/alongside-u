@@ -516,7 +516,7 @@ function MemoryCollage({
         <button
           type="button"
           onClick={onImport}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card paper-grain shadow-soft text-sm text-foreground/75 hover:text-foreground hover:bg-muted/40 transition"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card paper-grain shadow-soft text-sm text-foreground/75 hover:text-foreground hover:bg-muted/40 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <Instagram className="h-4 w-4" strokeWidth={1.6} />
           Bring in photos from Instagram or Facebook

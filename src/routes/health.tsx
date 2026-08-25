@@ -47,7 +47,7 @@ function Health() {
 
   if (!hydrated || !health.hydrated) return null;
 
-  const loveeName = onboarding.loveeName?.trim() || "your loved one";
+  const loveeName = onboarding.loveeName?.trim() || "Your loved one";
   const setView = (v: HealthView) =>
     navigate({ search: v === "visits" ? {} : { view: v }, replace: true });
 
@@ -55,7 +55,7 @@ function Health() {
     <AppShell>
       <div className="space-y-6">
         <div>
-          <h1 className="font-serif italic text-4xl font-light text-foreground/90 leading-tight">
+          <h1 className="font-serif text-4xl font-light text-foreground/90 leading-tight text-balance">
             {loveeName}'s health
           </h1>
           <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
@@ -68,7 +68,7 @@ function Health() {
             <button
               key={v.key}
               onClick={() => setView(v.key)}
-              className="relative flex-1 py-2 text-sm rounded-full"
+              className="relative flex-1 py-2 text-sm rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {view === v.key && (
                 <motion.span
@@ -115,14 +115,14 @@ function Health() {
 
         <Link
           to="/health/guide"
-          className="w-full text-left rounded-2xl bg-gradient-sage border border-sage/30 shadow-soft p-4 paper-grain hover:opacity-95 transition flex items-center gap-3"
+          className="w-full text-left rounded-2xl bg-gradient-sage border border-sage/30 shadow-soft p-4 paper-grain hover:opacity-95 transition flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <div className="h-10 w-10 rounded-full bg-background/70 flex items-center justify-center shrink-0">
             <MessagesSquare className="h-5 w-5 text-foreground/70" strokeWidth={1.6} />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-foreground/85">Talk it through</p>
-            <p className="text-xs text-foreground/60 mt-0.5">
+            <p className="text-xs text-foreground/70 mt-0.5">
               Gentle, practical guidance — medication battles, TCM, appointment fatigue.
             </p>
           </div>

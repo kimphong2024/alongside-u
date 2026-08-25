@@ -1,18 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  UserRound,
-  Wind,
-  Phone,
-  Mail,
-  Trash2,
-  Copy,
-  Check,
-  Share2,
-  Plus,
-  BookHeart,
-} from "lucide-react";
+import { UserRound, Phone, Mail, Trash2, Copy, Check, Share2, Plus, BookHeart } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
@@ -164,7 +153,7 @@ function You() {
             <button
               key={m}
               onClick={() => setMode(m)}
-              className="relative flex-1 py-2 text-sm rounded-full"
+              className="relative flex-1 py-2 text-sm rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {mode === m && (
                 <motion.span
@@ -203,8 +192,8 @@ function You() {
               )}
 
               <section className="space-y-3">
-                <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">
-                  Reminders
+                <h3 className="font-serif italic text-2xl font-light text-foreground/90 px-1">
+                  gentle reminders
                 </h3>
                 <Carousel opts={{ align: "start" }} className="w-full relative">
                   <CarouselContent>
@@ -246,22 +235,16 @@ function You() {
               </section>
 
               <section className="space-y-3">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Wind className="h-4 w-4" strokeWidth={1.6} />
-                  <span className="text-xs uppercase tracking-[0.14em]">
-                    Let's take a moment to breathe
-                  </span>
-                </div>
+                <h3 className="font-serif italic text-2xl font-light text-foreground/90 px-1">
+                  a moment to breathe
+                </h3>
                 <BreathExercise />
               </section>
 
               <section className="space-y-3">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Phone className="h-4 w-4" strokeWidth={1.6} />
-                  <span className="text-xs uppercase tracking-[0.14em]">
-                    If you need a listening ear
-                  </span>
-                </div>
+                <h3 className="font-serif italic text-2xl font-light text-foreground/90 px-1">
+                  if you need a listening ear
+                </h3>
                 <div className="grid gap-2">
                   {HELPLINES.map((h) => (
                     <a
@@ -319,7 +302,7 @@ function You() {
                       <button
                         key={r}
                         onClick={() => setRelationship(r)}
-                        className={`px-3 py-1.5 rounded-full text-xs border transition ${
+                        className={`px-3 py-1.5 rounded-full text-xs border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                           relationship === r
                             ? "bg-foreground text-background border-foreground"
                             : "bg-background border-border text-muted-foreground hover:text-foreground"
@@ -347,8 +330,8 @@ function You() {
               </div>
 
               <section className="space-y-2">
-                <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">
-                  People in the circle
+                <h3 className="font-serif italic text-2xl font-light text-foreground/90 px-1">
+                  people in the circle
                 </h3>
                 {family.length === 0 ? (
                   <div className="rounded-2xl bg-card border border-border border-dashed p-6 text-center">

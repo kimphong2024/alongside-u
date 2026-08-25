@@ -49,16 +49,12 @@ export function ConsultationsSection({ consultations, onboarding }: Props) {
 
   return (
     <section className="space-y-3">
-      <div className="flex items-center justify-between px-1">
-        <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Doctor visits</h3>
-        <Button
-          size="sm"
-          onClick={() => setRecorderOpen(true)}
-          className="rounded-full h-8 px-3 bg-foreground text-background hover:bg-foreground/90 text-xs"
-        >
-          <Mic className="h-3.5 w-3.5 mr-1" strokeWidth={1.8} /> Record a visit
-        </Button>
-      </div>
+      <Button
+        onClick={() => setRecorderOpen(true)}
+        className="w-full rounded-xl h-11 bg-foreground text-background hover:bg-foreground/90"
+      >
+        <Mic className="h-4 w-4 mr-1.5" strokeWidth={1.8} /> Record a visit
+      </Button>
 
       {consultations.length === 0 ? (
         <div className="rounded-2xl bg-card border border-border shadow-soft p-5 paper-grain text-center">
@@ -74,7 +70,7 @@ export function ConsultationsSection({ consultations, onboarding }: Props) {
             <button
               key={c.id}
               onClick={() => setDetailId(c.id)}
-              className="w-full text-left rounded-2xl bg-card border border-border shadow-soft p-4 paper-grain hover:bg-muted/30 transition"
+              className="w-full text-left rounded-2xl bg-card border border-border shadow-soft p-4 paper-grain hover:bg-muted/30 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <div className="flex items-center gap-3">
                 <div className="flex-1 min-w-0">

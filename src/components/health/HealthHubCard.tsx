@@ -44,7 +44,7 @@ export function HealthHubCard({ onConnectedChange }: Props) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-foreground/85">HealthHub & NUHS connected</p>
-          <p className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
+          <p className="text-xs text-foreground/70 flex items-center gap-1.5 mt-0.5">
             <span className="h-1.5 w-1.5 rounded-full bg-sage inline-block" />
             Last synced just now
           </p>

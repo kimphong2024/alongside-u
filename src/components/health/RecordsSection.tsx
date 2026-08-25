@@ -53,10 +53,6 @@ export function RecordsSection({ records }: { records: HealthRecord[] }) {
 
   return (
     <section className="space-y-3">
-      <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">
-        Reports & records
-      </h3>
-
       <input
         ref={fileRef}
         type="file"
@@ -76,7 +72,7 @@ export function RecordsSection({ records }: { records: HealthRecord[] }) {
             <button
               key={kind}
               onClick={() => pickFile(kind)}
-              className="flex flex-col items-center justify-center gap-1 h-20 rounded-2xl border border-dashed border-border bg-card/60 hover:bg-muted/40 transition text-xs text-muted-foreground"
+              className="flex flex-col items-center justify-center gap-1 h-20 rounded-2xl border border-dashed border-border bg-card/60 hover:bg-muted/40 transition text-xs text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <Icon className="h-4 w-4" strokeWidth={1.6} />
               <span className="flex items-center gap-1">
@@ -87,6 +83,15 @@ export function RecordsSection({ records }: { records: HealthRecord[] }) {
         })}
       </div>
 
+      {records.length === 0 && (
+        <div className="rounded-2xl bg-card border border-dashed border-border p-5 text-center">
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Photos of reports and test results live here — snap them as they arrive, and the family
+            can always find them.
+          </p>
+        </div>
+      )}
+
       {records.length > 0 && (
         <div className="space-y-2">
           {records.map((r) => {
@@ -95,7 +100,7 @@ export function RecordsSection({ records }: { records: HealthRecord[] }) {
               <button
                 key={r.id}
                 onClick={() => setDetail(r)}
-                className="w-full text-left rounded-2xl bg-card border border-border shadow-soft p-3.5 paper-grain hover:bg-muted/30 transition flex items-center gap-3"
+                className="w-full text-left rounded-2xl bg-card border border-border shadow-soft p-3.5 paper-grain hover:bg-muted/30 transition flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {r.file && r.mime?.startsWith("image/") ? (
                   <img

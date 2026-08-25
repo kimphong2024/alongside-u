@@ -92,8 +92,8 @@ export function GuideChat({ onboarding }: { onboarding: OnboardingData }) {
       <div className="flex-1 space-y-3">
         {messages.length === 0 && (
           <div className="pt-2">
-            <h1 className="font-serif italic text-4xl font-light text-foreground/90 leading-tight">
-              talk it through
+            <h1 className="font-serif text-4xl font-light text-foreground/90 leading-tight text-balance">
+              Talk it through
             </h1>
             <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed max-w-md">
               The everyday battles of caring for {loveeName} — medication, beliefs, energy, family.
@@ -107,7 +107,7 @@ export function GuideChat({ onboarding }: { onboarding: OnboardingData }) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.06 }}
                   onClick={() => void send(chip)}
-                  className="px-3.5 py-2 rounded-full text-sm border border-border bg-card paper-grain shadow-soft text-foreground/80 hover:bg-muted/40 transition"
+                  className="px-3.5 py-2 rounded-full text-sm border border-border bg-card paper-grain shadow-soft text-foreground/80 hover:bg-muted/40 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   {chip}
                 </motion.button>
@@ -159,7 +159,7 @@ export function GuideChat({ onboarding }: { onboarding: OnboardingData }) {
               <button
                 key={f}
                 onClick={() => void send(f)}
-                className="px-3 py-1.5 rounded-full text-xs border border-sage/40 bg-sage-soft/30 text-foreground/75 hover:bg-sage-soft/60 transition"
+                className="px-3 py-1.5 rounded-full text-xs border border-sage/40 bg-sage-soft/30 text-foreground/75 hover:bg-sage-soft/60 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {f}
               </button>
@@ -186,7 +186,7 @@ export function GuideChat({ onboarding }: { onboarding: OnboardingData }) {
           <button
             type="submit"
             disabled={!input.trim() || thinking}
-            className="h-10 w-10 rounded-xl bg-foreground text-background flex items-center justify-center disabled:opacity-40 transition shrink-0"
+            className="h-10 w-10 rounded-xl bg-foreground text-background flex items-center justify-center disabled:opacity-40 transition shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Send"
           >
             <Send className="h-4 w-4" strokeWidth={1.8} />
