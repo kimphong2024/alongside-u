@@ -22,7 +22,9 @@ function ResetPasswordPage() {
 
   // Wait for Supabase to parse the recovery hash and establish a session
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") setReady(true);
     });
     supabase.auth.getSession().then(({ data }) => {
@@ -66,26 +68,47 @@ function ResetPasswordPage() {
         </p>
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" strokeWidth={1.6} />
+            <Lock
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+              strokeWidth={1.6}
+            />
             <Input
-              type="password" required minLength={6}
-              value={password} onChange={(e) => setPassword(e.target.value)}
-              placeholder="New password" className="pl-9 h-11 rounded-xl bg-background"
+              type="password"
+              required
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="New password"
+              className="pl-9 h-11 rounded-xl bg-background"
             />
           </div>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" strokeWidth={1.6} />
+            <Lock
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+              strokeWidth={1.6}
+            />
             <Input
-              type="password" required minLength={6}
-              value={confirm} onChange={(e) => setConfirm(e.target.value)}
-              placeholder="Confirm password" className="pl-9 h-11 rounded-xl bg-background"
+              type="password"
+              required
+              minLength={6}
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              placeholder="Confirm password"
+              className="pl-9 h-11 rounded-xl bg-background"
             />
           </div>
           <Button
-            type="submit" disabled={busy || !ready}
+            type="submit"
+            disabled={busy || !ready}
             className="w-full h-11 rounded-xl bg-foreground text-background hover:bg-foreground/90 font-serif italic text-base"
           >
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : ready ? "Update password" : "Verifying link…"}
+            {busy ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : ready ? (
+              "Update password"
+            ) : (
+              "Verifying link…"
+            )}
           </Button>
         </form>
       </motion.div>

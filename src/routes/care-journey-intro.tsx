@@ -2,7 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowRight, ArrowLeft, Check, ChevronDown, Waves, CircleDashed, Wind, Compass, Shield, Sun, type LucideIcon } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowLeft,
+  Check,
+  ChevronDown,
+  Waves,
+  CircleDashed,
+  Wind,
+  Compass,
+  Shield,
+  Sun,
+  type LucideIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppData, type OnboardingData } from "@/lib/store";
 import heartImg from "@/assets/arms-hugging-heart.png";
@@ -26,7 +38,14 @@ type Step = {
 const RELATIONSHIPS = ["Son", "Daughter", "Spouse", "Grandchild", "Sibling", "Parent", "Friend"];
 
 const STAGES = ["Recently diagnosed", "Early stage", "Advanced", "Not sure yet"];
-const EMOTIONS = ["Overwhelmed", "Numb", "Anxious", "Lost", "Trying to stay strong", "Managing okay"];
+const EMOTIONS = [
+  "Overwhelmed",
+  "Numb",
+  "Anxious",
+  "Lost",
+  "Trying to stay strong",
+  "Managing okay",
+];
 const EMOTION_ICONS: Record<string, LucideIcon> = {
   Overwhelmed: Waves,
   Numb: CircleDashed,
@@ -46,19 +65,34 @@ const PRIORITIES = [
 function lovedOneFor(rel?: string): string {
   switch ((rel || "").toLowerCase()) {
     case "son":
-    case "daughter": return "parent";
-    case "grandchild": return "grandparent";
-    case "spouse": return "spouse";
-    case "sibling": return "sibling";
-    case "parent": return "child";
-    case "friend": return "friend";
-    default: return "loved one";
+    case "daughter":
+      return "parent";
+    case "grandchild":
+      return "grandparent";
+    case "spouse":
+      return "spouse";
+    case "sibling":
+      return "sibling";
+    case "parent":
+      return "child";
+    case "friend":
+      return "friend";
+    default:
+      return "loved one";
   }
 }
 
 function ChoiceGrid({
-  options, selected, onSelect, multi = false,
-}: { options: string[]; selected?: string | string[]; onSelect: (v: string) => void; multi?: boolean }) {
+  options,
+  selected,
+  onSelect,
+  multi = false,
+}: {
+  options: string[];
+  selected?: string | string[];
+  onSelect: (v: string) => void;
+  multi?: boolean;
+}) {
   const isSelected = (o: string) =>
     multi ? Array.isArray(selected) && selected.includes(o) : selected === o;
   return (
@@ -76,7 +110,10 @@ function ChoiceGrid({
         >
           <span className="text-sm font-medium">{o}</span>
           {isSelected(o) && (
-            <Check className="absolute top-3 right-3 h-4 w-4 text-accent-active" strokeWidth={2.4} />
+            <Check
+              className="absolute top-3 right-3 h-4 w-4 text-accent-active"
+              strokeWidth={2.4}
+            />
           )}
         </button>
       ))}
@@ -93,7 +130,13 @@ function Header({ title, subtitle }: { title: string; subtitle?: string }) {
   );
 }
 
-function RelationshipInline({ value, onChange }: { value?: string; onChange: (v: string) => void }) {
+function RelationshipInline({
+  value,
+  onChange,
+}: {
+  value?: string;
+  onChange: (v: string) => void;
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
 
@@ -102,7 +145,9 @@ function RelationshipInline({ value, onChange }: { value?: string; onChange: (v:
     const onDoc = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
     document.addEventListener("mousedown", onDoc);
     document.addEventListener("keydown", onKey);
     return () => {
@@ -196,10 +241,19 @@ function CareJourneyIntro() {
 
   useEffect(() => {
     if (!hydrated) return;
-    if (!user) { navigate({ to: "/auth" }); return; }
+    if (!user) {
+      navigate({ to: "/auth" });
+      return;
+    }
     const introDone = !!onboarding.relationship;
-    if (introDone) { navigate({ to: "/care-journey" }); return; }
-    if (!seeded) { setData(onboarding); setSeeded(true); }
+    if (introDone) {
+      navigate({ to: "/care-journey" });
+      return;
+    }
+    if (!seeded) {
+      setData(onboarding);
+      setSeeded(true);
+    }
   }, [hydrated, user, onboarding, navigate, seeded]);
 
   const set = <K extends keyof OnboardingData>(k: K, v: OnboardingData[K]) =>
@@ -214,102 +268,151 @@ function CareJourneyIntro() {
   };
 
   const steps: Step[] = [
-    { id: "welcome", render: () => (
-      <div className="text-center space-y-5 pt-8">
-        <img src={heartImg} alt="" className="mx-auto h-24 w-24 object-contain" />
-        <h1 className="text-4xl md:text-5xl text-balance font-serif">Let's set up your space.</h1>
-        <p className="text-muted-foreground text-balance leading-relaxed max-w-md mx-auto">
-          A few quick questions so we can tailor what shows up next.
-        </p>
-      </div>
-    )},
-    { id: "relationship", canContinue: (d) => !!d.relationship, render: ({ data, set }) => (
-      <div className="space-y-6 pt-4">
-        <h2 className="text-3xl md:text-4xl font-serif text-balance leading-snug">
-          I am a{" "}
-          <RelationshipInline
-            value={data.relationship}
-            onChange={(v) => set("relationship", v)}
-          />{" "}
-          to someone recently diagnosed.
-        </h2>
-      </div>
-    )},
-    { id: "illnessType", render: ({ data, set }) => {
-      const lovedOne = lovedOneFor(data.relationship);
-      return (
-      <div className="space-y-6">
-        <Header title="What diagnosis did your loved one receive?" subtitle="This helps us personalize guidance and support." />
-        <div className="space-y-2 pt-2">
-          <span className="text-sm text-muted-foreground">Where is your {lovedOne} in their diagnosis? (optional)</span>
-          <ChoiceGrid options={STAGES} selected={data.illnessStage} onSelect={(v) => set("illnessStage", v)} />
+    {
+      id: "welcome",
+      render: () => (
+        <div className="text-center space-y-5 pt-8">
+          <img src={heartImg} alt="" className="mx-auto h-24 w-24 object-contain" />
+          <h1 className="text-4xl md:text-5xl text-balance font-serif">Let's set up your space.</h1>
+          <p className="text-muted-foreground text-balance leading-relaxed max-w-md mx-auto">
+            A few quick questions so we can tailor what shows up next.
+          </p>
         </div>
-      </div>
-      );
-    }},
-    { id: "emotional", canContinue: (d) => !!d.emotional, render: ({ data, set }) => (
-      <div className="space-y-6">
-        <Header title="How are you feeling right now?" />
-        <div className="grid grid-cols-2 gap-3">
-          {EMOTIONS.map((o) => {
-            const Icon = EMOTION_ICONS[o];
-            const sel = data.emotional === o;
-            return (
-              <button
-                key={o}
-                type="button"
-                onClick={() => set("emotional", o)}
-                className={`group relative text-left px-4 py-4 rounded-2xl border transition-all duration-200 flex items-center gap-3 ${
-                  sel
-                    ? "bg-card border-border/70 shadow-soft text-accent-active"
-                    : "bg-transparent border-border text-foreground hover:bg-card/60"
-                }`}
-              >
-                <Icon className="h-5 w-5 shrink-0 opacity-70" strokeWidth={1.6} />
-                <span className="text-sm font-medium">{o}</span>
-                {sel && <Check className="absolute top-3 right-3 h-4 w-4 text-accent-active" strokeWidth={2.4} />}
-              </button>
-            );
-          })}
+      ),
+    },
+    {
+      id: "relationship",
+      canContinue: (d) => !!d.relationship,
+      render: ({ data, set }) => (
+        <div className="space-y-6 pt-4">
+          <h2 className="text-3xl md:text-4xl font-serif text-balance leading-snug">
+            I am a{" "}
+            <RelationshipInline
+              value={data.relationship}
+              onChange={(v) => set("relationship", v)}
+            />{" "}
+            to someone recently diagnosed.
+          </h2>
         </div>
-        {data.emotional && (
-          <motion.p initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-            className="text-sm text-foreground/80 bg-sage-soft rounded-xl p-4 leading-relaxed">
-            Thanks for sharing. We'll keep this in mind.
-          </motion.p>
-        )}
-      </div>
-    )},
-    { id: "priorities", canContinue: (d) => !!d.priorities && d.priorities.length > 0, render: ({ data, toggleArray }) => (
-      <div className="space-y-6">
-        <Header title="What would help most right now?" subtitle="Choose as many as you like." />
-        <div className="space-y-2">
-          {PRIORITIES.map((p) => {
-            const sel = data.priorities?.includes(p);
-            return (
-              <button key={p} type="button" onClick={() => toggleArray("priorities", p)}
-                className={`w-full text-left flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition ${
-                  sel ? "bg-card border-border/70 shadow-soft" : "bg-transparent border-border hover:bg-card/60"
-                }`}>
-                <span className={`h-5 w-5 rounded-full flex items-center justify-center border ${sel ? "bg-accent-active border-accent-active" : "border-border"}`}>
-                  {sel && <Check className="h-3 w-3 text-card" strokeWidth={3} />}
-                </span>
-                <span className={`text-sm ${sel ? "text-accent-active font-medium" : ""}`}>{p}</span>
-              </button>
-            );
-          })}
+      ),
+    },
+    {
+      id: "illnessType",
+      render: ({ data, set }) => {
+        const lovedOne = lovedOneFor(data.relationship);
+        return (
+          <div className="space-y-6">
+            <Header
+              title="What diagnosis did your loved one receive?"
+              subtitle="This helps us personalize guidance and support."
+            />
+            <div className="space-y-2 pt-2">
+              <span className="text-sm text-muted-foreground">
+                Where is your {lovedOne} in their diagnosis? (optional)
+              </span>
+              <ChoiceGrid
+                options={STAGES}
+                selected={data.illnessStage}
+                onSelect={(v) => set("illnessStage", v)}
+              />
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      id: "emotional",
+      canContinue: (d) => !!d.emotional,
+      render: ({ data, set }) => (
+        <div className="space-y-6">
+          <Header title="How are you feeling right now?" />
+          <div className="grid grid-cols-2 gap-3">
+            {EMOTIONS.map((o) => {
+              const Icon = EMOTION_ICONS[o];
+              const sel = data.emotional === o;
+              return (
+                <button
+                  key={o}
+                  type="button"
+                  onClick={() => set("emotional", o)}
+                  className={`group relative text-left px-4 py-4 rounded-2xl border transition-all duration-200 flex items-center gap-3 ${
+                    sel
+                      ? "bg-card border-border/70 shadow-soft text-accent-active"
+                      : "bg-transparent border-border text-foreground hover:bg-card/60"
+                  }`}
+                >
+                  <Icon className="h-5 w-5 shrink-0 opacity-70" strokeWidth={1.6} />
+                  <span className="text-sm font-medium">{o}</span>
+                  {sel && (
+                    <Check
+                      className="absolute top-3 right-3 h-4 w-4 text-accent-active"
+                      strokeWidth={2.4}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          {data.emotional && (
+            <motion.p
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-sm text-foreground/80 bg-sage-soft rounded-xl p-4 leading-relaxed"
+            >
+              Thanks for sharing. We'll keep this in mind.
+            </motion.p>
+          )}
         </div>
-      </div>
-    )},
-    { id: "final", render: ({ data }) => (
-      <div className="text-center space-y-5 pt-8">
-        <img src={heartImg} alt="" className="mx-auto h-24 w-24 object-contain" />
-        <h1 className="text-4xl font-serif text-balance">You're set.</h1>
-        <p className="text-muted-foreground text-balance max-w-md mx-auto leading-relaxed">
-          {data.caregiverName ? `${data.caregiverName}, ` : ""}we've prepared a starting set of next steps and a space for moments. Come back whenever.
-        </p>
-      </div>
-    )},
+      ),
+    },
+    {
+      id: "priorities",
+      canContinue: (d) => !!d.priorities && d.priorities.length > 0,
+      render: ({ data, toggleArray }) => (
+        <div className="space-y-6">
+          <Header title="What would help most right now?" subtitle="Choose as many as you like." />
+          <div className="space-y-2">
+            {PRIORITIES.map((p) => {
+              const sel = data.priorities?.includes(p);
+              return (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => toggleArray("priorities", p)}
+                  className={`w-full text-left flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition ${
+                    sel
+                      ? "bg-card border-border/70 shadow-soft"
+                      : "bg-transparent border-border hover:bg-card/60"
+                  }`}
+                >
+                  <span
+                    className={`h-5 w-5 rounded-full flex items-center justify-center border ${sel ? "bg-accent-active border-accent-active" : "border-border"}`}
+                  >
+                    {sel && <Check className="h-3 w-3 text-card" strokeWidth={3} />}
+                  </span>
+                  <span className={`text-sm ${sel ? "text-accent-active font-medium" : ""}`}>
+                    {p}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "final",
+      render: ({ data }) => (
+        <div className="text-center space-y-5 pt-8">
+          <img src={heartImg} alt="" className="mx-auto h-24 w-24 object-contain" />
+          <h1 className="text-4xl font-serif text-balance">You're set.</h1>
+          <p className="text-muted-foreground text-balance max-w-md mx-auto leading-relaxed">
+            {data.caregiverName ? `${data.caregiverName}, ` : ""}we've prepared a starting set of
+            next steps and a space for moments. Come back whenever.
+          </p>
+        </div>
+      ),
+    },
   ];
 
   if (!hydrated) return null;
@@ -335,29 +438,47 @@ function CareJourneyIntro() {
         <span className="font-serif text-xl">Alongside</span>
         <div className="ml-auto flex gap-1.5">
           {steps.map((_, i) => (
-            <span key={i} className={`h-1.5 rounded-full transition-all ${
-              i === step ? "w-6 bg-sage" : i < step ? "w-1.5 bg-sage/60" : "w-1.5 bg-border"
-            }`} />
+            <span
+              key={i}
+              className={`h-1.5 rounded-full transition-all ${
+                i === step ? "w-6 bg-sage" : i < step ? "w-1.5 bg-sage/60" : "w-1.5 bg-border"
+              }`}
+            />
           ))}
         </div>
       </div>
 
       <div className="flex-1 flex flex-col">
         <AnimatePresence mode="wait">
-          <motion.div key={step} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35, ease: "easeOut" }} className="flex-1">
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="flex-1"
+          >
             {current.render({ data, set, toggleArray })}
           </motion.div>
         </AnimatePresence>
 
         <div className="mt-8 flex items-center gap-3">
           {!isFirst && (
-            <Button variant="ghost" size="lg" onClick={() => setStep((s) => s - 1)} className="rounded-full">
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={() => setStep((s) => s - 1)}
+              className="rounded-full"
+            >
               <ArrowLeft className="h-4 w-4 mr-1" /> Back
             </Button>
           )}
-          <Button size="lg" onClick={next} disabled={!canNext}
-            className="ml-auto rounded-full px-7 h-12 bg-foreground text-background hover:bg-foreground/90">
+          <Button
+            size="lg"
+            onClick={next}
+            disabled={!canNext}
+            className="ml-auto rounded-full px-7 h-12 bg-foreground text-background hover:bg-foreground/90"
+          >
             {isFirst ? "Begin" : isLast ? "Take me in" : "Continue"}
             <ArrowRight className="h-4 w-4 ml-1" />
           </Button>

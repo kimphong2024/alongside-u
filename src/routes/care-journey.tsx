@@ -42,7 +42,9 @@ import { toast } from "sonner";
 import { flyHeart, setHeartTarget } from "@/lib/heart-flight";
 import { HeartFlyer } from "@/components/HeartFlyer";
 
-function originFromEvent(e: React.MouseEvent | React.TouchEvent | undefined): { x: number; y: number } | null {
+function originFromEvent(
+  e: React.MouseEvent | React.TouchEvent | undefined,
+): { x: number; y: number } | null {
   if (!e) return null;
   const t = e.currentTarget as HTMLElement;
   const r = t.getBoundingClientRect();
@@ -80,7 +82,10 @@ export const Route = createFileRoute("/care-journey")({
   head: () => ({
     meta: [
       { title: "Care Journey - Alongside" },
-      { name: "description", content: "Gentle, structured guidance through each phase of caregiving." },
+      {
+        name: "description",
+        content: "Gentle, structured guidance through each phase of caregiving.",
+      },
     ],
   }),
   component: CareJourney,
@@ -90,17 +95,17 @@ const EMOTIONAL_CATEGORY = "When you are ready, let's note down what has been ha
 
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
   "Family Coordination": Users,
-  "Medical": Stethoscope,
+  Medical: Stethoscope,
   "Medical Clarity": Stethoscope,
-  "Emotional": Heart,
+  Emotional: Heart,
   [EMOTIONAL_CATEGORY]: Heart,
   "Financial (Singapore)": Wallet,
-  "Legal": Scale,
-  "Practical": FileText,
+  Legal: Scale,
+  Practical: FileText,
   "Home Preparation": Home,
-  "Memories": BookOpen,
+  Memories: BookOpen,
   "Burnout Prevention": Sun,
-  "Relationship": Heart,
+  Relationship: Heart,
   "Comfort & Care": Heart,
   "After-Care Logistics": FileText,
 };
@@ -163,7 +168,12 @@ function CareJourney() {
               A few suggestions for each chapter.
             </p>
           </div>
-          <HeartMeter ratio={ratio} checked={checkedCount} total={totalCount} onClick={() => setProgressOpen(true)} />
+          <HeartMeter
+            ratio={ratio}
+            checked={checkedCount}
+            total={totalCount}
+            onClick={() => setProgressOpen(true)}
+          />
         </header>
 
         <div className="flex gap-2 overflow-x-auto pb-1 -mx-5 px-5 scrollbar-none">
@@ -193,7 +203,9 @@ function CareJourney() {
           >
             <div className="rounded-2xl bg-gradient-warm border border-border px-4 py-3">
               <h2 className="font-serif text-xl">{phase.title}</h2>
-              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{phase.subtitle}</p>
+              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                {phase.subtitle}
+              </p>
             </div>
 
             {phase.categories.map((cat) => {
@@ -222,11 +234,18 @@ function CareJourney() {
                           </p>
                         </div>
                       </div>
-                      <EmotionalCarousel items={cat.items} checkedItems={state.checkedItems} onToggle={check} />
+                      <EmotionalCarousel
+                        items={cat.items}
+                        checkedItems={state.checkedItems}
+                        onToggle={check}
+                      />
                       <div className="rounded-2xl border border-border bg-gradient-warm px-4 py-3 flex items-center gap-3">
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5">
-                            <Lightbulb className="h-3.5 w-3.5 text-foreground/70" strokeWidth={1.8} />
+                            <Lightbulb
+                              className="h-3.5 w-3.5 text-foreground/70"
+                              strokeWidth={1.8}
+                            />
                             <p className="text-sm font-medium leading-snug">Tip</p>
                           </div>
                           <p className="text-xs text-foreground/70 mt-0.5 leading-relaxed">
@@ -236,7 +255,11 @@ function CareJourney() {
                       </div>
                     </div>
                   ) : cat.category === "Medical Clarity" ? (
-                    <MedicalTiles items={cat.items} checkedItems={state.checkedItems} onToggle={check} />
+                    <MedicalTiles
+                      items={cat.items}
+                      checkedItems={state.checkedItems}
+                      onToggle={check}
+                    />
                   ) : (
                     <ChecklistAccordion
                       items={cat.items}
@@ -269,7 +292,9 @@ function CareJourney() {
         onOpenChange={setProgressOpen}
         completed={completedItems}
         pending={pendingItems}
-        onUncheck={(id) => update((s) => ({ ...s, checkedItems: { ...s.checkedItems, [id]: false } }))}
+        onUncheck={(id) =>
+          update((s) => ({ ...s, checkedItems: { ...s.checkedItems, [id]: false } }))
+        }
         onCheck={(id) => update((s) => ({ ...s, checkedItems: { ...s.checkedItems, [id]: true } }))}
       />
       <HeartFlyer />
@@ -320,7 +345,9 @@ function EmotionalCarousel({
           className="rounded-3xl border border-sage/30 bg-sage-soft/40 p-6 text-center"
         >
           <p className="font-serif text-lg text-foreground">All done for now.</p>
-          <p className="text-sm text-muted-foreground mt-1">Come back when you're ready for the next step.</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Come back when you're ready for the next step.
+          </p>
         </motion.div>
       ) : (
         <Carousel opts={{ align: "start", dragFree: true }} className="w-full">
@@ -329,7 +356,10 @@ function EmotionalCarousel({
               const grad = gradients[i % gradients.length];
               const isLeaving = !!leaving[item.id];
               return (
-                <CarouselItem key={item.id} className="pl-3 basis-[72%] sm:basis-[48%] md:basis-[34%]">
+                <CarouselItem
+                  key={item.id}
+                  className="pl-3 basis-[72%] sm:basis-[48%] md:basis-[34%]"
+                >
                   <motion.button
                     onClick={() => setActive(item)}
                     initial={{ opacity: 1, scale: 1 }}
@@ -365,7 +395,9 @@ function EmotionalCarousel({
                       )}
                     </div>
                     <div>
-                      <h4 className="font-serif text-base leading-tight text-foreground">{item.title}</h4>
+                      <h4 className="font-serif text-base leading-tight text-foreground">
+                        {item.title}
+                      </h4>
                     </div>
                   </motion.button>
                 </CarouselItem>
@@ -392,7 +424,9 @@ function EmotionalCarousel({
               </DialogHeader>
               <div className="space-y-3 text-sm">
                 <p className="text-foreground/80 leading-relaxed">
-                  <span className="text-xs uppercase tracking-wider text-muted-foreground/80">Why it matters · </span>
+                  <span className="text-xs uppercase tracking-wider text-muted-foreground/80">
+                    Why it matters ·{" "}
+                  </span>
                   {active.why}
                 </p>
                 <p className="text-sage leading-relaxed italic">{active.reassurance}</p>
@@ -462,7 +496,9 @@ function MedicalTiles({
           className="rounded-3xl border border-sage/30 bg-sage-soft/40 p-6 text-center"
         >
           <p className="font-serif text-lg text-foreground">All clear here.</p>
-          <p className="text-sm text-muted-foreground mt-1">You've gathered what you need for now.</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            You've gathered what you need for now.
+          </p>
         </motion.div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
@@ -494,7 +530,9 @@ function MedicalTiles({
                 {ITEM_IMAGES[item.id] ? (
                   <img src={ITEM_IMAGES[item.id]} alt="" className="h-20 w-20 object-contain" />
                 ) : (
-                  <span className={`h-14 w-14 rounded-2xl flex items-center justify-center ${t.icon}`}>
+                  <span
+                    className={`h-14 w-14 rounded-2xl flex items-center justify-center ${t.icon}`}
+                  >
                     <Stethoscope className="h-7 w-7" strokeWidth={1.4} />
                   </span>
                 )}
@@ -522,7 +560,9 @@ function MedicalTiles({
               </DialogHeader>
               <div className="space-y-3 text-sm">
                 <p className="text-foreground/80 leading-relaxed">
-                  <span className="text-xs uppercase tracking-wider text-muted-foreground/80">Why it matters · </span>
+                  <span className="text-xs uppercase tracking-wider text-muted-foreground/80">
+                    Why it matters ·{" "}
+                  </span>
                   {active.why}
                 </p>
                 <p className="text-sage leading-relaxed italic">{active.reassurance}</p>
@@ -620,14 +660,14 @@ function ChecklistAccordion({
               <button onClick={() => onToggleOpen(item.id)} className="flex-1 text-left">
                 <div className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
-                    <span className="text-sm font-medium leading-snug block">
-                      {item.title}
-                    </span>
+                    <span className="text-sm font-medium leading-snug block">{item.title}</span>
                     <span className="text-xs text-muted-foreground mt-0.5 block leading-relaxed">
                       {item.description}
                     </span>
                   </div>
-                  <ChevronDown className={`h-4 w-4 text-muted-foreground transition flex-shrink-0 ${open ? "rotate-180" : ""}`} />
+                  <ChevronDown
+                    className={`h-4 w-4 text-muted-foreground transition flex-shrink-0 ${open ? "rotate-180" : ""}`}
+                  />
                 </div>
               </button>
             </div>
@@ -642,7 +682,9 @@ function ChecklistAccordion({
                 >
                   <div className="px-4 pb-4 pl-12 space-y-2 text-sm">
                     <p className="text-foreground/80 leading-relaxed">
-                      <span className="text-xs uppercase tracking-wider text-muted-foreground/80">Why it matters · </span>
+                      <span className="text-xs uppercase tracking-wider text-muted-foreground/80">
+                        Why it matters ·{" "}
+                      </span>
                       {item.why}
                     </p>
                     <p className="text-sage leading-relaxed italic">{item.reassurance}</p>
@@ -659,7 +701,16 @@ function ChecklistAccordion({
 
 /* -------------------- Singapore resources carousel (modal_3) -------------------- */
 
-const RESOURCE_ICONS: LucideIcon[] = [Heart, BookOpen, Home, Wallet, FileText, Scale, Sparkles, Stethoscope];
+const RESOURCE_ICONS: LucideIcon[] = [
+  Heart,
+  BookOpen,
+  Home,
+  Wallet,
+  FileText,
+  Scale,
+  Sparkles,
+  Stethoscope,
+];
 const RESOURCE_GRADIENTS = [
   "bg-gradient-sage",
   "bg-gradient-warm",
@@ -677,9 +728,7 @@ function ResourcesCarousel() {
           return (
             <CarouselItem key={r.name} className="pl-3 basis-[60%] sm:basis-[40%] md:basis-[28%]">
               <a href={r.url} target="_blank" rel="noreferrer" className="block group">
-                <div
-                  className="relative aspect-[4/3] rounded-3xl border border-border bg-card shadow-soft overflow-hidden flex items-center justify-center p-5 transition group-hover:shadow-paper"
-                >
+                <div className="relative aspect-[4/3] rounded-3xl border border-border bg-card shadow-soft overflow-hidden flex items-center justify-center p-5 transition group-hover:shadow-paper">
                   {r.logo ? (
                     <img
                       src={r.logo}
@@ -695,7 +744,9 @@ function ResourcesCarousel() {
                   </span>
                 </div>
                 <p className="font-medium text-sm mt-2.5 leading-snug text-foreground">{r.name}</p>
-                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">{r.desc}</p>
+                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed line-clamp-2">
+                  {r.desc}
+                </p>
               </a>
             </CarouselItem>
           );
@@ -709,7 +760,17 @@ function ResourcesCarousel() {
 
 /* -------------------- Heart completion meter -------------------- */
 
-function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked: number; total: number; onClick?: () => void }) {
+function HeartMeter({
+  ratio,
+  checked,
+  total,
+  onClick,
+}: {
+  ratio: number;
+  checked: number;
+  total: number;
+  onClick?: () => void;
+}) {
   const r = Math.max(0, Math.min(1, ratio));
   const visualR = r === 0 ? 0 : 0.25 + 0.75 * r;
   const fillHeight = 24 * visualR;
@@ -738,10 +799,14 @@ function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked
     "M16 26 C 3 19, 3 9, 9 6 C 13 4.5, 15.5 6.5, 16 8.5 C 16.5 6.5, 19 4.5, 23 6 C 29 9, 29 19, 16 26 Z";
 
   // Wave paths: calm vs splashy (higher amplitude)
-  const waveBackCalm = "M -32 1 Q -24 -1.8, -16 1 T 0 1 T 16 1 T 32 1 T 48 1 T 64 1 L 64 6 L -32 6 Z";
-  const waveBackSplash = "M -32 1 Q -24 -5, -16 1 T 0 1 T 16 1 T 32 1 T 48 1 T 64 1 L 64 6 L -32 6 Z";
-  const waveFrontCalm = "M -32 1.6 Q -24 3.6, -16 1.6 T 0 1.6 T 16 1.6 T 32 1.6 T 48 1.6 T 64 1.6 L 64 6 L -32 6 Z";
-  const waveFrontSplash = "M -32 1.6 Q -24 6.5, -16 1.6 T 0 1.6 T 16 1.6 T 32 1.6 T 48 1.6 T 64 1.6 L 64 6 L -32 6 Z";
+  const waveBackCalm =
+    "M -32 1 Q -24 -1.8, -16 1 T 0 1 T 16 1 T 32 1 T 48 1 T 64 1 L 64 6 L -32 6 Z";
+  const waveBackSplash =
+    "M -32 1 Q -24 -5, -16 1 T 0 1 T 16 1 T 32 1 T 48 1 T 64 1 L 64 6 L -32 6 Z";
+  const waveFrontCalm =
+    "M -32 1.6 Q -24 3.6, -16 1.6 T 0 1.6 T 16 1.6 T 32 1.6 T 48 1.6 T 64 1.6 L 64 6 L -32 6 Z";
+  const waveFrontSplash =
+    "M -32 1.6 Q -24 6.5, -16 1.6 T 0 1.6 T 16 1.6 T 32 1.6 T 48 1.6 T 64 1.6 L 64 6 L -32 6 Z";
 
   const svgRef = useRef<SVGSVGElement | null>(null);
   useEffect(() => {
@@ -806,7 +871,9 @@ function HeartMeter({ ratio, checked, total, onClick }: { ratio: number; checked
           stroke="var(--sage)"
           strokeWidth="2"
           initial={false}
-          animate={splash ? { opacity: [0, 0.7, 0], scale: [1, 1.12, 1.18] } : { opacity: 0, scale: 1 }}
+          animate={
+            splash ? { opacity: [0, 0.7, 0], scale: [1, 1.12, 1.18] } : { opacity: 0, scale: 1 }
+          }
           style={{ transformOrigin: "16px 16px" }}
           transition={{ duration: 0.75, ease: "easeOut" }}
         />
@@ -907,7 +974,10 @@ function ProgressDialog({
             ) : (
               <ul className="space-y-1.5">
                 {completed.map((it) => (
-                  <li key={it.id} className="flex items-start gap-2 rounded-xl border border-border bg-sage-soft/30 px-3 py-2">
+                  <li
+                    key={it.id}
+                    className="flex items-start gap-2 rounded-xl border border-border bg-sage-soft/30 px-3 py-2"
+                  >
                     <button
                       onClick={() => onUncheck(it.id)}
                       aria-label="Mark as not done"
@@ -916,8 +986,12 @@ function ProgressDialog({
                       <Check className="h-3 w-3 text-card" strokeWidth={3} />
                     </button>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm leading-snug text-foreground/80 line-through">{it.title}</p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">{it.phase} · {it.category}</p>
+                      <p className="text-sm leading-snug text-foreground/80 line-through">
+                        {it.title}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                        {it.phase} · {it.category}
+                      </p>
                     </div>
                   </li>
                 ))}
@@ -935,7 +1009,10 @@ function ProgressDialog({
             ) : (
               <ul className="space-y-1.5">
                 {pending.map((it) => (
-                  <li key={it.id} className="flex items-start gap-2 rounded-xl border border-border bg-card px-3 py-2">
+                  <li
+                    key={it.id}
+                    className="flex items-start gap-2 rounded-xl border border-border bg-card px-3 py-2"
+                  >
                     <button
                       onClick={() => onCheck(it.id)}
                       aria-label="Mark as done"
@@ -943,7 +1020,9 @@ function ProgressDialog({
                     />
                     <div className="min-w-0 flex-1">
                       <p className="text-sm leading-snug text-foreground">{it.title}</p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">{it.phase} · {it.category}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                        {it.phase} · {it.category}
+                      </p>
                     </div>
                   </li>
                 ))}

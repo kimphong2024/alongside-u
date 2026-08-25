@@ -14,10 +14,7 @@ export function HeartFlyer() {
         const target = getHeartTarget();
         if (!target) return;
         const id = Date.now() + Math.random();
-        setItems((prev) => [
-          ...prev,
-          { id, x: origin.x, y: origin.y, tx: target.x, ty: target.y },
-        ]);
+        setItems((prev) => [...prev, { id, x: origin.x, y: origin.y, tx: target.x, ty: target.y }]);
         window.setTimeout(() => {
           setItems((prev) => prev.filter((i) => i.id !== id));
         }, 950);

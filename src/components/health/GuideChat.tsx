@@ -96,8 +96,8 @@ export function GuideChat({ onboarding }: { onboarding: OnboardingData }) {
               talk it through
             </h1>
             <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed max-w-md">
-              The everyday battles of caring for {loveeName} — medication, beliefs, energy,
-              family. Ask anything, or start from one of these.
+              The everyday battles of caring for {loveeName} — medication, beliefs, energy, family.
+              Ask anything, or start from one of these.
             </p>
             <div className="flex flex-wrap gap-2 mt-5">
               {TOPIC_CHIPS.map((chip, i) => (
@@ -114,9 +114,8 @@ export function GuideChat({ onboarding }: { onboarding: OnboardingData }) {
               ))}
             </div>
             <p className="text-[11px] text-muted-foreground mt-6 leading-relaxed max-w-md">
-              This is guidance from a companion, not medical advice — for medication or
-              symptoms, your care team decides. If it ever feels too heavy, SOS is at 1-767,
-              any time.
+              This is guidance from a companion, not medical advice — for medication or symptoms,
+              your care team decides. If it ever feels too heavy, SOS is at 1-767, any time.
             </p>
           </div>
         )}
@@ -143,7 +142,11 @@ export function GuideChat({ onboarding }: { onboarding: OnboardingData }) {
         </AnimatePresence>
 
         {thinking && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex justify-start"
+          >
             <div className="rounded-2xl rounded-bl-md bg-card border border-border shadow-soft">
               <TypingDots />
             </div>
@@ -168,7 +171,10 @@ export function GuideChat({ onboarding }: { onboarding: OnboardingData }) {
 
       <div className="sticky bottom-24 pt-4">
         <form
-          onSubmit={(e) => { e.preventDefault(); void send(input); }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            void send(input);
+          }}
           className="flex gap-2 bg-card/90 backdrop-blur-xl border border-border shadow-soft rounded-2xl p-2"
         >
           <Input

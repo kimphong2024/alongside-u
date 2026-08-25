@@ -29,9 +29,14 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const reset = () => {
-    setTitle(""); setNote(""); setPhoto(undefined); setVideo(undefined);
-    setAudio(undefined); setAudioDuration(undefined);
-    setRecording(false); setElapsed(0);
+    setTitle("");
+    setNote("");
+    setPhoto(undefined);
+    setVideo(undefined);
+    setAudio(undefined);
+    setAudioDuration(undefined);
+    setRecording(false);
+    setElapsed(0);
   };
 
   useEffect(() => setMounted(true), []);
@@ -147,162 +152,182 @@ export function MomentComposer({ open, onOpenChange, onSave }: Props) {
             </button>
             <div className="paper-grain p-6 pb-8">
               <div className="text-left mb-5">
-            <div className="mx-auto h-1 w-10 rounded-full bg-border mb-4" />
-            <h2 id="moment-composer-title" className="font-serif text-3xl italic font-light text-foreground/90">
-              hold this moment
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-              A photo, a few words, or just a voice - whatever feels right.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="A title, like 'Sunday tea on the porch'"
-              className="rounded-xl bg-background h-12 font-serif italic text-lg placeholder:font-sans placeholder:not-italic placeholder:text-base"
-            />
-            <Textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="What do you want to remember about this?"
-              className="rounded-xl bg-background min-h-[110px] resize-none leading-relaxed"
-            />
-
-            <AnimatePresence>
-              {photo && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="relative mx-auto max-w-[80%]"
+                <div className="mx-auto h-1 w-10 rounded-full bg-border mb-4" />
+                <h2
+                  id="moment-composer-title"
+                  className="font-serif text-3xl italic font-light text-foreground/90"
                 >
-                  <div className="bg-card border border-border p-3 pb-5 shadow-paper rounded-md polaroid-left">
-                    <img src={photo} alt="" className="w-full aspect-[4/3] object-cover rounded-sm" />
-                  </div>
-                  <button
-                    onClick={() => setPhoto(undefined)}
-                    className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-foreground text-background flex items-center justify-center shadow-soft"
-                    aria-label="Remove photo"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  hold this moment
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                  A photo, a few words, or just a voice - whatever feels right.
+                </p>
+              </div>
 
-            <AnimatePresence>
-              {video && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="relative mx-auto max-w-[80%]"
-                >
-                  <div className="bg-card border border-border p-3 pb-5 shadow-paper rounded-md polaroid-right">
-                    <video src={video} controls className="w-full aspect-[4/3] object-cover rounded-sm bg-black" />
-                  </div>
-                  <button
-                    onClick={() => setVideo(undefined)}
-                    className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-foreground text-background flex items-center justify-center shadow-soft"
-                    aria-label="Remove video"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-              {audio && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="flex items-center gap-3 p-4 rounded-2xl bg-sage-soft/40 border border-sage/30"
-                >
-                  <Mic className="h-4 w-4 text-foreground/60" strokeWidth={1.6} />
-                  <div className="flex-1 flex items-center gap-[3px] h-8">
-                    {Array.from({ length: 28 }).map((_, i) => (
-                      <span
-                        key={i}
-                        className="w-[3px] rounded-full bg-foreground/40"
-                        style={{ height: `${30 + Math.sin(i * 0.7) * 18 + (i % 3) * 6}%` }}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-xs tabular-nums text-muted-foreground">
-                    0:{String(audioDuration ?? 0).padStart(2, "0")}
-                  </span>
-                  <button onClick={() => { setAudio(undefined); setAudioDuration(undefined); }} aria-label="Remove voice note">
-                    <Trash2 className="h-4 w-4 text-muted-foreground hover:text-foreground" strokeWidth={1.6} />
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <div className="grid grid-cols-3 gap-2 pt-1">
-              <label className="cursor-pointer">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => e.target.files?.[0] && handlePhoto(e.target.files[0])}
+              <div className="space-y-4">
+                <Input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="A title, like 'Sunday tea on the porch'"
+                  className="rounded-xl bg-background h-12 font-serif italic text-lg placeholder:font-sans placeholder:not-italic placeholder:text-base"
                 />
-                <div className="flex flex-col items-center justify-center gap-1 h-16 rounded-xl border border-border bg-background hover:bg-muted/40 transition text-xs">
-                  <ImagePlus className="h-4 w-4" strokeWidth={1.6} />
-                  <span>{photo ? "Change photo" : "Add photo"}</span>
-                </div>
-              </label>
-              <label className="cursor-pointer">
-                <input
-                  type="file"
-                  accept="video/*"
-                  className="hidden"
-                  onChange={(e) => e.target.files?.[0] && handleVideo(e.target.files[0])}
+                <Textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="What do you want to remember about this?"
+                  className="rounded-xl bg-background min-h-[110px] resize-none leading-relaxed"
                 />
-                <div className="flex flex-col items-center justify-center gap-1 h-16 rounded-xl border border-border bg-background hover:bg-muted/40 transition text-xs">
-                  <Video className="h-4 w-4" strokeWidth={1.6} />
-                  <span>{video ? "Change video" : "Add video"}</span>
-                </div>
-              </label>
-              {!recording ? (
-                <button
-                  onClick={startRecording}
-                  className="flex flex-col items-center justify-center gap-1 h-16 rounded-xl border border-border bg-background hover:bg-muted/40 transition text-xs"
-                >
-                  <Mic className="h-4 w-4" strokeWidth={1.6} />
-                  <span>{audio ? "Re-record" : "Voice note"}</span>
-                </button>
-              ) : (
-                <button
-                  onClick={stopRecording}
-                  className="flex flex-col items-center justify-center gap-1 h-16 rounded-xl bg-clay text-primary-foreground transition text-xs animate-pulse"
-                >
-                  <Square className="h-3.5 w-3.5 fill-current" />
-                  <span>Stop · 0:{String(elapsed).padStart(2, "0")}</span>
-                </button>
-              )}
-            </div>
 
-            <div className="flex gap-2 pt-3">
-              <Button
-                variant="ghost"
-                onClick={() => onOpenChange(false)}
-                className="flex-1 rounded-xl h-12 text-muted-foreground hover:text-foreground"
-              >
-                Not now
-              </Button>
-              <Button
-                onClick={handleSave}
-                disabled={!canSave}
-                className="flex-[2] rounded-xl h-12 bg-foreground text-background hover:bg-foreground/90 font-serif italic text-base"
-              >
-                <Check className="h-4 w-4 mr-1.5" strokeWidth={2} /> Keep this moment
-              </Button>
-            </div>
-          </div>
+                <AnimatePresence>
+                  {photo && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="relative mx-auto max-w-[80%]"
+                    >
+                      <div className="bg-card border border-border p-3 pb-5 shadow-paper rounded-md polaroid-left">
+                        <img
+                          src={photo}
+                          alt=""
+                          className="w-full aspect-[4/3] object-cover rounded-sm"
+                        />
+                      </div>
+                      <button
+                        onClick={() => setPhoto(undefined)}
+                        className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-foreground text-background flex items-center justify-center shadow-soft"
+                        aria-label="Remove photo"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                  {video && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="relative mx-auto max-w-[80%]"
+                    >
+                      <div className="bg-card border border-border p-3 pb-5 shadow-paper rounded-md polaroid-right">
+                        <video
+                          src={video}
+                          controls
+                          className="w-full aspect-[4/3] object-cover rounded-sm bg-black"
+                        />
+                      </div>
+                      <button
+                        onClick={() => setVideo(undefined)}
+                        className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-foreground text-background flex items-center justify-center shadow-soft"
+                        aria-label="Remove video"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                  {audio && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="flex items-center gap-3 p-4 rounded-2xl bg-sage-soft/40 border border-sage/30"
+                    >
+                      <Mic className="h-4 w-4 text-foreground/60" strokeWidth={1.6} />
+                      <div className="flex-1 flex items-center gap-[3px] h-8">
+                        {Array.from({ length: 28 }).map((_, i) => (
+                          <span
+                            key={i}
+                            className="w-[3px] rounded-full bg-foreground/40"
+                            style={{ height: `${30 + Math.sin(i * 0.7) * 18 + (i % 3) * 6}%` }}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs tabular-nums text-muted-foreground">
+                        0:{String(audioDuration ?? 0).padStart(2, "0")}
+                      </span>
+                      <button
+                        onClick={() => {
+                          setAudio(undefined);
+                          setAudioDuration(undefined);
+                        }}
+                        aria-label="Remove voice note"
+                      >
+                        <Trash2
+                          className="h-4 w-4 text-muted-foreground hover:text-foreground"
+                          strokeWidth={1.6}
+                        />
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div className="grid grid-cols-3 gap-2 pt-1">
+                  <label className="cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => e.target.files?.[0] && handlePhoto(e.target.files[0])}
+                    />
+                    <div className="flex flex-col items-center justify-center gap-1 h-16 rounded-xl border border-border bg-background hover:bg-muted/40 transition text-xs">
+                      <ImagePlus className="h-4 w-4" strokeWidth={1.6} />
+                      <span>{photo ? "Change photo" : "Add photo"}</span>
+                    </div>
+                  </label>
+                  <label className="cursor-pointer">
+                    <input
+                      type="file"
+                      accept="video/*"
+                      className="hidden"
+                      onChange={(e) => e.target.files?.[0] && handleVideo(e.target.files[0])}
+                    />
+                    <div className="flex flex-col items-center justify-center gap-1 h-16 rounded-xl border border-border bg-background hover:bg-muted/40 transition text-xs">
+                      <Video className="h-4 w-4" strokeWidth={1.6} />
+                      <span>{video ? "Change video" : "Add video"}</span>
+                    </div>
+                  </label>
+                  {!recording ? (
+                    <button
+                      onClick={startRecording}
+                      className="flex flex-col items-center justify-center gap-1 h-16 rounded-xl border border-border bg-background hover:bg-muted/40 transition text-xs"
+                    >
+                      <Mic className="h-4 w-4" strokeWidth={1.6} />
+                      <span>{audio ? "Re-record" : "Voice note"}</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={stopRecording}
+                      className="flex flex-col items-center justify-center gap-1 h-16 rounded-xl bg-clay text-primary-foreground transition text-xs animate-pulse"
+                    >
+                      <Square className="h-3.5 w-3.5 fill-current" />
+                      <span>Stop · 0:{String(elapsed).padStart(2, "0")}</span>
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex gap-2 pt-3">
+                  <Button
+                    variant="ghost"
+                    onClick={() => onOpenChange(false)}
+                    className="flex-1 rounded-xl h-12 text-muted-foreground hover:text-foreground"
+                  >
+                    Not now
+                  </Button>
+                  <Button
+                    onClick={handleSave}
+                    disabled={!canSave}
+                    className="flex-[2] rounded-xl h-12 bg-foreground text-background hover:bg-foreground/90 font-serif italic text-base"
+                  >
+                    <Check className="h-4 w-4 mr-1.5" strokeWidth={2} /> Keep this moment
+                  </Button>
+                </div>
+              </div>
             </div>
           </motion.div>
         </motion.div>

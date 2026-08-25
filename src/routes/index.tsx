@@ -17,7 +17,10 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Today - Alongside" },
-      { name: "description", content: "What needs the family today — visits, next steps, and moments." },
+      {
+        name: "description",
+        content: "What needs the family today — visits, next steps, and moments.",
+      },
     ],
   }),
   component: Today,
@@ -43,7 +46,10 @@ function Today() {
 
   useEffect(() => {
     if (!hydrated) return;
-    if (!user) { navigate({ to: "/auth" }); return; }
+    if (!user) {
+      navigate({ to: "/auth" });
+      return;
+    }
     if (!onboarding.completed) navigate({ to: "/onboarding" });
   }, [hydrated, user, onboarding.completed, navigate]);
 
@@ -94,7 +100,8 @@ function Today() {
           <div className="relative flex items-start justify-between gap-3">
             <div className="space-y-3 max-w-md">
               <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                {timeGreeting}{greetingName ? `, ${greetingName}` : ""}
+                {timeGreeting}
+                {greetingName ? `, ${greetingName}` : ""}
               </p>
               <h1 className="text-4xl md:text-5xl font-serif font-light text-balance leading-[1.1]">
                 You're doing the best you can.
@@ -191,7 +198,8 @@ function Today() {
             <div className="relative max-w-md">
               <h3 className="font-serif text-2xl leading-snug">Take a moment for yourself.</h3>
               <p className="text-[15px] leading-relaxed text-foreground/80 mt-3">
-                Drink water. Eat something gentle. Rest when you can. Caring for yourself is part of caring for them.
+                Drink water. Eat something gentle. Rest when you can. Caring for yourself is part of
+                caring for them.
               </p>
               <Link
                 to="/support"
@@ -212,7 +220,9 @@ function SectionLabel({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-3 px-1">
       <span className="h-px w-6 bg-border" />
-      <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground/80">{label}</span>
+      <span className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground/80">
+        {label}
+      </span>
     </div>
   );
 }

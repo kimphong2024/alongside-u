@@ -74,8 +74,13 @@ export function AppShell({ children }: { children: ReactNode }) {
                       transition={{ type: "spring", stiffness: 500, damping: 40 }}
                     />
                   )}
-                  <Icon className={`relative h-5 w-5 ${active ? "text-accent-active" : "text-muted-foreground"}`} strokeWidth={1.6} />
-                  <span className={`relative text-[11px] ${active ? "text-accent-active font-medium" : "text-muted-foreground"}`}>
+                  <Icon
+                    className={`relative h-5 w-5 ${active ? "text-accent-active" : "text-muted-foreground"}`}
+                    strokeWidth={1.6}
+                  />
+                  <span
+                    className={`relative text-[11px] ${active ? "text-accent-active font-medium" : "text-muted-foreground"}`}
+                  >
                     {label}
                   </span>
                 </Link>

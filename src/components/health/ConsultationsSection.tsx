@@ -64,8 +64,8 @@ export function ConsultationsSection({ consultations, onboarding }: Props) {
         <div className="rounded-2xl bg-card border border-border shadow-soft p-5 paper-grain text-center">
           <Stethoscope className="h-6 w-6 mx-auto text-muted-foreground" strokeWidth={1.4} />
           <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-            Record the next consultation and we'll turn it into notes, a summary and next
-            steps — so the whole family stays on the same page.
+            Record the next consultation and we'll turn it into notes, a summary and next steps — so
+            the whole family stays on the same page.
           </p>
         </div>
       ) : (
@@ -87,9 +87,14 @@ export function ConsultationsSection({ consultations, onboarding }: Props) {
                       {c.summary}
                     </p>
                   )}
-                  <div className="mt-1"><StatusChip status={c.status} /></div>
+                  <div className="mt-1">
+                    <StatusChip status={c.status} />
+                  </div>
                 </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" strokeWidth={1.6} />
+                <ChevronRight
+                  className="h-4 w-4 text-muted-foreground shrink-0"
+                  strokeWidth={1.6}
+                />
               </div>
             </button>
           ))}

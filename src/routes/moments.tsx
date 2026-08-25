@@ -1,7 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Plus, Sparkles, Check, Play, Pause, Mic, Film, ArrowLeft, Share2, Instagram } from "lucide-react";
+import {
+  Heart,
+  Plus,
+  Sparkles,
+  Check,
+  Play,
+  Pause,
+  Mic,
+  Film,
+  ArrowLeft,
+  Share2,
+  Instagram,
+} from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
@@ -12,6 +24,7 @@ import { BUCKET_TEMPLATES } from "@/lib/content";
 import { MomentComposer } from "@/components/MomentComposer";
 import { ImportMomentsSheet } from "@/components/ImportMomentsSheet";
 import { supabase } from "@/integrations/supabase/client";
+import { getScrapbookShareUrl } from "@/lib/share";
 import momentsTea from "@/assets/moments-tea.jpg";
 import momentsHands from "@/assets/moments-hands.jpg";
 import momentsGarden from "@/assets/moments-garden.jpg";
@@ -42,18 +55,13 @@ function Moments() {
     if (!user || sharing) return;
     setSharing(true);
     try {
-      const { data: existing } = await supabase
-        .from("profiles").select("share_token").eq("id", user.id).maybeSingle();
-      let token = existing?.share_token as string | null;
-      if (!token) {
-        token = crypto.randomUUID();
-        await supabase.from("profiles").update({ share_token: token }).eq("id", user.id);
-      }
-      const url = `${window.location.origin}/scrapbook/${token}`;
+      const url = await getScrapbookShareUrl(user.id);
       if (navigator.share) {
         try {
           await navigator.share({ title: "A shared scrapbook", url });
-        } catch { /* user cancelled */ }
+        } catch {
+          /* user cancelled */
+        }
       } else {
         await navigator.clipboard.writeText(url);
         toast.success("Public link copied", { description: url });
@@ -117,7 +125,10 @@ function Moments() {
     if (!newBucket.trim()) return;
     update((s) => ({
       ...s,
-      bucketList: [...s.bucketList, { id: crypto.randomUUID(), title: newBucket.trim(), category: "Personal", done: false }],
+      bucketList: [
+        ...s.bucketList,
+        { id: crypto.randomUUID(), title: newBucket.trim(), category: "Personal", done: false },
+      ],
     }));
     setNewBucket("");
   };
@@ -143,7 +154,6 @@ function Moments() {
     (acc[b.category] ??= []).push(b);
     return acc;
   }, {});
-
 
   return (
     <AppShell>
@@ -207,8 +217,8 @@ function Moments() {
                   Demo scrapbook
                 </p>
                 <p className="text-sm text-foreground/75 mt-1 leading-relaxed">
-                  A few sample memories so you can see the clothesline. They'll
-                  step aside as soon as you add your first real moment.
+                  A few sample memories so you can see the clothesline. They'll step aside as soon
+                  as you add your first real moment.
                 </p>
               </div>
             )}
@@ -237,7 +247,10 @@ function Moments() {
                 className="rounded-xl bg-background h-11"
                 onKeyDown={(e) => e.key === "Enter" && addBucket()}
               />
-              <Button onClick={addBucket} className="rounded-xl bg-foreground text-background hover:bg-foreground/90 h-11">
+              <Button
+                onClick={addBucket}
+                className="rounded-xl bg-foreground text-background hover:bg-foreground/90 h-11"
+              >
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
@@ -263,22 +276,32 @@ function Moments() {
 
           {Object.entries(grouped).map(([cat, items]) => (
             <div key={cat} className="space-y-2">
-              <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">{cat}</h3>
+              <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">
+                {cat}
+              </h3>
               <div className="space-y-2">
                 {items.map((b) => (
                   <button
                     key={b.id}
                     onClick={() => toggleBucket(b.id)}
                     className={`w-full text-left flex items-center gap-3 p-4 rounded-2xl border transition ${
-                      b.done ? "bg-clay-soft/40 border-clay/30" : "bg-card border-border hover:border-clay/40"
+                      b.done
+                        ? "bg-clay-soft/40 border-clay/30"
+                        : "bg-card border-border hover:border-clay/40"
                     }`}
                   >
-                    <span className={`h-5 w-5 rounded-full flex items-center justify-center border flex-shrink-0 ${
-                      b.done ? "bg-clay border-clay" : "border-border"
-                    }`}>
-                      {b.done && <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />}
+                    <span
+                      className={`h-5 w-5 rounded-full flex items-center justify-center border flex-shrink-0 ${
+                        b.done ? "bg-clay border-clay" : "border-border"
+                      }`}
+                    >
+                      {b.done && (
+                        <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />
+                      )}
                     </span>
-                    <span className={`text-sm flex-1 ${b.done ? "text-muted-foreground line-through decoration-muted-foreground/30" : ""}`}>
+                    <span
+                      className={`text-sm flex-1 ${b.done ? "text-muted-foreground line-through decoration-muted-foreground/30" : ""}`}
+                    >
                       {b.title}
                     </span>
                   </button>
@@ -367,7 +390,9 @@ function MemoryCollage({
           <span className="text-xs uppercase tracking-[0.18em]">Scrapbook</span>
         </div>
         <h1 className="font-serif italic text-4xl md:text-5xl text-foreground/90 leading-[1.1] mt-4">
-          Small things,<br />deeply remembered
+          Small things,
+          <br />
+          deeply remembered
         </h1>
         <p className="text-muted-foreground mt-4 leading-relaxed text-sm md:text-base max-w-md mx-auto">
           A space to hold meaningful moments with {loveeName} — kept like pages in a family album.
@@ -382,7 +407,10 @@ function MemoryCollage({
       >
         <div className="relative pt-6 pb-2">
           {/* Clothesline string */}
-          <div className="absolute left-4 right-4 top-10 border-t border-foreground/20" aria-hidden />
+          <div
+            className="absolute left-4 right-4 top-10 border-t border-foreground/20"
+            aria-hidden
+          />
 
           <div className="relative flex items-start justify-center gap-3 md:gap-6 px-2">
             {cards.map((c, i) => {
@@ -415,7 +443,12 @@ function MemoryCollage({
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <img src={c.src} alt="" loading="lazy" className="w-full h-full object-cover" />
+                        <img
+                          src={c.src}
+                          alt=""
+                          loading="lazy"
+                          className="w-full h-full object-cover"
+                        />
                       )}
                       {c.kind === "video" && (
                         <span className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-foreground/70 backdrop-blur-sm flex items-center justify-center">
@@ -437,7 +470,12 @@ function MemoryCollage({
             <motion.div
               initial={{ opacity: 0, y: -40, rotate: 0 }}
               animate={{ opacity: 1, y: 0, rotate: 4 }}
-              transition={{ delay: cards.length * 0.12, type: "spring", stiffness: 80, damping: 14 }}
+              transition={{
+                delay: cards.length * 0.12,
+                type: "spring",
+                stiffness: 80,
+                damping: 14,
+              }}
               whileHover={{ y: -6, rotate: 1.6, transition: { duration: 0.3 } }}
               className="relative"
               style={{ transformOrigin: "top center" }}
@@ -496,7 +534,8 @@ function groupByRelativeDate(moments: Moment[]): Group[] {
   const today = new Date();
   const ymd = (d: Date) => d.toISOString().slice(0, 10);
   const todayKey = ymd(today);
-  const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
   const yKey = ymd(yesterday);
 
   const map = new Map<string, Moment[]>();
@@ -629,8 +668,8 @@ function MomentCard({
         stacked
           ? "absolute origin-center"
           : expanded
-          ? "w-[300px] sm:w-[340px] flex-shrink-0 snap-center"
-          : "mx-auto max-w-[92%] sm:max-w-[520px]"
+            ? "w-[300px] sm:w-[340px] flex-shrink-0 snap-center"
+            : "mx-auto max-w-[92%] sm:max-w-[520px]"
       } bg-card border border-border p-5 pb-7 shadow-paper paper-grain rounded-md`}
     >
       {moment.photo && (
@@ -644,9 +683,15 @@ function MomentCard({
         </div>
       )}
       <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-        {new Date(moment.date).toLocaleDateString("en-SG", { weekday: "long", month: "long", day: "numeric" })}
+        {new Date(moment.date).toLocaleDateString("en-SG", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+        })}
       </p>
-      <h3 className="font-serif text-2xl italic mt-1 leading-snug text-foreground/90">{moment.title}</h3>
+      <h3 className="font-serif text-2xl italic mt-1 leading-snug text-foreground/90">
+        {moment.title}
+      </h3>
       {moment.note && (
         <p className="font-hand text-xl text-foreground/80 mt-3 leading-snug whitespace-pre-line">
           {moment.note}
@@ -667,7 +712,11 @@ function VoiceNote({ src, duration }: { src: string; duration: number }) {
   const toggle = () => {
     const a = audioRef.current;
     if (!a) return;
-    if (playing) { a.pause(); } else { void a.play(); }
+    if (playing) {
+      a.pause();
+    } else {
+      void a.play();
+    }
   };
 
   return (
@@ -677,12 +726,16 @@ function VoiceNote({ src, duration }: { src: string; duration: number }) {
         className="h-9 w-9 rounded-full bg-foreground text-background flex items-center justify-center shrink-0 shadow-soft"
         aria-label={playing ? "Pause voice note" : "Play voice note"}
       >
-        {playing ? <Pause className="h-4 w-4 fill-current" /> : <Play className="h-4 w-4 fill-current ml-0.5" />}
+        {playing ? (
+          <Pause className="h-4 w-4 fill-current" />
+        ) : (
+          <Play className="h-4 w-4 fill-current ml-0.5" />
+        )}
       </button>
       <Mic className="h-3.5 w-3.5 text-foreground/40 shrink-0" strokeWidth={1.6} />
       <div className="flex-1 min-w-0 flex items-center gap-[2px] h-6 overflow-hidden">
         {Array.from({ length: 20 }).map((_, i) => {
-          const active = (i / 20) <= progress;
+          const active = i / 20 <= progress;
           return (
             <span
               key={i}
@@ -700,7 +753,10 @@ function VoiceNote({ src, duration }: { src: string; duration: number }) {
         src={src}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
-        onEnded={() => { setPlaying(false); setProgress(0); }}
+        onEnded={() => {
+          setPlaying(false);
+          setProgress(0);
+        }}
         onTimeUpdate={(e) => {
           const a = e.currentTarget;
           if (a.duration) setProgress(a.currentTime / a.duration);

@@ -35,7 +35,12 @@ export function ConsultationDetail({ consultation, onboarding, onClose }: Props)
     setNewStep("");
   }, [consultation?.id]);
 
-  if (!consultation) return <Dialog open={false}><span /></Dialog>;
+  if (!consultation)
+    return (
+      <Dialog open={false}>
+        <span />
+      </Dialog>
+    );
   const c = consultation;
 
   const saveSummary = () => {
@@ -116,9 +121,19 @@ export function ConsultationDetail({ consultation, onboarding, onClose }: Props)
 
         {c.status === "failed" && (
           <div className="rounded-2xl bg-clay-soft/30 border border-clay/30 p-4 text-sm">
-            <p className="text-foreground/80">The write-up didn't go through. Your recording is safe.</p>
-            <Button size="sm" onClick={retry} disabled={retrying} className="mt-2 rounded-full h-8 text-xs bg-foreground text-background">
-              <RefreshCw className={`h-3.5 w-3.5 mr-1 ${retrying ? "animate-spin" : ""}`} strokeWidth={1.8} />
+            <p className="text-foreground/80">
+              The write-up didn't go through. Your recording is safe.
+            </p>
+            <Button
+              size="sm"
+              onClick={retry}
+              disabled={retrying}
+              className="mt-2 rounded-full h-8 text-xs bg-foreground text-background"
+            >
+              <RefreshCw
+                className={`h-3.5 w-3.5 mr-1 ${retrying ? "animate-spin" : ""}`}
+                strokeWidth={1.8}
+              />
               {retrying ? "Retrying…" : "Try again"}
             </Button>
           </div>
@@ -128,9 +143,14 @@ export function ConsultationDetail({ consultation, onboarding, onClose }: Props)
           <div className="space-y-5">
             <section className="space-y-2">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs uppercase tracking-[0.14em] text-muted-foreground">What was said</h4>
+                <h4 className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                  What was said
+                </h4>
                 {!editingSummary && (
-                  <button onClick={() => setEditingSummary(true)} className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
+                  <button
+                    onClick={() => setEditingSummary(true)}
+                    className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                  >
                     Edit
                   </button>
                 )}
@@ -142,17 +162,25 @@ export function ConsultationDetail({ consultation, onboarding, onClose }: Props)
                     onChange={(e) => setSummaryDraft(e.target.value)}
                     className="rounded-xl bg-background min-h-[110px] leading-relaxed"
                   />
-                  <Button size="sm" onClick={saveSummary} className="rounded-full h-8 text-xs bg-foreground text-background">
+                  <Button
+                    size="sm"
+                    onClick={saveSummary}
+                    className="rounded-full h-8 text-xs bg-foreground text-background"
+                  >
                     <Check className="h-3.5 w-3.5 mr-1" strokeWidth={2} /> Save
                   </Button>
                 </div>
               ) : (
-                <p className="text-sm leading-relaxed text-foreground/85">{c.summary || "No summary yet."}</p>
+                <p className="text-sm leading-relaxed text-foreground/85">
+                  {c.summary || "No summary yet."}
+                </p>
               )}
             </section>
 
             <section className="space-y-2">
-              <h4 className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Next steps</h4>
+              <h4 className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                Next steps
+              </h4>
               {c.actionSteps.length === 0 && (
                 <p className="text-sm text-muted-foreground">No action steps were picked up.</p>
               )}
@@ -162,13 +190,17 @@ export function ConsultationDetail({ consultation, onboarding, onClose }: Props)
                     <button
                       onClick={() => toggleStep(i)}
                       className={`mt-0.5 h-5 w-5 rounded-full border flex items-center justify-center shrink-0 transition ${
-                        s.done ? "bg-sage border-sage text-background" : "border-border bg-background"
+                        s.done
+                          ? "bg-sage border-sage text-background"
+                          : "border-border bg-background"
                       }`}
                       aria-label={s.done ? "Mark not done" : "Mark done"}
                     >
                       {s.done && <Check className="h-3 w-3" strokeWidth={2.5} />}
                     </button>
-                    <span className={`text-sm flex-1 leading-relaxed ${s.done ? "line-through text-muted-foreground" : "text-foreground/85"}`}>
+                    <span
+                      className={`text-sm flex-1 leading-relaxed ${s.done ? "line-through text-muted-foreground" : "text-foreground/85"}`}
+                    >
                       {s.text}
                     </span>
                     <button
@@ -189,7 +221,12 @@ export function ConsultationDetail({ consultation, onboarding, onClose }: Props)
                   placeholder="Add a step…"
                   className="rounded-xl bg-background h-9 text-sm"
                 />
-                <Button size="sm" variant="outline" onClick={addStep} className="rounded-xl h-9 px-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={addStep}
+                  className="rounded-xl h-9 px-3"
+                >
                   <Plus className="h-4 w-4" strokeWidth={1.8} />
                 </Button>
               </div>

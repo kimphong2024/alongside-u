@@ -5,7 +5,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { MOCK_APPOINTMENTS, appointmentDate } from "@/lib/mock-health";
 
 const sameDay = (a: Date, b: Date) =>
-  a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate();
 
 export function AppointmentsCard() {
   const [selected, setSelected] = useState<Date | undefined>();
@@ -55,8 +57,13 @@ export function AppointmentsCard() {
             <div className="min-w-0">
               <p className="text-sm font-medium text-foreground/85">{a.purpose}</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {a.when.toLocaleDateString("en-SG", { weekday: "short", day: "numeric", month: "short" })}
-                {" · "}{a.time} · {a.doctor}
+                {a.when.toLocaleDateString("en-SG", {
+                  weekday: "short",
+                  day: "numeric",
+                  month: "short",
+                })}
+                {" · "}
+                {a.time} · {a.doctor}
               </p>
               <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                 <MapPin className="h-3 w-3" strokeWidth={1.6} /> {a.location}

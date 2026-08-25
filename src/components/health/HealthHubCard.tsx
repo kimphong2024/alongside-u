@@ -24,13 +24,16 @@ export function HealthHubCard({ onConnectedChange }: Props) {
     CONNECT_STAGES.forEach((_, i) => {
       setTimeout(() => setStage(i), i * 850);
     });
-    setTimeout(() => {
-      setStage(null);
-      setSheetOpen(false);
-      setConnected(true);
-      writeMockFlag(MOCK_KEYS.healthhub, true);
-      onConnectedChange(true);
-    }, CONNECT_STAGES.length * 850 + 400);
+    setTimeout(
+      () => {
+        setStage(null);
+        setSheetOpen(false);
+        setConnected(true);
+        writeMockFlag(MOCK_KEYS.healthhub, true);
+        onConnectedChange(true);
+      },
+      CONNECT_STAGES.length * 850 + 400,
+    );
   };
 
   if (connected) {
@@ -69,8 +72,8 @@ export function HealthHubCard({ onConnectedChange }: Props) {
               Bring their records together
             </h4>
             <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-              Sync appointments, medications and reports from HealthHub and NUHS — so
-              everything lives in one gentle place.
+              Sync appointments, medications and reports from HealthHub and NUHS — so everything
+              lives in one gentle place.
             </p>
             <Button
               onClick={() => setSheetOpen(true)}
@@ -82,13 +85,20 @@ export function HealthHubCard({ onConnectedChange }: Props) {
         </div>
       </div>
 
-      <BottomSheet open={sheetOpen} onOpenChange={(v) => stage === null && setSheetOpen(v)} labelledBy="healthhub-sheet-title">
-        <h2 id="healthhub-sheet-title" className="font-serif text-3xl italic font-light text-foreground/90">
+      <BottomSheet
+        open={sheetOpen}
+        onOpenChange={(v) => stage === null && setSheetOpen(v)}
+        labelledBy="healthhub-sheet-title"
+      >
+        <h2
+          id="healthhub-sheet-title"
+          className="font-serif text-3xl italic font-light text-foreground/90"
+        >
           connect your records
         </h2>
         <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-          Log in with Singpass to sync HealthHub and NUHS — appointments, medications and
-          reports, kept private to your family.
+          Log in with Singpass to sync HealthHub and NUHS — appointments, medications and reports,
+          kept private to your family.
         </p>
 
         <div className="mt-5 rounded-2xl overflow-hidden border border-border">
@@ -128,7 +138,9 @@ export function HealthHubCard({ onConnectedChange }: Props) {
                   ) : (
                     <span className="h-4 w-4 rounded-full border border-border" />
                   )}
-                  <span className={i <= stage ? "text-foreground/85" : "text-muted-foreground"}>{label}</span>
+                  <span className={i <= stage ? "text-foreground/85" : "text-muted-foreground"}>
+                    {label}
+                  </span>
                 </div>
               ))}
             </motion.div>

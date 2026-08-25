@@ -20,18 +20,21 @@ Avoid duplicates of: ${existing.slice(0, 30).join("; ") || "none"}.
 Return STRICT JSON only: {"ideas":[{"title":"...","category":"Experiences|Legacy|Connection|Simple Joys"}]}.
 Keep each title under 10 words, warm and concrete.`;
 
-    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${GEMINI_API_KEY}`,
-        "Content-Type": "application/json",
+    const res = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GEMINI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gemini-flash-latest",
+          messages: [{ role: "user", content: prompt }],
+          response_format: { type: "json_object" },
+        }),
       },
-      body: JSON.stringify({
-        model: "gemini-flash-latest",
-        messages: [{ role: "user", content: prompt }],
-        response_format: { type: "json_object" },
-      }),
-    });
+    );
 
     if (!res.ok) {
       const text = await res.text();
@@ -44,7 +47,11 @@ Keep each title under 10 words, warm and concrete.`;
     const data = await res.json();
     const content = data?.choices?.[0]?.message?.content ?? "{}";
     let parsed: { ideas?: { title: string; category: string }[] } = {};
-    try { parsed = JSON.parse(content); } catch { parsed = {}; }
+    try {
+      parsed = JSON.parse(content);
+    } catch {
+      parsed = {};
+    }
     const ideas = (parsed.ideas ?? []).filter((i) => i?.title).slice(0, 8);
 
     return new Response(JSON.stringify({ ideas }), {

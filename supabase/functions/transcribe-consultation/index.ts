@@ -17,12 +17,11 @@ async function callGemini(key: string, mime: string, audioBase64: string, prompt
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contents: [{
-          parts: [
-            { inline_data: { mime_type: mime, data: audioBase64 } },
-            { text: prompt },
-          ],
-        }],
+        contents: [
+          {
+            parts: [{ inline_data: { mime_type: mime, data: audioBase64 } }, { text: prompt }],
+          },
+        ],
         generationConfig: { responseMimeType: "application/json" },
       }),
     },
@@ -33,8 +32,13 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { audioBase64, mime = "audio/webm", loveeName, illnessType, illnessStage } =
-      await req.json().catch(() => ({}));
+    const {
+      audioBase64,
+      mime = "audio/webm",
+      loveeName,
+      illnessType,
+      illnessStage,
+    } = await req.json().catch(() => ({}));
     if (!audioBase64 || typeof audioBase64 !== "string") {
       return json({ error: "Missing audioBase64" }, 400);
     }
@@ -65,7 +69,11 @@ If the audio is silent or unintelligible, return {"transcript":"","summary":"We 
     const data = await res.json();
     const content: string = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}";
     let parsed: { transcript?: string; summary?: string; action_steps?: string[] } = {};
-    try { parsed = JSON.parse(content); } catch { parsed = {}; }
+    try {
+      parsed = JSON.parse(content);
+    } catch {
+      parsed = {};
+    }
 
     return json({
       transcript: parsed.transcript ?? "",

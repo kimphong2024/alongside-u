@@ -21,7 +21,9 @@ Deno.serve(async (req) => {
     if (!GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY");
 
     const clean: ChatMessage[] = (messages as ChatMessage[])
-      .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
+      .filter(
+        (m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string",
+      )
       .slice(-12);
     if (!clean.length || clean[clean.length - 1].role !== "user") {
       return json({ error: "messages must end with a user message" }, 400);
@@ -29,14 +31,17 @@ Deno.serve(async (req) => {
 
     const { loveeName, relationship, illnessType, illnessStage, language, patientKnows } = profile;
     const who = loveeName || "their loved one";
-    const context = [
-      `The caregiver is caring for ${who}`,
-      relationship ? `their ${relationship.toLowerCase()}` : null,
-      illnessType ? `who has ${illnessType}` : null,
-      illnessStage ? `(${illnessStage})` : null,
-      language ? `${who} is most comfortable in ${language}` : null,
-      patientKnows ? `awareness of diagnosis: ${patientKnows}` : null,
-    ].filter(Boolean).join(", ") + ".";
+    const context =
+      [
+        `The caregiver is caring for ${who}`,
+        relationship ? `their ${relationship.toLowerCase()}` : null,
+        illnessType ? `who has ${illnessType}` : null,
+        illnessStage ? `(${illnessStage})` : null,
+        language ? `${who} is most comfortable in ${language}` : null,
+        patientKnows ? `awareness of diagnosis: ${patientKnows}` : null,
+      ]
+        .filter(Boolean)
+        .join(", ") + ".";
 
     const system = `You are Alongside's care guide - a warm, practical companion for family caregivers in Singapore looking after an older loved one with a serious illness. ${context}
 
@@ -54,18 +59,21 @@ Rules:
 - If the caregiver sounds in distress or hopeless, acknowledge it first and mention SOS 1-767 is there any time.
 - Return STRICT JSON only: {"reply":"...","followUps":["...","...","..."]}. followUps are 2-3 short questions (max 8 words each) the caregiver might naturally ask next, written in their voice.`;
 
-    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${GEMINI_API_KEY}`,
-        "Content-Type": "application/json",
+    const res = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${GEMINI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gemini-flash-latest",
+          messages: [{ role: "system", content: system }, ...clean],
+          response_format: { type: "json_object" },
+        }),
       },
-      body: JSON.stringify({
-        model: "gemini-flash-latest",
-        messages: [{ role: "system", content: system }, ...clean],
-        response_format: { type: "json_object" },
-      }),
-    });
+    );
 
     if (!res.ok) {
       const detail = await res.text();
@@ -75,12 +83,18 @@ Rules:
     const data = await res.json();
     const content = data?.choices?.[0]?.message?.content ?? "{}";
     let parsed: { reply?: string; followUps?: string[] } = {};
-    try { parsed = JSON.parse(content); } catch { parsed = {}; }
+    try {
+      parsed = JSON.parse(content);
+    } catch {
+      parsed = {};
+    }
 
     if (!parsed.reply) return json({ error: "Empty reply" }, 502);
     return json({
       reply: parsed.reply,
-      followUps: (parsed.followUps ?? []).filter((s) => typeof s === "string" && s.trim()).slice(0, 3),
+      followUps: (parsed.followUps ?? [])
+        .filter((s) => typeof s === "string" && s.trim())
+        .slice(0, 3),
     });
   } catch (e) {
     return json({ error: (e as Error).message }, 500);

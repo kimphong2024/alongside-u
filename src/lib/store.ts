@@ -42,7 +42,12 @@ type LocalState = {
   checkInHistory: { date: string; mood: string }[];
 };
 
-const defaultLocal: LocalState = { checkedItems: {}, bucketList: [], moments: [], checkInHistory: [] };
+const defaultLocal: LocalState = {
+  checkedItems: {},
+  bucketList: [],
+  moments: [],
+  checkInHistory: [],
+};
 
 const isUuid = (s: string) =>
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
@@ -109,7 +114,10 @@ let snapshot: StoreSnapshot = {
   local: defaultLocal,
 };
 const listeners = new Set<() => void>();
-const subscribe = (l: () => void) => { listeners.add(l); return () => listeners.delete(l); };
+const subscribe = (l: () => void) => {
+  listeners.add(l);
+  return () => listeners.delete(l);
+};
 const getSnapshot = () => snapshot;
 const getServerSnapshot = () => snapshot;
 const setSnapshot = (next: Partial<StoreSnapshot>) => {
@@ -130,10 +138,26 @@ async function loadForUser(uid: string) {
     { data: checked },
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", uid).maybeSingle(),
-    supabase.from("family_members").select("*").eq("owner_id", uid).order("created_at", { ascending: true }),
-    supabase.from("moments").select("*").eq("owner_id", uid).order("created_at", { ascending: false }),
-    supabase.from("bucket_items").select("*").eq("owner_id", uid).order("created_at", { ascending: true }),
-    supabase.from("check_ins").select("*").eq("owner_id", uid).order("created_at", { ascending: true }),
+    supabase
+      .from("family_members")
+      .select("*")
+      .eq("owner_id", uid)
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("moments")
+      .select("*")
+      .eq("owner_id", uid)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("bucket_items")
+      .select("*")
+      .eq("owner_id", uid)
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("check_ins")
+      .select("*")
+      .eq("owner_id", uid)
+      .order("created_at", { ascending: true }),
     supabase.from("checked_items").select("*").eq("owner_id", uid),
   ]);
   if (snapshot.userId !== uid) return;
@@ -141,7 +165,10 @@ async function loadForUser(uid: string) {
     hydrated: true,
     onboarding: rowToOnboarding(profile as Record<string, unknown> | null),
     family: (fams ?? []).map((f) => ({
-      id: f.id, name: f.name, relationship: f.relationship ?? "Family", email: f.email ?? undefined,
+      id: f.id,
+      name: f.name,
+      relationship: f.relationship ?? "Family",
+      email: f.email ?? undefined,
     })),
     local: {
       moments: (moments ?? []).map((m) => ({
@@ -155,7 +182,10 @@ async function loadForUser(uid: string) {
         audioDuration: m.audio_duration ?? undefined,
       })),
       bucketList: (bucket ?? []).map((b) => ({
-        id: b.id, title: b.title, category: b.category ?? "Personal", done: !!b.done,
+        id: b.id,
+        title: b.title,
+        category: b.category ?? "Personal",
+        done: !!b.done,
       })),
       checkInHistory: (checkins ?? []).map((c) => ({ date: c.date, mood: c.mood })),
       checkedItems: Object.fromEntries((checked ?? []).map((c) => [c.item_key, true])),
@@ -174,39 +204,76 @@ export function useAppData() {
     if (!user) {
       if (snapshot.userId !== null || !snapshot.hydrated) {
         loadingForUid = null;
-        setSnapshot({ userId: null, hydrated: true, onboarding: {}, family: [], local: defaultLocal });
+        setSnapshot({
+          userId: null,
+          hydrated: true,
+          onboarding: {},
+          family: [],
+          local: defaultLocal,
+        });
       }
       return;
     }
     if (snapshot.userId === user.id && snapshot.hydrated) return;
     if (snapshot.userId !== user.id) {
       loadingForUid = null;
-      setSnapshot({ userId: user.id, hydrated: false, onboarding: {}, family: [], local: defaultLocal });
+      setSnapshot({
+        userId: user.id,
+        hydrated: false,
+        onboarding: {},
+        family: [],
+        local: defaultLocal,
+      });
     }
     void loadForUser(user.id);
   }, [user, authLoading]);
 
-  const saveOnboarding = useCallback(async (d: OnboardingData) => {
-    if (!user) return;
-    setSnapshot({ onboarding: d });
-    await supabase.from("profiles").upsert({ id: user.id, ...onboardingToRow(d) });
-  }, [user]);
+  const saveOnboarding = useCallback(
+    async (d: OnboardingData) => {
+      if (!user) return;
+      setSnapshot({ onboarding: d });
+      await supabase.from("profiles").upsert({ id: user.id, ...onboardingToRow(d) });
+    },
+    [user],
+  );
 
-  const addFamily = useCallback(async (m: Omit<FamilyMember, "id">) => {
-    if (!user) return;
-    const { data, error } = await supabase.from("family_members").insert({
-      owner_id: user.id, name: m.name, relationship: m.relationship, email: m.email,
-    }).select().single();
-    if (!error && data) setSnapshot({
-      family: [...snapshot.family, { id: data.id, name: data.name, relationship: data.relationship ?? "Family", email: data.email ?? undefined }],
-    });
-  }, [user]);
+  const addFamily = useCallback(
+    async (m: Omit<FamilyMember, "id">) => {
+      if (!user) return;
+      const { data, error } = await supabase
+        .from("family_members")
+        .insert({
+          owner_id: user.id,
+          name: m.name,
+          relationship: m.relationship,
+          email: m.email,
+        })
+        .select()
+        .single();
+      if (!error && data)
+        setSnapshot({
+          family: [
+            ...snapshot.family,
+            {
+              id: data.id,
+              name: data.name,
+              relationship: data.relationship ?? "Family",
+              email: data.email ?? undefined,
+            },
+          ],
+        });
+    },
+    [user],
+  );
 
-  const removeFamily = useCallback(async (id: string) => {
-    if (!user) return;
-    setSnapshot({ family: snapshot.family.filter((x) => x.id !== id) });
-    await supabase.from("family_members").delete().eq("id", id);
-  }, [user]);
+  const removeFamily = useCallback(
+    async (id: string) => {
+      if (!user) return;
+      setSnapshot({ family: snapshot.family.filter((x) => x.id !== id) });
+      await supabase.from("family_members").delete().eq("id", id);
+    },
+    [user],
+  );
 
   const syncDiff = (prev: LocalState, next: LocalState) => {
     const uid = uidRef.current;
@@ -247,10 +314,18 @@ export function useAppData() {
           category: b.category,
           done: b.done,
         });
-      } else if (isUuid(b.id) && (before.done !== b.done || before.title !== b.title || before.category !== b.category)) {
-        void supabase.from("bucket_items").update({
-          title: b.title, category: b.category, done: b.done,
-        }).eq("id", b.id);
+      } else if (
+        isUuid(b.id) &&
+        (before.done !== b.done || before.title !== b.title || before.category !== b.category)
+      ) {
+        void supabase
+          .from("bucket_items")
+          .update({
+            title: b.title,
+            category: b.category,
+            done: b.done,
+          })
+          .eq("id", b.id);
       }
     });
     prev.bucketList.forEach((b) => {
@@ -281,10 +356,9 @@ export function useAppData() {
       const after = !!next.checkedItems[key];
       if (before === after) return;
       if (after) {
-        void supabase.from("checked_items").upsert(
-          { owner_id: uid, item_key: key },
-          { onConflict: "owner_id,item_key" },
-        );
+        void supabase
+          .from("checked_items")
+          .upsert({ owner_id: uid, item_key: key }, { onConflict: "owner_id,item_key" });
       } else {
         void supabase.from("checked_items").delete().eq("owner_id", uid).eq("item_key", key);
       }

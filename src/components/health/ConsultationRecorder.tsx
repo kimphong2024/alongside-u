@@ -68,8 +68,12 @@ export function ConsultationRecorder({ open, onOpenChange, onboarding, onSaved }
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const resetAll = () => {
-    setTitle(""); setAudio(undefined); setAudioDuration(0); setElapsed(0);
-    setRecording(false); setSaving(false);
+    setTitle("");
+    setAudio(undefined);
+    setAudioDuration(0);
+    setElapsed(0);
+    setRecording(false);
+    setSaving(false);
   };
 
   const startRecording = async () => {
@@ -135,7 +139,11 @@ export function ConsultationRecorder({ open, onOpenChange, onboarding, onSaved }
     onOpenChange(false);
     resetAll();
     onSaved(created);
-    const ok = await runTranscription({ id: created.id, audio, mime: audioMime }, onboarding, updateConsultation);
+    const ok = await runTranscription(
+      { id: created.id, audio, mime: audioMime },
+      onboarding,
+      updateConsultation,
+    );
     if (ok) toast.success("Visit notes are ready.");
     else toast.error("Transcription didn't go through — the recording is saved, you can retry.");
   };
@@ -148,12 +156,15 @@ export function ConsultationRecorder({ open, onOpenChange, onboarding, onSaved }
 
   return (
     <BottomSheet open={open} onOpenChange={close} labelledBy="consult-recorder-title">
-      <h2 id="consult-recorder-title" className="font-serif text-3xl italic font-light text-foreground/90">
+      <h2
+        id="consult-recorder-title"
+        className="font-serif text-3xl italic font-light text-foreground/90"
+      >
         record this visit
       </h2>
       <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-        Set your phone down and be present — we'll listen, write it up, and pull out the
-        next steps for the family. Do let the doctor know you're recording.
+        Set your phone down and be present — we'll listen, write it up, and pull out the next steps
+        for the family. Do let the doctor know you're recording.
       </p>
 
       <div className="mt-5 space-y-4">
@@ -191,9 +202,20 @@ export function ConsultationRecorder({ open, onOpenChange, onboarding, onSaved }
             >
               <Mic className="h-4 w-4 text-foreground/60" strokeWidth={1.6} />
               <audio src={audio} controls className="flex-1 h-9" />
-              <span className="text-xs tabular-nums text-muted-foreground">{fmt(audioDuration)}</span>
-              <button onClick={() => { setAudio(undefined); setAudioDuration(0); }} aria-label="Discard recording">
-                <Trash2 className="h-4 w-4 text-muted-foreground hover:text-foreground" strokeWidth={1.6} />
+              <span className="text-xs tabular-nums text-muted-foreground">
+                {fmt(audioDuration)}
+              </span>
+              <button
+                onClick={() => {
+                  setAudio(undefined);
+                  setAudioDuration(0);
+                }}
+                aria-label="Discard recording"
+              >
+                <Trash2
+                  className="h-4 w-4 text-muted-foreground hover:text-foreground"
+                  strokeWidth={1.6}
+                />
               </button>
             </motion.div>
           )}
@@ -203,7 +225,11 @@ export function ConsultationRecorder({ open, onOpenChange, onboarding, onSaved }
         </div>
 
         <div className="flex gap-2">
-          <Button variant="ghost" onClick={() => close(false)} className="flex-1 rounded-xl h-12 text-muted-foreground hover:text-foreground">
+          <Button
+            variant="ghost"
+            onClick={() => close(false)}
+            className="flex-1 rounded-xl h-12 text-muted-foreground hover:text-foreground"
+          >
             Not now
           </Button>
           <Button

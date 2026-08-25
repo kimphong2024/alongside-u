@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { BottomSheet } from "@/components/BottomSheet";
 import {
-  MOCK_CARE_TEAM, MESSAGE_SUBJECTS, MOCK_KEYS, readMockJson, writeMockJson,
+  MOCK_CARE_TEAM,
+  MESSAGE_SUBJECTS,
+  MOCK_KEYS,
+  readMockJson,
+  writeMockJson,
 } from "@/lib/mock-health";
 import type { DoctorMessage } from "@/lib/mock-health";
 
@@ -61,7 +65,10 @@ export function MessageDoctorCard() {
       </button>
 
       <BottomSheet open={open} onOpenChange={setOpen} labelledBy="msg-doctor-title">
-        <h2 id="msg-doctor-title" className="font-serif text-3xl italic font-light text-foreground/90">
+        <h2
+          id="msg-doctor-title"
+          className="font-serif text-3xl italic font-light text-foreground/90"
+        >
           message the care team
         </h2>
         <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
@@ -119,10 +126,15 @@ export function MessageDoctorCard() {
                     <p className="text-xs font-medium text-foreground/80">{m.subject}</p>
                     <span className="text-[11px] text-muted-foreground flex items-center gap-1">
                       <Check className="h-3 w-3 text-sage" strokeWidth={2} />
-                      {new Date(m.sentAt).toLocaleDateString("en-SG", { day: "numeric", month: "short" })}
+                      {new Date(m.sentAt).toLocaleDateString("en-SG", {
+                        day: "numeric",
+                        month: "short",
+                      })}
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2 leading-relaxed">{m.body}</p>
+                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
+                    {m.body}
+                  </p>
                 </div>
               ))}
             </div>

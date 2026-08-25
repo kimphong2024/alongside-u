@@ -79,7 +79,9 @@ export function RecordsSection({ records }: { records: HealthRecord[] }) {
               className="flex flex-col items-center justify-center gap-1 h-20 rounded-2xl border border-dashed border-border bg-card/60 hover:bg-muted/40 transition text-xs text-muted-foreground"
             >
               <Icon className="h-4 w-4" strokeWidth={1.6} />
-              <span className="flex items-center gap-1"><Upload className="h-3 w-3" strokeWidth={1.6} /> {label}</span>
+              <span className="flex items-center gap-1">
+                <Upload className="h-3 w-3" strokeWidth={1.6} /> {label}
+              </span>
             </button>
           );
         })}
@@ -96,14 +98,20 @@ export function RecordsSection({ records }: { records: HealthRecord[] }) {
                 className="w-full text-left rounded-2xl bg-card border border-border shadow-soft p-3.5 paper-grain hover:bg-muted/30 transition flex items-center gap-3"
               >
                 {r.file && r.mime?.startsWith("image/") ? (
-                  <img src={r.file} alt="" className="h-11 w-11 rounded-lg object-cover border border-border shrink-0" />
+                  <img
+                    src={r.file}
+                    alt=""
+                    className="h-11 w-11 rounded-lg object-cover border border-border shrink-0"
+                  />
                 ) : (
                   <div className="h-11 w-11 rounded-lg bg-sand/60 border border-border flex items-center justify-center shrink-0">
                     <Icon className="h-5 w-5 text-foreground/60" strokeWidth={1.6} />
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground/85 truncate">{r.title || KIND_META[r.kind].label}</p>
+                  <p className="text-sm font-medium text-foreground/85 truncate">
+                    {r.title || KIND_META[r.kind].label}
+                  </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {KIND_META[r.kind].label} · {fmtDate(r.date)}
                   </p>
@@ -127,11 +135,19 @@ export function RecordsSection({ records }: { records: HealthRecord[] }) {
                 </DialogTitle>
               </DialogHeader>
               {detail.file && detail.mime?.startsWith("image/") && (
-                <img src={detail.file} alt={detail.title} className="w-full rounded-2xl border border-border" />
+                <img
+                  src={detail.file}
+                  alt={detail.title}
+                  className="w-full rounded-2xl border border-border"
+                />
               )}
               {detail.file && detail.mime === "application/pdf" && (
                 <div className="space-y-2">
-                  <iframe src={detail.file} title={detail.title} className="w-full h-80 rounded-2xl border border-border bg-white" />
+                  <iframe
+                    src={detail.file}
+                    title={detail.title}
+                    className="w-full h-80 rounded-2xl border border-border bg-white"
+                  />
                   <a
                     href={detail.file}
                     target="_blank"

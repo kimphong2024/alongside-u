@@ -16,8 +16,7 @@ const TILES = [
     // This path skips the intake questionnaire, so it must mark onboarding
     // complete itself or the Today gate bounces the user back here forever.
     completes: true,
-    gradient:
-      "radial-gradient(120% 100% at 20% 15%, #F4D7DE 0%, #EBD5E6 45%, #E0D2EC 100%)",
+    gradient: "radial-gradient(120% 100% at 20% 15%, #F4D7DE 0%, #EBD5E6 45%, #E0D2EC 100%)",
   },
   {
     title: "Show me what needs to be done",
@@ -25,8 +24,7 @@ const TILES = [
     illustration: checklistImg,
     to: "/care-journey-intro" as const,
     completes: false,
-    gradient:
-      "radial-gradient(120% 100% at 25% 20%, #DDEAD3 0%, #CFE5CC 50%, #D8EBD4 100%)",
+    gradient: "radial-gradient(120% 100% at 25% 20%, #DDEAD3 0%, #CFE5CC 50%, #D8EBD4 100%)",
   },
 ];
 
@@ -36,7 +34,10 @@ export function OnboardingFlow() {
 
   useEffect(() => {
     if (!hydrated) return;
-    if (!user) { navigate({ to: "/auth" }); return; }
+    if (!user) {
+      navigate({ to: "/auth" });
+      return;
+    }
   }, [hydrated, user, navigate]);
 
   if (!hydrated) return null;
@@ -90,10 +91,7 @@ export function OnboardingFlow() {
                     className="absolute inset-x-0 top-1/2 -translate-y-[58%] mx-auto w-[78%] max-h-[68%] object-contain pointer-events-none select-none opacity-95 transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="relative flex items-start justify-between">
-                    <Icon
-                      className="h-7 w-7 text-foreground/70"
-                      strokeWidth={1.4}
-                    />
+                    <Icon className="h-7 w-7 text-foreground/70" strokeWidth={1.4} />
                     <ArrowRight
                       className="h-4 w-4 text-foreground/50 group-hover:translate-x-0.5 group-hover:text-foreground/80 transition"
                       strokeWidth={1.6}

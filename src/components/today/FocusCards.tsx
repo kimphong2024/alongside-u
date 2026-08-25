@@ -21,15 +21,51 @@ type Props = {
 export function FocusCards({ isHeavy, loveeName, hasOpenSteps }: Props) {
   const focuses: Focus[] = isHeavy
     ? [
-        { kind: "breath", title: "Take three slow breaths", why: "Begin with the smallest step.", effort: "1 minute", link: "/support" },
-        { kind: "talk", title: "Talk it through, no judgement", why: "The everyday battles are easier said out loud.", effort: "5 minutes", link: "/health/guide" },
+        {
+          kind: "breath",
+          title: "Take three slow breaths",
+          why: "Begin with the smallest step.",
+          effort: "1 minute",
+          link: "/support",
+        },
+        {
+          kind: "talk",
+          title: "Talk it through, no judgement",
+          why: "The everyday battles are easier said out loud.",
+          effort: "5 minutes",
+          link: "/health/guide",
+        },
       ]
     : [
-        { kind: "subsidies", title: "Review available caregiving subsidies", why: "Many families find this eases long-term stress.", effort: "10 minutes", link: "/care-journey" },
-        { kind: "questions", title: "Note one question for the next medical visit", why: "Clarity often matters more than answers.", effort: "5 minutes", link: "/care-journey" },
+        {
+          kind: "subsidies",
+          title: "Review available caregiving subsidies",
+          why: "Many families find this eases long-term stress.",
+          effort: "10 minutes",
+          link: "/care-journey",
+        },
+        {
+          kind: "questions",
+          title: "Note one question for the next medical visit",
+          why: "Clarity often matters more than answers.",
+          effort: "5 minutes",
+          link: "/care-journey",
+        },
         hasOpenSteps
-          ? { kind: "visitSteps", title: "Pick up where the last visit left off", why: "A few next steps are waiting from the doctor.", effort: "5 minutes", link: "/health" }
-          : { kind: "moment", title: `Suggest one small moment with ${loveeName}`, why: "These are the memories that stay.", effort: "Today", link: "/moments" },
+          ? {
+              kind: "visitSteps",
+              title: "Pick up where the last visit left off",
+              why: "A few next steps are waiting from the doctor.",
+              effort: "5 minutes",
+              link: "/health",
+            }
+          : {
+              kind: "moment",
+              title: `Suggest one small moment with ${loveeName}`,
+              why: "These are the memories that stay.",
+              effort: "Today",
+              link: "/moments",
+            },
       ];
 
   return (

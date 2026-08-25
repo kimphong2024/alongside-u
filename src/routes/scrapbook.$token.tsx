@@ -80,15 +80,13 @@ function SharedScrapbook() {
       </header>
 
       <main className="max-w-3xl mx-auto px-5 pb-24 space-y-12">
-        {loading && (
-          <p className="text-center text-sm text-muted-foreground">Loading…</p>
-        )}
-        {error && (
-          <p className="text-center text-sm text-muted-foreground">{error}</p>
-        )}
+        {loading && <p className="text-center text-sm text-muted-foreground">Loading…</p>}
+        {error && <p className="text-center text-sm text-muted-foreground">{error}</p>}
         {isDemo && (
           <div className="rounded-2xl border border-dashed border-border bg-card/60 px-4 py-3 text-center">
-            <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Demo scrapbook</p>
+            <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
+              Demo scrapbook
+            </p>
             <p className="text-sm text-foreground/75 mt-1 leading-relaxed">
               A few sample memories so you can see what a shared scrapbook looks like.
             </p>
@@ -108,7 +106,13 @@ function SharedScrapbook() {
                 preserveAspectRatio="none"
                 className="absolute left-0 right-0 top-3 w-full h-5 pointer-events-none"
               >
-                <path d="M0,4 Q50,18 100,4" fill="none" stroke="hsl(var(--border))" strokeWidth="0.4" vectorEffect="non-scaling-stroke" />
+                <path
+                  d="M0,4 Q50,18 100,4"
+                  fill="none"
+                  stroke="hsl(var(--border))"
+                  strokeWidth="0.4"
+                  vectorEffect="non-scaling-stroke"
+                />
               </svg>
               <div className="relative flex gap-6 overflow-x-auto pb-8 pt-6 px-2 snap-x snap-mandatory scrollbar-none">
                 {g.items.map((m, i) => (
@@ -140,8 +144,16 @@ function PeggedPolaroid({ moment, index }: { moment: Moment; index: number }) {
       className="relative flex-shrink-0 snap-center pt-3"
       style={{ transform: `rotate(${rotate}deg)`, transformOrigin: "top center" }}
     >
-      <span aria-hidden className="absolute -top-1 left-6 h-2.5 w-2.5 rounded-[3px] bg-clay shadow-soft z-10" style={{ transform: "rotate(12deg)" }} />
-      <span aria-hidden className="absolute -top-1 right-6 h-2.5 w-2.5 rounded-[3px] bg-clay shadow-soft z-10" style={{ transform: "rotate(-12deg)" }} />
+      <span
+        aria-hidden
+        className="absolute -top-1 left-6 h-2.5 w-2.5 rounded-[3px] bg-clay shadow-soft z-10"
+        style={{ transform: "rotate(12deg)" }}
+      />
+      <span
+        aria-hidden
+        className="absolute -top-1 right-6 h-2.5 w-2.5 rounded-[3px] bg-clay shadow-soft z-10"
+        style={{ transform: "rotate(-12deg)" }}
+      />
       <article className="w-[300px] sm:w-[340px] bg-card border border-border p-5 pb-7 shadow-paper paper-grain rounded-md">
         {moment.photo && (
           <div className="mb-4 rounded-sm overflow-hidden aspect-[4/3] bg-muted">
@@ -154,15 +166,21 @@ function PeggedPolaroid({ moment, index }: { moment: Moment; index: number }) {
           </div>
         )}
         <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-          {new Date(moment.date).toLocaleDateString("en-SG", { weekday: "long", month: "long", day: "numeric" })}
+          {new Date(moment.date).toLocaleDateString("en-SG", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+          })}
         </p>
-        <h3 className="font-serif text-2xl italic mt-1 leading-snug text-foreground/90">{moment.title}</h3>
+        <h3 className="font-serif text-2xl italic mt-1 leading-snug text-foreground/90">
+          {moment.title}
+        </h3>
         {moment.note && (
-          <p className="font-hand text-xl text-foreground/80 mt-3 leading-snug whitespace-pre-line">{moment.note}</p>
+          <p className="font-hand text-xl text-foreground/80 mt-3 leading-snug whitespace-pre-line">
+            {moment.note}
+          </p>
         )}
-        {moment.audio && (
-          <audio src={moment.audio} controls className="w-full mt-3" />
-        )}
+        {moment.audio && <audio src={moment.audio} controls className="w-full mt-3" />}
       </article>
     </motion.div>
   );

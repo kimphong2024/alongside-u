@@ -26,7 +26,9 @@ export function JourneyProgressCard({ checkedCount, totalCount, nextItemTitle }:
         </div>
         <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
           {nextItemTitle ? (
-            <>Up next: <span className="text-foreground/80">{nextItemTitle}</span></>
+            <>
+              Up next: <span className="text-foreground/80">{nextItemTitle}</span>
+            </>
           ) : (
             "Every step is done. That took real strength."
           )}

@@ -1,24 +1,44 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LifeBuoy, Wind, Phone, Mail, Trash2, Link2, Copy, Check, Share2, Eye } from "lucide-react";
+import {
+  UserRound,
+  Wind,
+  Phone,
+  Mail,
+  Trash2,
+  Copy,
+  Check,
+  Share2,
+  Plus,
+  BookHeart,
+} from "lucide-react";
+import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
-import { useAppState } from "@/lib/store";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
+import { useAppData } from "@/lib/store";
+import { HELPLINES } from "@/lib/content";
+import { getScrapbookShareUrl } from "@/lib/share";
 
 export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
-      { title: "Support - Alongside" },
-      { name: "description", content: "Support yourself, or invite family to support you." },
+      { title: "You - Alongside" },
+      { name: "description", content: "Care for yourself, and keep your circle close." },
     ],
   }),
-  component: Support,
+  component: You,
 });
 
-import { HELPLINES } from "@/lib/content";
+const RELATIONSHIP_PRESETS = ["Sibling", "Child", "Spouse", "Relative", "Friend"];
 
 export function BreathExercise() {
   const [running, setRunning] = useState(false);
@@ -28,12 +48,30 @@ export function BreathExercise() {
         <motion.div
           className="absolute inset-0 rounded-full bg-sage-soft"
           animate={running ? { scale: [1, 1.4, 1.4, 1, 1] } : { scale: 1 }}
-          transition={running ? { duration: 12, repeat: Infinity, ease: "easeInOut", times: [0, 0.33, 0.5, 0.83, 1] } : {}}
+          transition={
+            running
+              ? {
+                  duration: 12,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  times: [0, 0.33, 0.5, 0.83, 1],
+                }
+              : {}
+          }
         />
         <motion.div
           className="absolute inset-4 rounded-full bg-sage/40"
           animate={running ? { scale: [1, 1.3, 1.3, 1, 1] } : { scale: 1 }}
-          transition={running ? { duration: 12, repeat: Infinity, ease: "easeInOut", times: [0, 0.33, 0.5, 0.83, 1] } : {}}
+          transition={
+            running
+              ? {
+                  duration: 12,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  times: [0, 0.33, 0.5, 0.83, 1],
+                }
+              : {}
+          }
         />
         <motion.p
           className="relative font-serif text-2xl"
@@ -56,70 +94,73 @@ export function BreathExercise() {
   );
 }
 
-function Support() {
-  const { state, update, hydrated } = useAppState();
-  const [mode, setMode] = useState<"self" | "family">("self");
+function You() {
+  const { local, family, addFamily, removeFamily, hydrated, user } = useAppData();
+  const [mode, setMode] = useState<"self" | "circle">("self");
+  const [name, setName] = useState("");
+  const [relationship, setRelationship] = useState("");
+  const [email, setEmail] = useState("");
+  const [sharing, setSharing] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  const inviteLink = useMemo(() => {
-    if (typeof window === "undefined") return "";
-    let token = "";
-    try {
-      token = localStorage.getItem("alongside.inviteToken") || "";
-      if (!token) {
-        token = crypto.randomUUID().slice(0, 8);
-        localStorage.setItem("alongside.inviteToken", token);
-      }
-    } catch {
-      token = "preview";
-    }
-    return `${window.location.origin}/join/${token}`;
-  }, []);
 
   if (!hydrated) return null;
 
-  const recent = state.checkInHistory.slice(-7);
-  const overwhelmedCount = recent.filter((c) => ["Overwhelmed", "Tired", "Sad", "Numb"].includes(c.mood)).length;
+  const recent = local.checkInHistory.slice(-7);
+  const overwhelmedCount = recent.filter((c) =>
+    ["Overwhelmed", "Tired", "Sad", "Numb"].includes(c.mood),
+  ).length;
   const showBurnoutNote = overwhelmedCount >= 3;
 
-  const copyLink = async () => {
+  const submitMember = () => {
+    if (!name.trim() || !relationship.trim()) return;
+    void addFamily({
+      name: name.trim(),
+      relationship: relationship.trim(),
+      email: email.trim() || undefined,
+    });
+    setName("");
+    setRelationship("");
+    setEmail("");
+  };
+
+  const shareScrapbook = async () => {
+    if (!user || sharing) return;
+    setSharing(true);
     try {
-      await navigator.clipboard.writeText(inviteLink);
+      const url = await getScrapbookShareUrl(user.id);
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: "A shared scrapbook", url });
+          return;
+        } catch {
+          /* user cancelled */
+        }
+      }
+      await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
-    } catch {
-      /* ignore */
+      toast.success("Scrapbook link copied", { description: url });
+    } finally {
+      setSharing(false);
     }
   };
-  const shareLink = async () => {
-    const text = "I'd like to share my journey progress with you on Alongside.";
-    if (typeof navigator !== "undefined" && (navigator as Navigator & { share?: (d: ShareData) => Promise<void> }).share) {
-      try {
-        await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share({ title: "Alongside", text, url: inviteLink });
-        return;
-      } catch { /* user cancelled */ }
-    }
-    copyLink();
-  };
-  const removeMember = (id: string) =>
-    update((s) => ({ ...s, family: s.family.filter((m) => m.id !== id) }));
 
   return (
     <AppShell>
       <div className="space-y-6">
         <header>
           <div className="flex items-center gap-2 text-muted-foreground">
-            <LifeBuoy className="h-4 w-4" strokeWidth={1.6} />
-            <span className="text-xs uppercase tracking-[0.14em]">Support</span>
+            <UserRound className="h-4 w-4" strokeWidth={1.6} />
+            <span className="text-xs uppercase tracking-[0.14em]">You</span>
           </div>
-          <h1 className="text-4xl font-serif mt-1.5 text-balance">Let your support meet you where you are</h1>
+          <h1 className="text-4xl font-serif mt-1.5 text-balance">This space is for you, too</h1>
           <p className="text-muted-foreground mt-2 leading-relaxed">
-            Support yourself, or invite family to walk alongside you.
+            Care for yourself, and keep your circle close.
           </p>
         </header>
 
         <div className="relative rounded-full bg-card/60 border border-border p-1 flex">
-          {(["self", "family"] as const).map((m) => (
+          {(["self", "circle"] as const).map((m) => (
             <button
               key={m}
               onClick={() => setMode(m)}
@@ -132,8 +173,10 @@ function Support() {
                   transition={{ type: "spring", stiffness: 500, damping: 40 }}
                 />
               )}
-              <span className={`relative ${mode === m ? "font-medium text-accent-active" : "text-muted-foreground"}`}>
-                {m === "self" ? "For you" : "From family"}
+              <span
+                className={`relative ${mode === m ? "font-medium text-accent-active" : "text-muted-foreground"}`}
+              >
+                {m === "self" ? "For you" : "Your circle"}
               </span>
             </button>
           ))}
@@ -153,26 +196,46 @@ function Support() {
                 <div className="rounded-2xl bg-clay-soft border border-clay/30 p-5">
                   <p className="font-serif text-lg">A gentle observation</p>
                   <p className="text-sm text-foreground/80 mt-1.5 leading-relaxed">
-                    The past week has felt heavy. That's a sign to lean on someone, even briefly. You deserve care too.
+                    The past week has felt heavy. That's a sign to lean on someone, even briefly.
+                    You deserve care too.
                   </p>
                 </div>
               )}
 
               <section className="space-y-3">
-                <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">Reminders</h3>
+                <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">
+                  Reminders
+                </h3>
                 <Carousel opts={{ align: "start" }} className="w-full relative">
                   <CarouselContent>
                     {[
-                      { text: "You are doing the best you can with what you have.", grad: "bg-gradient-warm" },
-                      { text: "Resting is not abandoning. It is sustaining.", grad: "bg-gradient-sage" },
-                      { text: "Asking for help is an act of love - for them, and for you.", grad: "bg-gradient-dawn" },
+                      {
+                        text: "You are doing the best you can with what you have.",
+                        grad: "bg-gradient-warm",
+                      },
+                      {
+                        text: "Resting is not abandoning. It is sustaining.",
+                        grad: "bg-gradient-sage",
+                      },
+                      {
+                        text: "Asking for help is an act of love - for them, and for you.",
+                        grad: "bg-gradient-dawn",
+                      },
                       { text: "There is no perfect way to do this.", grad: "bg-gradient-warm" },
                     ].map((q) => (
-                      <CarouselItem key={q.text} className="basis-[88%] sm:basis-[72%] md:basis-[60%]">
+                      <CarouselItem
+                        key={q.text}
+                        className="basis-[88%] sm:basis-[72%] md:basis-[60%]"
+                      >
                         <div
                           className={`min-h-[200px] rounded-2xl ${q.grad} border border-border p-7 shadow-soft flex items-center`}
                         >
-                          <p className="font-serif italic leading-snug text-foreground/85 text-balance" style={{ fontSize: 30 }}>{q.text}</p>
+                          <p
+                            className="font-serif italic leading-snug text-foreground/85 text-balance"
+                            style={{ fontSize: 30 }}
+                          >
+                            {q.text}
+                          </p>
                         </div>
                       </CarouselItem>
                     ))}
@@ -185,7 +248,9 @@ function Support() {
               <section className="space-y-3">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Wind className="h-4 w-4" strokeWidth={1.6} />
-                  <span className="text-xs uppercase tracking-[0.14em]">Let's take a moment to breathe</span>
+                  <span className="text-xs uppercase tracking-[0.14em]">
+                    Let's take a moment to breathe
+                  </span>
                 </div>
                 <BreathExercise />
               </section>
@@ -193,7 +258,9 @@ function Support() {
               <section className="space-y-3">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Phone className="h-4 w-4" strokeWidth={1.6} />
-                  <span className="text-xs uppercase tracking-[0.14em]">If you need a listening ear</span>
+                  <span className="text-xs uppercase tracking-[0.14em]">
+                    If you need a listening ear
+                  </span>
                 </div>
                 <div className="grid gap-2">
                   {HELPLINES.map((h) => (
@@ -214,13 +281,14 @@ function Support() {
                   ))}
                 </div>
                 <p className="text-xs text-muted-foreground/80 px-1 pt-1 leading-relaxed">
-                  Alongside is a companion, not a medical or crisis service. Please reach out to a doctor or helpline for urgent needs.
+                  Alongside is a companion, not a medical or crisis service. Please reach out to a
+                  doctor or helpline for urgent needs.
                 </p>
               </section>
             </motion.div>
           ) : (
             <motion.div
-              key="family"
+              key="circle"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
@@ -229,74 +297,93 @@ function Support() {
             >
               <div className="rounded-2xl bg-card border border-border p-5 space-y-4 shadow-soft">
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Link2 className="h-4 w-4" strokeWidth={1.6} />
-                  <span className="text-xs uppercase tracking-[0.14em]">Invite link</span>
+                  <Plus className="h-4 w-4" strokeWidth={1.6} />
+                  <span className="text-xs uppercase tracking-[0.14em]">Your circle</span>
                 </div>
                 <div className="space-y-1.5">
-                  <h2 className="font-serif text-xl">Bring someone into the circle</h2>
+                  <h2 className="font-serif text-xl">Who walks this with you?</h2>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Share this private link with anyone who wants to walk alongside you.
+                    Keep track of the people sharing the care, so no one carries it alone.
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 rounded-xl bg-background border border-border px-3 py-2">
+                <div className="space-y-2.5">
                   <Input
-                    value={inviteLink}
-                    readOnly
-                    onFocus={(e) => e.currentTarget.select()}
-                    className="border-0 bg-transparent h-9 px-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Name"
+                    className="rounded-xl bg-background h-11"
                   />
-                  <button
-                    onClick={copyLink}
-                    aria-label="Copy link"
-                    className="h-9 w-9 rounded-lg hover:bg-muted flex items-center justify-center flex-shrink-0 transition"
+                  <div className="flex flex-wrap gap-2">
+                    {RELATIONSHIP_PRESETS.map((r) => (
+                      <button
+                        key={r}
+                        onClick={() => setRelationship(r)}
+                        className={`px-3 py-1.5 rounded-full text-xs border transition ${
+                          relationship === r
+                            ? "bg-foreground text-background border-foreground"
+                            : "bg-background border-border text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                  <Input
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email (optional)"
+                    type="email"
+                    className="rounded-xl bg-background h-11"
+                  />
+                  <Button
+                    onClick={submitMember}
+                    disabled={!name.trim() || !relationship.trim()}
+                    className="w-full rounded-xl h-11 bg-foreground text-background hover:bg-foreground/90"
                   >
-                    {copied ? <Check className="h-4 w-4 text-sage" /> : <Copy className="h-4 w-4 text-muted-foreground" />}
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <Button onClick={copyLink} variant="outline" className="rounded-xl h-11">
-                    {copied ? <><Check className="h-4 w-4 mr-1.5" /> Copied</> : <><Copy className="h-4 w-4 mr-1.5" /> Copy link</>}
+                    <Plus className="h-4 w-4 mr-1.5" /> Add to the circle
                   </Button>
-                  <Button onClick={shareLink} className="rounded-xl bg-foreground text-background hover:bg-foreground/90 h-11">
-                    <Share2 className="h-4 w-4 mr-1.5" /> Share
-                  </Button>
-                </div>
-
-                <div className="flex items-start gap-2 rounded-xl bg-sage-soft/40 border border-sage/20 px-3 py-2.5">
-                  <Eye className="h-4 w-4 text-sage mt-0.5 flex-shrink-0" strokeWidth={1.8} />
-                  <p className="text-xs text-foreground/80 leading-relaxed">
-                    Linked accounts can only see your <span className="font-medium">Journey progress</span>. Moments, check-ins, and notes stay private to you.
-                  </p>
                 </div>
               </div>
 
               <section className="space-y-2">
-                <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">Linked accounts</h3>
-                {state.family.length === 0 ? (
+                <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">
+                  People in the circle
+                </h3>
+                {family.length === 0 ? (
                   <div className="rounded-2xl bg-card border border-border border-dashed p-6 text-center">
-                    <p className="text-sm text-muted-foreground">No one linked yet. Share your invite link to bring someone in.</p>
+                    <p className="text-sm text-muted-foreground">
+                      No one here yet. Add the people who share the care with you.
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    {state.family.map((m) => (
-                      <div key={m.id} className="rounded-2xl bg-card border border-border p-4 flex items-center gap-3">
+                    {family.map((m) => (
+                      <div
+                        key={m.id}
+                        className="rounded-2xl bg-card border border-border p-4 flex items-center gap-3"
+                      >
                         <div className="h-10 w-10 rounded-full bg-gradient-dawn flex items-center justify-center text-sm font-medium">
                           {m.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium">{m.name}</p>
-                          <p className="text-xs text-muted-foreground truncate">
-                            {m.relationship} · sees Journey progress
-                          </p>
+                          <p className="text-xs text-muted-foreground truncate">{m.relationship}</p>
                         </div>
                         {m.email && (
-                          <a href={`mailto:${m.email}?subject=A%20gentle%20update`} className="h-9 w-9 rounded-full hover:bg-muted flex items-center justify-center" aria-label="Email">
+                          <a
+                            href={`mailto:${m.email}?subject=A%20gentle%20update`}
+                            className="h-9 w-9 rounded-full hover:bg-muted flex items-center justify-center"
+                            aria-label="Email"
+                          >
                             <Mail className="h-4 w-4 text-muted-foreground" />
                           </a>
                         )}
-                        <button onClick={() => removeMember(m.id)} className="h-9 w-9 rounded-full hover:bg-muted flex items-center justify-center" aria-label="Remove">
+                        <button
+                          onClick={() => void removeFamily(m.id)}
+                          className="h-9 w-9 rounded-full hover:bg-muted flex items-center justify-center"
+                          aria-label="Remove"
+                        >
                           <Trash2 className="h-4 w-4 text-muted-foreground" />
                         </button>
                       </div>
@@ -305,21 +392,37 @@ function Support() {
                 )}
               </section>
 
-              <section className="space-y-3">
-                <h3 className="text-xs uppercase tracking-[0.14em] text-muted-foreground px-1">Suggested ways to share</h3>
-                <div className="grid gap-2">
-                  {[
-                    { title: "Weekly family update", desc: "One short message every Sunday - saves repeating." },
-                    { title: "Visit calendar", desc: "Spread visits across the week so everyone gets quiet time." },
-                    { title: "Task circle", desc: "Groceries, meals, transport - small things, shared." },
-                  ].map((s) => (
-                    <div key={s.title} className="rounded-2xl bg-gradient-warm border border-border p-4">
-                      <p className="font-serif text-lg">{s.title}</p>
-                      <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">{s.desc}</p>
-                    </div>
-                  ))}
+              <div className="rounded-2xl bg-card border border-border p-5 space-y-3 shadow-soft">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <BookHeart className="h-4 w-4" strokeWidth={1.6} />
+                  <span className="text-xs uppercase tracking-[0.14em]">Share the scrapbook</span>
                 </div>
-              </section>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  A view-only page of your saved moments — anyone with the link can open it, no
+                  account needed.
+                </p>
+                <Button
+                  onClick={shareScrapbook}
+                  disabled={sharing}
+                  className="w-full rounded-xl h-11 bg-foreground text-background hover:bg-foreground/90"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-4 w-4 mr-1.5" /> Link copied
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="h-4 w-4 mr-1.5" />{" "}
+                      {sharing ? "Preparing…" : "Share the link"}
+                    </>
+                  )}
+                </Button>
+                <p className="text-xs text-muted-foreground/80 leading-relaxed">
+                  Alongside is one shared login today — people you add above are your own notes
+                  about the circle. The scrapbook link is the one thing others can open on their
+                  own.
+                </p>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

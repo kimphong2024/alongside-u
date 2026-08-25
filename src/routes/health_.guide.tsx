@@ -8,7 +8,10 @@ export const Route = createFileRoute("/health_/guide")({
   head: () => ({
     meta: [
       { title: "Talk it through - Alongside" },
-      { name: "description", content: "Gentle, practical guidance on caring for an older loved one." },
+      {
+        name: "description",
+        content: "Gentle, practical guidance on caring for an older loved one.",
+      },
     ],
   }),
   component: Guide,

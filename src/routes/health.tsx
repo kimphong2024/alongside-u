@@ -28,7 +28,10 @@ export const Route = createFileRoute("/health")({
   head: () => ({
     meta: [
       { title: "Health - Alongside" },
-      { name: "description", content: "Doctor visits, records and appointments — kept together for the family." },
+      {
+        name: "description",
+        content: "Doctor visits, records and appointments — kept together for the family.",
+      },
     ],
   }),
   component: Health,
@@ -74,7 +77,9 @@ function Health() {
                   transition={{ type: "spring", stiffness: 500, damping: 40 }}
                 />
               )}
-              <span className={`relative ${view === v.key ? "font-medium text-accent-active" : "text-muted-foreground"}`}>
+              <span
+                className={`relative ${view === v.key ? "font-medium text-accent-active" : "text-muted-foreground"}`}
+              >
                 {v.label}
               </span>
             </button>

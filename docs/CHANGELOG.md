@@ -7,6 +7,7 @@ Two sections: an **inferred history** reconstructed from the current codebase (a
 ## Inferred history
 
 ### 0.1 — Foundation
+
 - TanStack Start v1 scaffold with file-based routing.
 - Lovable Cloud (Supabase) wired in: auth, Postgres, RLS.
 - Email + password and Google OAuth sign-in.
@@ -14,27 +15,32 @@ Two sections: an **inferred history** reconstructed from the current codebase (a
 - Base design tokens in `src/styles.css` (oklch), shadcn/ui components installed.
 
 ### 0.2 — Care Journey
+
 - Care Journey checklist content (`src/lib/content.ts`) covering medical, legal, financial and emotional next steps.
 - Singapore resource carousel.
 - Progress tracking on the checklist.
 
 ### 0.3 — Moments
+
 - Moments composer supporting photos, video and audio.
 - Bucket list with template ideas.
 - `suggest-bucket-ideas` edge function for AI-suggested moments.
 - Seeded demo moments to give first-time users something to look at.
 
 ### 0.4 — Sharing
+
 - Public scrapbook route `/scrapbook/$token`.
 - `public-scrapbook` edge function for token-resolved read-only views.
 
 ### 0.5 — Support & Family
+
 - Breath exercise.
 - Singapore helpline directory (SOS, AIC, Hospice Council, 995).
 - Family member invites.
 - `/family` route consolidated under `/support`.
 
 ### 0.6 — Onboarding refresh
+
 - Heart illustration introduced as the recurring visual anchor.
 - Inline pill-style relationship picker with custom-entry support.
 - Emotion options gain line iconography.

@@ -34,8 +34,7 @@ export function deriveOpenSteps(consultations: Consultation[]): OpenStep[] {
 export function nextJourneyItem(checked: Record<string, boolean>) {
   for (const phase of CARE_JOURNEY)
     for (const cat of phase.categories)
-      for (const item of cat.items)
-        if (!checked[item.id]) return { item, phase };
+      for (const item of cat.items) if (!checked[item.id]) return { item, phase };
   return null;
 }
 
@@ -52,7 +51,13 @@ const rowMotion = {
   animate: { opacity: 1, y: 0 },
 };
 
-export function NextUpSection({ openSteps, healthHydrated, hubConnected, checkedItems, onToggleStep }: Props) {
+export function NextUpSection({
+  openSteps,
+  healthHydrated,
+  hubConnected,
+  checkedItems,
+  onToggleStep,
+}: Props) {
   const nextAppt = hubConnected ? MOCK_APPOINTMENTS[0] : null;
   const journey = nextJourneyItem(checkedItems);
   const empty = healthHydrated && openSteps.length === 0 && !nextAppt && !journey;
@@ -66,7 +71,11 @@ export function NextUpSection({ openSteps, healthHydrated, hubConnected, checked
       )}
 
       {openSteps.map((step, i) => (
-        <motion.div key={`${step.consultationId}-${step.stepIndex}`} {...rowMotion} transition={{ delay: i * 0.05 }}>
+        <motion.div
+          key={`${step.consultationId}-${step.stepIndex}`}
+          {...rowMotion}
+          transition={{ delay: i * 0.05 }}
+        >
           <div className="rounded-2xl bg-card border border-border p-4 shadow-soft paper-grain flex items-start gap-3">
             <button
               onClick={() => onToggleStep(step.consultationId, step.stepIndex)}
@@ -81,7 +90,10 @@ export function NextUpSection({ openSteps, healthHydrated, hubConnected, checked
                 From {step.visitTitle} · {step.date}
               </p>
             </Link>
-            <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" strokeWidth={1.6} />
+            <ChevronRight
+              className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5"
+              strokeWidth={1.6}
+            />
           </div>
         </motion.div>
       ))}
@@ -99,8 +111,13 @@ export function NextUpSection({ openSteps, healthHydrated, hubConnected, checked
             <div className="flex-1 min-w-0">
               <p className="text-sm text-foreground/85">{nextAppt.purpose}</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {appointmentDate(nextAppt).toLocaleDateString("en-SG", { weekday: "short", day: "numeric", month: "short" })}
-                {" · "}{nextAppt.time} · {nextAppt.clinic}
+                {appointmentDate(nextAppt).toLocaleDateString("en-SG", {
+                  weekday: "short",
+                  day: "numeric",
+                  month: "short",
+                })}
+                {" · "}
+                {nextAppt.time} · {nextAppt.clinic}
               </p>
             </div>
             <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" strokeWidth={1.6} />
@@ -109,7 +126,10 @@ export function NextUpSection({ openSteps, healthHydrated, hubConnected, checked
       )}
 
       {journey && (
-        <motion.div {...rowMotion} transition={{ delay: (openSteps.length + (nextAppt ? 1 : 0)) * 0.05 }}>
+        <motion.div
+          {...rowMotion}
+          transition={{ delay: (openSteps.length + (nextAppt ? 1 : 0)) * 0.05 }}
+        >
           <Link
             to="/care-journey"
             className="rounded-2xl bg-card border border-border p-4 shadow-soft paper-grain flex items-center gap-3 hover:bg-muted/30 transition"
@@ -119,7 +139,9 @@ export function NextUpSection({ openSteps, healthHydrated, hubConnected, checked
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-foreground/85">{journey.item.title}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Next on the journey · {journey.phase.title}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Next on the journey · {journey.phase.title}
+              </p>
             </div>
             <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" strokeWidth={1.6} />
           </Link>
