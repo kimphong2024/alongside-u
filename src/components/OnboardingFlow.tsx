@@ -4,29 +4,27 @@ import { useNavigate, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { useAppData } from "@/lib/store";
 import heartImg from "@/assets/arms-hugging-heart.png";
-import processWavesImg from "@/assets/onboarding-process-waves.png";
-import checklistImg from "@/assets/onboarding-checklist.png";
+import processBleedImg from "@/assets/onboarding-process-bleed.jpg";
+import checklistBleedImg from "@/assets/onboarding-checklist-bleed.jpg";
 
 const TILES = [
   {
     title: "Let me process this a bit more",
     description: "A quiet space to breathe, with gentle support around you.",
     meta: "Open anytime",
-    illustration: processWavesImg,
+    art: processBleedImg,
     to: "/support" as const,
     // This path skips the intake questionnaire, so it must mark onboarding
     // complete itself or the Today gate bounces the user back here forever.
     completes: true,
-    gradient: "radial-gradient(120% 100% at 20% 15%, #F4D7DE 0%, #EBD5E6 45%, #E0D2EC 100%)",
   },
   {
     title: "Show me what needs to be done",
     description: "A few questions, then a clear path of next steps for the family.",
     meta: "About 5 minutes",
-    illustration: checklistImg,
+    art: checklistBleedImg,
     to: "/care-journey-intro" as const,
     completes: false,
-    gradient: "radial-gradient(120% 100% at 25% 20%, #DDEAD3 0%, #CFE5CC 50%, #D8EBD4 100%)",
   },
 ];
 
@@ -84,25 +82,31 @@ export function OnboardingFlow() {
                 // full profiles row and would null out absent fields.
                 if (t.completes) void saveOnboarding({ ...onboarding, completed: true });
               }}
-              className="group flex items-center gap-4 sm:gap-5 rounded-3xl border border-border/40 p-5 sm:p-6 shadow-soft paper-grain hover:shadow-paper hover:-translate-y-0.5 active:scale-[0.99] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-left"
-              style={{ backgroundImage: t.gradient }}
+              className="group relative flex items-center gap-4 overflow-hidden rounded-3xl border border-border/40 p-5 sm:p-6 min-h-[10rem] shadow-soft paper-grain hover:shadow-paper hover:-translate-y-0.5 active:scale-[0.99] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-left"
             >
-              <div className="flex-1 min-w-0">
+              {/* Full-bleed watercolor: motif lives on the right, wash on the left. */}
+              <img
+                src={t.art}
+                alt=""
+                className="absolute inset-0 h-full w-full object-cover object-right select-none group-hover:scale-[1.03] transition-transform duration-700"
+              />
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-gradient-to-r from-card/70 via-card/20 to-transparent"
+              />
+              <div className="relative flex-1 min-w-0 max-w-[62%] sm:max-w-[58%]">
                 <h3 className="font-serif text-2xl leading-tight text-foreground/90 text-balance">
                   {t.title}
                 </h3>
                 <p className="text-sm text-foreground/75 leading-relaxed mt-1.5">{t.description}</p>
-                <p className="text-xs text-foreground/60 mt-2.5">{t.meta}</p>
+                <p className="text-xs text-foreground/70 mt-2.5">{t.meta}</p>
               </div>
-              <img
-                src={t.illustration}
-                alt=""
-                className="h-24 w-28 sm:h-28 sm:w-36 object-contain shrink-0 select-none group-hover:scale-105 transition-transform duration-500"
-              />
-              <ArrowRight
-                className="h-4 w-4 text-foreground/50 group-hover:translate-x-0.5 group-hover:text-foreground/80 transition shrink-0"
-                strokeWidth={1.6}
-              />
+              <span className="relative ml-auto h-8 w-8 rounded-full bg-card/70 border border-border/50 flex items-center justify-center shrink-0 group-hover:bg-card transition">
+                <ArrowRight
+                  className="h-4 w-4 text-foreground/70 group-hover:translate-x-0.5 transition"
+                  strokeWidth={1.6}
+                />
+              </span>
             </Link>
           </motion.div>
         ))}
